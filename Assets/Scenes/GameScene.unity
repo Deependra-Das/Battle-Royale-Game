@@ -3968,6 +3968,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8551820576649856524}
+  - component: {fileID: 8551820576649856527}
   - component: {fileID: 3734785155189355208}
   - component: {fileID: 8551820576649856526}
   - component: {fileID: 8551820576649856525}
@@ -6595,6 +6596,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cinemachineCameraTarget: {fileID: 146768992}
   _controller: {fileID: 3734785155189355208}
+  _animator: {fileID: 8551820576649856527}
   _playerInput: {fileID: 8551820576649856526}
   TopClamp: 70
   BottomClamp: -30
@@ -6606,9 +6608,15 @@ MonoBehaviour:
   analogMovement: 0
   cursorLocked: 1
   cursorInputForLook: 1
-  MoveSpeed: 5
+  MoveSpeed: 10
   RotationSmoothTime: 0.12
-  SpeedChangeRate: 10
+  SpeedChangeRate: 20
+  VerticalSpeedChangeRate: 0.5
+  FallGravityClamp: -20
+  MaxJumpTime: 1.5
+  gravity: -9.8
+  GroundedGravity: -0.05
+  FallMultiplier: 2
 --- !u!114 &8551820576649856526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6707,6 +6715,28 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!95 &8551820576649856527
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4680773117143004191}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 82a2914d8f86c62488456950c8330e38, type: 3}
+  m_Controller: {fileID: 9100000, guid: 4da08055483a75d49a2c2277535e7448, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &8689300036801244798
 Transform:
   m_ObjectHideFlags: 0
