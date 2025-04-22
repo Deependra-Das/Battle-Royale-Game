@@ -6594,6 +6594,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cinemachineCameraTarget: {fileID: 146768992}
+  _controller: {fileID: 3734785155189355208}
   _playerInput: {fileID: 8551820576649856526}
   TopClamp: 70
   BottomClamp: -30
@@ -6605,6 +6606,9 @@ MonoBehaviour:
   analogMovement: 0
   cursorLocked: 1
   cursorInputForLook: 1
+  MoveSpeed: 5
+  RotationSmoothTime: 0.12
+  SpeedChangeRate: 10
 --- !u!114 &8551820576649856526
 MonoBehaviour:
   m_ObjectHideFlags: 0
