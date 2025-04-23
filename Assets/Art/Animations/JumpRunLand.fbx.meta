@@ -1,25 +1,19 @@
 fileFormatVersion: 2
-guid: 98f277b0c8055e143b2fcf058d3c27dc
+guid: 3c033631149b9c541bcf155cd94cccba
 AssetOrigin:
   serializedVersion: 1
   productId: 196526
   packageName: Starter Assets - ThirdPerson | Updates in new CharacterController
     package
   packageVersion: 1.1.5
-  assetPath: Assets/StarterAssets/ThirdPersonController/Character/Animations/Jump--Jump.anim.fbx
+  assetPath: Assets/StarterAssets/ThirdPersonController/Character/Animations/Locomotion--Run_N_Land.anim.fbx
   uploadId: 691128
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable:
   - first:
-      74: 7478122292733868173
-    second: JumpStart
-  - first:
-      74: -2702400367771620057
-    second: InAir
-  - first:
-      74: -9098803823909532060
-    second: JumpLand
+      74: -2817517482862745934
+    second: Run_N_Land
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -38,7 +32,7 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
-    importConstraints: 0
+    importConstraints: 1
     animationCompression: 1
     animationRotationError: 0.05
     animationPositionError: 0.05
@@ -48,40 +42,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: JumpStart
-      takeName: JumpStart
+      name: Run_N_Land
+      takeName: Run_N_Land
       internalID: 0
-      firstFrame: 28
-      lastFrame: 40
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0.2
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 1
-      loopBlendPositionY: 1
-      loopBlendPositionXZ: 1
-      keepOriginalOrientation: 1
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 1
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 20
-    - serializedVersion: 16
-      name: JumpLand
-      takeName: JumpStart
-      internalID: 0
-      firstFrame: 55
-      lastFrame: 74
+      firstFrame: 0
+      lastFrame: 20
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -104,7 +69,7 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 20
+      additiveReferencePoseFrame: 0
     isReadable: 0
   meshes:
     lODScreenPercentages: []
