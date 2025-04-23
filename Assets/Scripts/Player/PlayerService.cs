@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace BattleRoyale.Player
 {
+    [DefaultExecutionOrder(-1)]
     public class PlayerService : MonoBehaviour
     {
         [SerializeField] private PlayerView _playerView;
