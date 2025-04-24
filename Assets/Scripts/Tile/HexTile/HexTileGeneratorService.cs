@@ -7,13 +7,12 @@ namespace BattleRoyale.Tile
     [DefaultExecutionOrder(-10)]
     public class HexTileGeneratorService : MonoBehaviour
     {
-        [SerializeField] private HexTileView hexTilePrefab;
-        [SerializeField] private Transform hexTileContainerTransform;
-        [SerializeField] private int mapWidth = 25;
-        [SerializeField] private int mapHeight = 12;
-        [SerializeField] private float tileOffset_X = 1.8f;
-        [SerializeField] private float tileOffset_Z = 1.565f;
-        
+        [SerializeField] private HexTileView _hexTilePrefab;
+        [SerializeField] private Transform _hexTileContainerTransform;
+        [SerializeField] private int _mapWidth = 25;
+        [SerializeField] private int _mapHeight = 12;
+        [SerializeField] private float _tileOffset_X = 1.8f;
+        [SerializeField] private float _tileOffset_Z = 1.565f;        
 
         private List<HexTileView> _tileViewList;
 
@@ -25,25 +24,25 @@ namespace BattleRoyale.Tile
 
         void CreateHexTileMap()
         {
-            float mapMin_X = -mapWidth / 2;
-            float mapMax_X = mapWidth / 2;
-            float mapMin_Z = -mapHeight / 2;
-            float mapMax_Z = mapHeight / 2;
+            float mapMin_X = -_mapWidth / 2;
+            float mapMax_X = _mapWidth / 2;
+            float mapMin_Z = -_mapHeight / 2;
+            float mapMax_Z = _mapHeight / 2;
 
             for (float i = mapMin_X; i <= mapMax_X; i++)
             {
                 for (float j = mapMin_Z; j <= mapMax_Z; j++)
                 {
-                    HexTileView newTile = Object.Instantiate(hexTilePrefab);
+                    HexTileView newTile = Object.Instantiate(_hexTilePrefab);
                     Vector3 tilePosition;
 
                     if (j % 2 == 0)
                     {
-                        tilePosition = new Vector3(i * tileOffset_X, 0, j * tileOffset_Z);
+                        tilePosition = new Vector3(i * _tileOffset_X, 0, j * _tileOffset_Z);
                     }
                     else
                     {
-                        tilePosition = new Vector3(i * tileOffset_X + tileOffset_X / 2, 0, j * tileOffset_Z);
+                        tilePosition = new Vector3(i * _tileOffset_X + _tileOffset_X / 2, 0, j * _tileOffset_Z);
                     }
 
                     StartCoroutine(SetTileData(newTile, i, j, tilePosition));
@@ -56,7 +55,7 @@ namespace BattleRoyale.Tile
         {
             yield return new WaitForSeconds(0.00001f);
             hexTileView.gameObject.transform.position = tilePosition;
-            hexTileView.gameObject.transform.parent = hexTileContainerTransform;
+            hexTileView.gameObject.transform.parent = _hexTileContainerTransform;
             hexTileView.gameObject.name = i.ToString()+","+j.ToString();
         }
 

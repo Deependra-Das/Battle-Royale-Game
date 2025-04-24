@@ -619,12 +619,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4268ac33d00e3e46af1034281904344, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hexTilePrefab: {fileID: 7845598811733508655, guid: 10412a063b6572d4cbacafb1a8031925, type: 3}
-  hexTileContainerTransform: {fileID: 1538614967}
-  mapWidth: 50
-  mapHeight: 50
-  tileOffset_X: 4
-  tileOffset_Z: 3.53
+  _hexTilePrefab: {fileID: 7845598811733508655, guid: 10412a063b6572d4cbacafb1a8031925, type: 3}
+  _hexTileContainerTransform: {fileID: 1538614967}
+  _mapWidth: 50
+  _mapHeight: 50
+  _tileOffset_X: 4
+  _tileOffset_Z: 3.53
 --- !u!54 &1596599103
 Rigidbody:
   m_ObjectHideFlags: 0
