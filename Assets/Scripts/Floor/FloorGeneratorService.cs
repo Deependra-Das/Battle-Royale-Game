@@ -3,20 +3,14 @@ using System.Collections.Generic;
 
 namespace BattleRoyale.Floor
 {
-    [DefaultExecutionOrder(-15)]
     public class FloorGeneratorService : MonoBehaviour
     {
         [SerializeField] private int _numberOfFloors;
         [SerializeField] private float _heightIncrement;
 
-        public List<GameObject> floorsList = new List<GameObject>();
+        private List<GameObject> _floorsList = new List<GameObject>();
 
-        void Start()
-        {
-            GenerateFloors();
-        }
-
-        void GenerateFloors()
+        public void GenerateFloors(Transform parentTransform)
         {
             for (int i = 1; i <= _numberOfFloors; i++)
             {
@@ -24,22 +18,23 @@ namespace BattleRoyale.Floor
                 GameObject newFloor = new GameObject("Floor_" + i);
 
                 newFloor.transform.position = position;
-                floorsList.Add(newFloor);
+                newFloor.transform.parent = parentTransform;
+                _floorsList.Add(newFloor);
             }
         }
 
         public void DestroyAllFloors()
         {
-            foreach (GameObject floor in floorsList)
+            foreach (GameObject floor in _floorsList)
             {
                 Destroy(floor);
             }
-            floorsList.Clear();
+            _floorsList.Clear();
         }
 
         public List<GameObject> GetFloors()
         {
-            return floorsList;
+            return _floorsList;
         }
     }
 }
