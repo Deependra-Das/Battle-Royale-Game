@@ -1,7 +1,6 @@
-using Unity.Android.Gradle.Manifest;
+using BattleRoyale.Tile;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
 
 namespace BattleRoyale.Player
 {
@@ -18,6 +17,9 @@ namespace BattleRoyale.Player
 
         private bool Grounded = true;
         public LayerMask GroundLayers;
+        public LayerMask pushLayers;
+        public bool canPush;
+        [Range(0.5f, 5f)] public float strength = 1.1f;
 
         [Header("Cinemachine")]
         public float TopClamp = 70.0f;
@@ -234,6 +236,20 @@ namespace BattleRoyale.Player
             Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
         }
 
+        private void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+            Rigidbody body = hit.collider.attachedRigidbody;
+
+            if (body != null)
+            {
+                HexTileView groundHexTile = body.gameObject.GetComponent<HexTileView>();
+
+                if (groundHexTile != null)
+                {
+                    groundHexTile.PlayerOnTheTileDetected();
+                }
+            }
+        }
 
         public GameObject PlayerCameraRoot { get { return _cinemachineCameraTarget; } }
     }

@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: Player_SO
   m_EditorClassIdentifier: 
   moveSpeed: 10
-  rotationSmoothTime: 0.12
   speedChangeRate: 20
-  verticalSpeedChangeRate: 0.5
-  fallGravityClamp: -20
-  maxJumpTime: 1.5
-  groundedGravity: -0.05
-  fallMultiplier: 2
+  rotationSmoothTime: 0.12
+  jumpHeight: 1.2
+  gravity: -15
+  terminalVelocity: 53
+  jumpTimeout: 0.5
+  fallTimeout: 0.15
+  groundedOffset: -0.14
+  groundedRadius: 0.28
