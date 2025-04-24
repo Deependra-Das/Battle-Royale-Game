@@ -5,29 +5,40 @@ namespace BattleRoyale.Tile
 {
     public class HexTileView : MonoBehaviour
     {
-        public MeshRenderer meshRenderer;
-        public Material deactivateMaterial;
-        public float lifetime;
-        public Vector3 targetScale = new Vector3(1f, 0.5f, 1f);
+        [SerializeField] private MeshRenderer _meshRenderer;
+        [SerializeField] private Material _deactivateMaterial;
+        [SerializeField] private float _lifetime;
+        [SerializeField] private Vector3 _targetScale = new Vector3(1f, 0.5f, 1f);
+        private HexTileStates _currentTileState;
+
+        void Start()
+        {
+            _currentTileState = HexTileStates.Untouched;
+        }
 
         private IEnumerator DeactivateCoroutine()
         {
-            yield return new WaitForSeconds(lifetime);
+            yield return new WaitForSeconds(_lifetime);
+            _currentTileState = HexTileStates.Inactive;
             gameObject.SetActive(false);
         }
 
         public void PlayerOnTheTileDetected()
         {
-            StartCoroutine(DeactivateCoroutine());
-            StartCoroutine(ChangeMaterial());
-            StartCoroutine(ScaleObject(transform.localScale, targetScale, lifetime));
+            if (_currentTileState == HexTileStates.Untouched)
+            {
+                _currentTileState = HexTileStates.Touched;
+                StartCoroutine(DeactivateCoroutine());
+                StartCoroutine(ChangeMaterial());
+                StartCoroutine(ScaleObject(transform.localScale, _targetScale, _lifetime));
+            }
         }
 
         private IEnumerator ChangeMaterial()
         {
-            if (meshRenderer != null && deactivateMaterial != null)
+            if (_meshRenderer != null && _deactivateMaterial != null)
             {
-                meshRenderer.material = deactivateMaterial;
+                _meshRenderer.material = _deactivateMaterial;
                 yield return new WaitForSeconds(1f);
             }
         }

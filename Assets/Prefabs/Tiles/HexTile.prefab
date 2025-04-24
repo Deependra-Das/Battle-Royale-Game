@@ -123,10 +123,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3856aced7e9260d46aa685efdd2f1d79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshRenderer: {fileID: 4143328445719126984}
-  deactivateMaterial: {fileID: 2100000, guid: 235149f6d58787747a2b662520dc46c1, type: 2}
-  lifetime: 1
-  targetScale: {x: 1, y: 0.5, z: 1}
+  _meshRenderer: {fileID: 4143328445719126984}
+  _deactivateMaterial: {fileID: 2100000, guid: 235149f6d58787747a2b662520dc46c1, type: 2}
+  _lifetime: 1
+  _targetScale: {x: 1, y: 0.5, z: 1}
 --- !u!54 &4408749501471372059
 Rigidbody:
   m_ObjectHideFlags: 0
