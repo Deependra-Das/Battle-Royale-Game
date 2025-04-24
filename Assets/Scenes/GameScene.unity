@@ -397,7 +397,7 @@ GameObject:
   - component: {fileID: 1074471440}
   - component: {fileID: 1074471439}
   - component: {fileID: 1074471438}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -520,7 +520,7 @@ Transform:
   m_GameObject: {fileID: 1160788799}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.22108957, y: 0.5970862, z: 0.51055944}
+  m_LocalPosition: {x: 0, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -550,7 +550,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1538614967}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HexTileContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -585,7 +585,7 @@ GameObject:
   - component: {fileID: 1596599101}
   - component: {fileID: 1596599104}
   - component: {fileID: 1596599103}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HexTileGenerator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -601,7 +601,7 @@ Transform:
   m_GameObject: {fileID: 1596599099}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 25, z: 0}
+  m_LocalPosition: {x: 1000, y: 25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

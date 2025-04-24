@@ -198,19 +198,9 @@ MonoBehaviour:
   _charController: {fileID: 1063341598028967511}
   _animator: {fileID: 7103471529918078927}
   _playerInput: {fileID: 8608270715702665693}
-  MoveSpeed: 10
-  SpeedChangeRate: 10
-  RotationSmoothTime: 0.12
-  JumpHeight: 1.2
-  Gravity: -15
-  JumpTimeout: 0.5
-  FallTimeout: 0.15
-  Grounded: 1
-  GroundedOffset: -0.14
-  GroundedRadius: 0.28
   GroundLayers:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 65
   TopClamp: 70
   BottomClamp: -30
   CameraAngleOverride: 0
