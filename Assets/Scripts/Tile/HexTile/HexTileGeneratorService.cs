@@ -1,16 +1,23 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using System;
 
 namespace BattleRoyale.Tile
 {
     public class HexTileGeneratorService : MonoBehaviour
     {
+        [SerializeField] private Transform containerTransform;
         [SerializeField] private HexTileView _hexTilePrefab;
         [SerializeField] private int _mapWidth = 25;
         [SerializeField] private int _mapHeight = 12;
         [SerializeField] private float _tileOffset_X = 1.8f;
-        [SerializeField] private float _tileOffset_Z = 1.565f;   
+        [SerializeField] private float _tileOffset_Z = 1.565f;
+
+        private void Start()
+        {
+            GenerateHexTileMap(containerTransform);
+        }
 
         public void GenerateHexTileMap(Transform containerTransform)
         {
@@ -23,7 +30,7 @@ namespace BattleRoyale.Tile
             {
                 for (float j = mapMin_Z; j <= mapMax_Z; j++)
                 {
-                    HexTileView newTile = Object.Instantiate(_hexTilePrefab);
+                    HexTileView newTile = Instantiate(_hexTilePrefab);
                     Vector3 tilePosition;
 
                     if (j % 2 == 0)

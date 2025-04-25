@@ -7,28 +7,42 @@ namespace BattleRoyale.Level
 {
     public class LevelService : MonoBehaviour
     {
-        [SerializeField] private FloorGeneratorService floorGeneratorService;
-        [SerializeField] private HexTileGeneratorService hexTileGeneratorService;
+        [SerializeField] private List<GameObject> _floorPrefabList;
+        [SerializeField] private float _floorHeightIncrement;
+        
+        private List<GameObject> _floorsList = new List<GameObject>();
 
-        private List<GameObject> _floorList = new List<GameObject>();
         void Start()
         {
-            CreateFloors();
-            CreateFloorTiles();
+            GenerateFloors();
         }
 
-        void CreateFloors()
+        public void GenerateFloors()
         {
-            floorGeneratorService.GenerateFloors(transform);
-            _floorList = floorGeneratorService.GetFloors();
-        }
-
-        void CreateFloorTiles()
-        {
-            foreach(GameObject floor in _floorList)
+            for (int i = 1; i <= _floorPrefabList.Count; i++)
             {
-                hexTileGeneratorService.GenerateHexTileMap(floor.transform);
+                Vector3 position = new Vector3(0, i * _floorHeightIncrement, 0);
+                GameObject newFloor = Instantiate(_floorPrefabList[i-1]);
+
+                newFloor.transform.position = position;
+                newFloor.transform.parent = transform;
+                newFloor.name = "Floor_" + i;
+                _floorsList.Add(newFloor);
             }
+        }
+
+        public void DestroyAllFloors()
+        {
+            foreach (GameObject floor in _floorsList)
+            {
+                Destroy(floor);
+            }
+            _floorsList.Clear();
+        }
+
+        public List<GameObject> GetFloors()
+        {
+            return _floorsList;
         }
     }
 }

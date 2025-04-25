@@ -5,6 +5,7 @@ namespace BattleRoyale.Floor
 {
     public class FloorGeneratorService : MonoBehaviour
     {
+        [SerializeField] private List<GameObject> _floorPrefabList;
         [SerializeField] private int _numberOfFloors;
         [SerializeField] private float _heightIncrement;
 
