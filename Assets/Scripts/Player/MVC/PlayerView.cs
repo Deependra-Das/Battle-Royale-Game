@@ -1,4 +1,5 @@
 using BattleRoyale.Tile;
+using BattleRoyale.Level;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -196,17 +197,17 @@ namespace BattleRoyale.Player
             return Mathf.Clamp(lfAngle, lfMin, lfMax);
         }
 
-        private void OnDrawGizmosSelected()
-        {
-            Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
-            Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
+        //private void OnDrawGizmosSelected()
+        //{
+        //    Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
+        //    Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
 
-            if (Grounded) Gizmos.color = transparentGreen;
-            else Gizmos.color = transparentRed;
-            Gizmos.DrawSphere(
-                new Vector3(transform.position.x, transform.position.y - _playerModel.GroundedOffset, transform.position.z),
-                _playerModel.GroundedRadius);
-        }
+        //    if (Grounded) Gizmos.color = transparentGreen;
+        //    else Gizmos.color = transparentRed;
+        //    Gizmos.DrawSphere(
+        //        new Vector3(transform.position.x, transform.position.y - _playerModel.GroundedOffset, transform.position.z),
+        //        _playerModel.GroundedRadius);
+        //}
 
         public void OnMove(InputValue value)
         {

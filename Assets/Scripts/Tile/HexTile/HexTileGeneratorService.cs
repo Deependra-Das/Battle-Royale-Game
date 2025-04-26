@@ -1,28 +1,25 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using System;
 
 namespace BattleRoyale.Tile
 {
-    [DefaultExecutionOrder(-10)]
     public class HexTileGeneratorService : MonoBehaviour
     {
+        [SerializeField] private Transform containerTransform;
         [SerializeField] private HexTileView _hexTilePrefab;
-        [SerializeField] private Transform _hexTileContainerTransform;
         [SerializeField] private int _mapWidth = 25;
         [SerializeField] private int _mapHeight = 12;
         [SerializeField] private float _tileOffset_X = 1.8f;
-        [SerializeField] private float _tileOffset_Z = 1.565f;        
+        [SerializeField] private float _tileOffset_Z = 1.565f;
 
-        private List<HexTileView> _tileViewList;
-
-        void Start()
+        private void Start()
         {
-            _tileViewList = new List<HexTileView>();
-            CreateHexTileMap();
+            GenerateHexTileMap(containerTransform);
         }
 
-        void CreateHexTileMap()
+        public void GenerateHexTileMap(Transform containerTransform)
         {
             float mapMin_X = -_mapWidth / 2;
             float mapMax_X = _mapWidth / 2;
@@ -33,29 +30,28 @@ namespace BattleRoyale.Tile
             {
                 for (float j = mapMin_Z; j <= mapMax_Z; j++)
                 {
-                    HexTileView newTile = Object.Instantiate(_hexTilePrefab);
+                    HexTileView newTile = Instantiate(_hexTilePrefab);
                     Vector3 tilePosition;
 
                     if (j % 2 == 0)
                     {
-                        tilePosition = new Vector3(i * _tileOffset_X, 0, j * _tileOffset_Z);
+                        tilePosition = new Vector3(i * _tileOffset_X, containerTransform.position.y, j * _tileOffset_Z);
                     }
                     else
                     {
-                        tilePosition = new Vector3(i * _tileOffset_X + _tileOffset_X / 2, 0, j * _tileOffset_Z);
+                        tilePosition = new Vector3(i * _tileOffset_X + _tileOffset_X / 2, containerTransform.position.y, j * _tileOffset_Z);
                     }
 
-                    StartCoroutine(SetTileData(newTile, i, j, tilePosition));
-                    _tileViewList.Add(newTile);
+                    StartCoroutine(SetTileData(newTile, i, j, tilePosition, containerTransform));
                 }
             }
         }
 
-        IEnumerator SetTileData(HexTileView hexTileView,float i, float j, Vector3 tilePosition)
+        IEnumerator SetTileData(HexTileView hexTileView,float i, float j, Vector3 tilePosition, Transform containerTransform)
         {
             yield return new WaitForSeconds(0.00001f);
             hexTileView.gameObject.transform.position = tilePosition;
-            hexTileView.gameObject.transform.parent = _hexTileContainerTransform;
+            hexTileView.gameObject.transform.parent = containerTransform;
             hexTileView.gameObject.name = i.ToString()+","+j.ToString();
         }
 

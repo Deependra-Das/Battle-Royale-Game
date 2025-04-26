@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 4318050363459343890}
   - component: {fileID: 4143328445719126984}
   - component: {fileID: 6867002860916560648}
-  - component: {fileID: 7845598811733508655}
   - component: {fileID: 4408749501471372059}
+  - component: {fileID: 7845598811733508655}
   m_Layer: 6
   m_Name: HexTile
   m_TagString: Untagged
@@ -111,22 +111,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 1477051960566787356, guid: 9911af48c4550d848be6fa6934eff784, type: 3}
---- !u!114 &7845598811733508655
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2916693813902238934}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3856aced7e9260d46aa685efdd2f1d79, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _meshRenderer: {fileID: 4143328445719126984}
-  _deactivateMaterial: {fileID: 2100000, guid: 235149f6d58787747a2b662520dc46c1, type: 2}
-  _lifetime: 1
-  _targetScale: {x: 1, y: 0.5, z: 1}
 --- !u!54 &4408749501471372059
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -154,3 +138,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &7845598811733508655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2916693813902238934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3856aced7e9260d46aa685efdd2f1d79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _meshRenderer: {fileID: 4143328445719126984}
+  _deactivateMaterial: {fileID: 2100000, guid: 235149f6d58787747a2b662520dc46c1, type: 2}
+  _lifetime: 1
+  _targetScale: {x: 1, y: 0.5, z: 1}

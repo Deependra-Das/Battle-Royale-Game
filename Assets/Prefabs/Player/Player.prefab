@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1063341598028967511}
   - component: {fileID: 8608270715702665693}
   - component: {fileID: 606758117999298598}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -200,7 +200,12 @@ MonoBehaviour:
   _playerInput: {fileID: 8608270715702665693}
   GroundLayers:
     serializedVersion: 2
-    m_Bits: 65
+    m_Bits: 64
+  pushLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  canPush: 0
+  strength: 1.1
   TopClamp: 70
   BottomClamp: -30
   CameraAngleOverride: 0
