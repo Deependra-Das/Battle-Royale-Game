@@ -1,3 +1,4 @@
+using BattleRoyale.Level;
 using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -10,19 +11,21 @@ namespace BattleRoyale.Player
         [SerializeField] private PlayerView _playerView;
         [SerializeField] private PlayerScriptableObject _player_SO;
         [SerializeField] private CinemachineCamera _playerCamera;
-        [SerializeField] private List<Vector2> playerSpawnPositionList;
+        [SerializeField] private List<Vector3> playerSpawnPositionList;
+        [SerializeField] private LevelService _levelService;
 
         private PlayerController _acivePlayerController;
 
         void Start()
         {
+            playerSpawnPositionList = _levelService.GetPlayerSpawnPoints();
             SpawnPlayer();
             SetCameraTarget();
         }
 
         public void SpawnPlayer()
         {
-            _acivePlayerController = new PlayerController(_playerView, _player_SO, transform, playerSpawnPositionList[0]);
+            _acivePlayerController = new PlayerController(_playerView, _player_SO, playerSpawnPositionList[0]);
         }
 
         public void SetCameraTarget()

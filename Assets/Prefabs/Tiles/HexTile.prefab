@@ -66,7 +66,8 @@ MeshRenderer:
   m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
-  m_Materials: []
+  m_Materials:
+  - {fileID: 2100000, guid: 5322628078ace9949bf382e57b5667c8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -150,11 +151,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _meshRenderer: {fileID: 4143328445719126984}
-  _activeTileMatList:
-  - {fileID: 2100000, guid: 5322628078ace9949bf382e57b5667c8, type: 2}
-  - {fileID: 2100000, guid: 324e1575215bd4a4e92543e4ab9c925c, type: 2}
-  - {fileID: 2100000, guid: 3c4bdbca2b682f641a14ae48729e8dda, type: 2}
-  - {fileID: 2100000, guid: 784dbde10edc60940b403bca0b902c19, type: 2}
   _deactivateMaterial: {fileID: 2100000, guid: 235149f6d58787747a2b662520dc46c1, type: 2}
   _lifetime: 1
   _targetScale: {x: 1, y: 0.5, z: 1}
