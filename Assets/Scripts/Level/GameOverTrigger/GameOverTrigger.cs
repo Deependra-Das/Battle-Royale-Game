@@ -1,5 +1,7 @@
 using BattleRoyale.Player;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 namespace BattleRoyale.Level
 {
@@ -17,7 +19,13 @@ namespace BattleRoyale.Level
         void TriggerGameOver()
         {
             Debug.Log("Game Over!");
+            StartCoroutine("SceneLoadTest");
         }
 
+        private IEnumerator SceneLoadTest()
+        {
+            yield return new WaitForSeconds(5);
+            SceneManager.LoadScene("StartScene");
+        }
     }
 }
