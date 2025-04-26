@@ -1,18 +1,20 @@
 using UnityEngine;
 using BattleRoyale.Utilities;
-using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class GameManager : GenericMonoSingleton<GameManager>
 {
-    void Start()
+    protected override void Awake()
     {
-        StartCoroutine("SceneLoadTest");
+        base.Awake();
+        InitializeServices();
     }
 
-    private IEnumerator SceneLoadTest()
+    private void InitializeServices()
     {
-        yield return new WaitForSeconds(5);
-        SceneManager.LoadScene("GameScene");
+    }
+
+    private void OnDestroy()
+    {
     }
 }
