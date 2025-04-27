@@ -2,34 +2,29 @@ using UnityEngine;
 using BattleRoyale.Utilities;
 using System.Collections;
 using BattleRoyale.Level;
+using UnityEngine.SceneManagement;
 
-public class GameManager : GenericMonoSingleton<GameManager>
+namespace BattleRoyale.Main
 {
-    [SerializeField] private LevelScriptableObject _level_SO;
-
-    protected override void Awake()
+    public class GameManager : GenericMonoSingleton<GameManager>
     {
-        base.Awake();
-        InitializeServices();
-    }
+        [SerializeField] public LevelScriptableObject _level_SO;
+        private GameStateMachine _stateMachine;
 
-    private void Start()
-    {
-        Get<LevelService>().StartLevel(); //For Testing
-    }
+        protected override void Awake()
+        {
+            base.Awake();
+        }
 
-    private void InitializeServices()
-    {
-        ServiceLocator.Register(new LevelService(_level_SO));
-    }
+        private void Start()
+        {
+            _stateMachine = new GameStateMachine();
+            _stateMachine.ChangeGameState(new GameplayState());
+        }
 
-    private void OnDestroy()
-    {
-        ServiceLocator.Unregister<LevelService>();
-    }
-
-    public T Get<T>()
-    {
-        return ServiceLocator.Get<T>();
+        public T Get<T>()
+        {
+            return ServiceLocator.Get<T>();
+        }
     }
 }
