@@ -8,13 +8,20 @@ namespace BattleRoyale.Main
         public void Enter()
         {
             Debug.Log("Gameplay Enter");
-            RegisterGameplayServices();
-            GameManager.Instance.Get<LevelService>().StartLevel(); //For Testing
+            SceneLoader.SceneLoader.Instance.LoadSceneAsync("GameScene");
+            SceneLoader.SceneLoader.Instance.OnSceneLoaded += HandleGameplayState;
         }
 
         public void Exit()
         {
             UnegisterGameplayServices();
+        }
+
+        private void HandleGameplayState()
+        {
+            Debug.Log("Gameplay Services");
+            RegisterGameplayServices();
+            GameManager.Instance.Get<LevelService>().StartLevel(); //For Testing
         }
 
         private void RegisterGameplayServices()

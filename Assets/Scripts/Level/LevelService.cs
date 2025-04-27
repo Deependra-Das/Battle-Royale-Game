@@ -11,6 +11,7 @@ namespace BattleRoyale.Level
         private List<GameObject> _floorPrefabList;
         private GameObject _spawnTileCluster;
         private GameObject _gameOverTrigger;
+        private GameObject _basePlane;
         private float _floorHeightIncrement;    
         private float _radius;
         private int _numberOfPlayers;
@@ -22,17 +23,19 @@ namespace BattleRoyale.Level
 
         public LevelService(LevelScriptableObject level_SO)
         {
-            _floorPrefabList = level_SO._floorPrefabList;
-            _spawnTileCluster = level_SO._spawnTileCluster;
-            _gameOverTrigger = level_SO._gameOverTrigger;
-            _floorHeightIncrement = level_SO._floorHeightIncrement;
-            _radius = level_SO._radius;
-            _numberOfPlayers = level_SO._numberOfPlayers;
+            _floorPrefabList = level_SO.floorPrefabList;
+            _spawnTileCluster = level_SO.spawnTileCluster;
+            _gameOverTrigger = level_SO.gameOverTrigger;
+            _basePlane = level_SO.basePlane;
+            _floorHeightIncrement = level_SO.floorHeightIncrement;
+            _radius = level_SO.radius;
+            _numberOfPlayers = level_SO.numberOfPlayers;
         }
 
         public void StartLevel()
         {
             GenerateLevelContainer();
+            GenerateBasePlane();
             GenerateTileFloors();
             GenerateSpawnTileCluster();
             GenerateGameOverTrigger();
@@ -43,6 +46,12 @@ namespace BattleRoyale.Level
             _activelevel = new GameObject();
             _activelevel.name = "LevelContainer";
             _parentTansform = _activelevel.transform;
+        }
+
+        private void GenerateBasePlane()
+        {
+            GameObject basePlane = Object.Instantiate(_basePlane);
+            basePlane.transform.parent = _parentTansform;
         }
 
         private void GenerateTileFloors()
