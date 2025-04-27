@@ -1,35 +1,31 @@
 using BattleRoyale.Level;
+using BattleRoyale.Main;
 using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
 
 namespace BattleRoyale.Player
 {
-    [DefaultExecutionOrder(-1)]
-    public class PlayerService : MonoBehaviour
+    public class PlayerService
     {
-        [SerializeField] private PlayerView _playerView;
-        [SerializeField] private PlayerScriptableObject _player_SO;
-        [SerializeField] private CinemachineCamera _playerCamera;
-        [SerializeField] private List<Vector3> playerSpawnPositionList;
-        [SerializeField] private LevelService _levelService;
-
+        private PlayerScriptableObject _player_SO;
+        private CinemachineCamera _playerCamera;
         private PlayerController _acivePlayerController;
 
-        void Start()
+        public PlayerService(PlayerScriptableObject player_SO)
         {
-            playerSpawnPositionList = _levelService.GetPlayerSpawnPoints();
-            SpawnPlayer();
-            SetCameraTarget();
+            _player_SO = player_SO;
         }
 
-        public void SpawnPlayer()
+        public void SpawnPlayer(List<Vector3> playerSpawnPositionList)
         {
-            _acivePlayerController = new PlayerController(_playerView, _player_SO, playerSpawnPositionList[0]);
+            _acivePlayerController = new PlayerController(_player_SO, playerSpawnPositionList[0]);
+            SetPlayerCamera(playerSpawnPositionList[0]);
         }
 
-        public void SetCameraTarget()
+        public void SetPlayerCamera(Vector3 camIntialPosition)
         {
+            _playerCamera = Object.Instantiate(_player_SO.playerCameraPrefab , camIntialPosition , Quaternion.identity);
             _playerCamera.Follow = _acivePlayerController.PlayerCameraRoot.transform;
         }
     }

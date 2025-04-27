@@ -285,6 +285,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _level_SO: {fileID: 11400000, guid: d645f1fdce9235e40b372e468e76addc, type: 2}
+  _player_SO: {fileID: 11400000, guid: 3f3fe4270ec1ae7438c5d9d802236402, type: 2}
 --- !u!1 &2045991907
 GameObject:
   m_ObjectHideFlags: 0

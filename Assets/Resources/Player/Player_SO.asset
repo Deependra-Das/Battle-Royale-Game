@@ -22,3 +22,5 @@ MonoBehaviour:
   fallTimeout: 0.15
   groundedOffset: -0.14
   groundedRadius: 0.28
+  playerPrefab: {fileID: 606758117999298598, guid: 646285c4be4ac90449236632709d9e27, type: 3}
+  playerCameraPrefab: {fileID: 2106433250033077998, guid: a1a802ecaf6775746bb2a929fb554ad8, type: 3}
