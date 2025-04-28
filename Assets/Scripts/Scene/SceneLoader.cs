@@ -1,3 +1,4 @@
+using BattleRoyale.Event;
 using BattleRoyale.Utilities;
 using System;
 using System.Collections;
@@ -8,26 +9,38 @@ namespace BattleRoyale.Scene
 {
     public class SceneLoader : GenericMonoSingleton<SceneLoader>
     {
-        // For Testing
-        public delegate void SceneLoadedEvent();
-        public event SceneLoadedEvent OnSceneLoaded;
-
         public void LoadSceneAsync(SceneName sceneName)
         {
-            StartCoroutine(LoadSceneAsyncCoroutine(sceneName.ToString()));
+            StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
         }
 
-        private IEnumerator LoadSceneAsyncCoroutine(string sceneName)
+        private IEnumerator LoadSceneAsyncCoroutine(SceneName sceneName)
         {
-            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName.ToString());
 
             while (!asyncLoad.isDone)
             {
                 Debug.Log("Loading scene: " + asyncLoad.progress * 100 + "%");
                 yield return null;
             }
-            Debug.Log("Scene loaded successfully.");
-            OnSceneLoaded?.Invoke();
+
+            OnSceneLoaded(sceneName);
+        }
+
+        private void OnSceneLoaded(SceneName sceneName)
+        {
+            switch(sceneName)
+            {
+                case SceneName.StartScene:
+                    EventBusManager.Instance.RaiseNoParams(EventName.StartSceneLoadedEvent);
+                    break;
+                case SceneName.GameScene:
+                    EventBusManager.Instance.RaiseNoParams(EventName.GameplaySceneLoadedEvent);
+                    break;
+                case SceneName.GameOverScene:
+                    EventBusManager.Instance.RaiseNoParams(EventName.GameOverSceneLoadedEvent);
+                    break;
+            }
         }
     }
 }

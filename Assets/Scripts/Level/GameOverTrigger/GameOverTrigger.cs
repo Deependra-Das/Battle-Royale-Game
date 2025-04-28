@@ -1,7 +1,7 @@
-using BattleRoyale.Player;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
+using BattleRoyale.Main;
+using BattleRoyale.Player;
 
 namespace BattleRoyale.Level
 {
@@ -19,6 +19,7 @@ namespace BattleRoyale.Level
         void TriggerGameOver()
         {
             Debug.Log("Game Over!");
+            GameManager.Instance.ChangeGameState(GameState.GameOver);
         }
     }
 }
