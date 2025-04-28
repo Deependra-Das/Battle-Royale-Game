@@ -11,12 +11,12 @@ namespace BattleRoyale.Scene
     {
         public void LoadSceneAsync(SceneName sceneName)
         {
-            StartCoroutine(LoadSceneAsyncCoroutine(sceneName.ToString()));
+            StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
         }
 
-        private IEnumerator LoadSceneAsyncCoroutine(string sceneName)
+        private IEnumerator LoadSceneAsyncCoroutine(SceneName sceneName)
         {
-            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName.ToString());
 
             while (!asyncLoad.isDone)
             {
@@ -24,12 +24,23 @@ namespace BattleRoyale.Scene
                 yield return null;
             }
 
-            OnSceneLoaded();
+            OnSceneLoaded(sceneName);
         }
 
-        private void OnSceneLoaded()
+        private void OnSceneLoaded(SceneName sceneName)
         {
-            EventBusManager.Instance.RaiseNoParams(EventName.GameplaySceneLoadedEvent);
+            switch(sceneName)
+            {
+                case SceneName.StartScene:
+                    EventBusManager.Instance.RaiseNoParams(EventName.StartSceneLoadedEvent);
+                    break;
+                case SceneName.GameScene:
+                    EventBusManager.Instance.RaiseNoParams(EventName.GameplaySceneLoadedEvent);
+                    break;
+                case SceneName.GameOverScene:
+                    EventBusManager.Instance.RaiseNoParams(EventName.GameOverSceneLoadedEvent);
+                    break;
+            }
         }
     }
 }
