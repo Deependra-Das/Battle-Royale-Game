@@ -1,5 +1,7 @@
 using BattleRoyale.Player;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 namespace BattleRoyale.Level
 {
@@ -18,6 +20,5 @@ namespace BattleRoyale.Level
         {
             Debug.Log("Game Over!");
         }
-
     }
 }

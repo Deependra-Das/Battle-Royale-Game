@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3bcb3909f2ca7a4c80dca9cf115e4e5, type: 3}
+  m_Name: Level_SO
+  m_EditorClassIdentifier: 
+  floorPrefabList:
+  - {fileID: 8596272847463182690, guid: d63ec2e0da0ed9d4ab88e5497c4b95cd, type: 3}
+  - {fileID: 6003186760370213493, guid: 511203b880b22294cacb8f8ec8287079, type: 3}
+  - {fileID: 8596272847463182690, guid: 763e05f3123d2434a8654e9d02338bb7, type: 3}
+  spawnTileCluster: {fileID: 8600607714957407920, guid: bad2240722a984441bd2aad12a14dccc, type: 3}
+  gameOverTrigger: {fileID: 3253056895373416965, guid: c2d73e750caf46b4a91cd327d4afbbee, type: 3}
+  basePlane: {fileID: 2136367136475387162, guid: 2da1247af48fd1942935cc6c977ea6a8, type: 3}
+  floorHeightIncrement: 15
+  radius: 40
+  numberOfPlayers: 8
