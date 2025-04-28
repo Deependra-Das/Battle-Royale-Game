@@ -28,5 +28,12 @@ namespace BattleRoyale.Player
             _playerCamera = Object.Instantiate(_player_SO.playerCameraPrefab , camIntialPosition , Quaternion.identity);
             _playerCamera.Follow = _acivePlayerController.PlayerCameraRoot.transform;
         }
+
+        public void Dispose()
+        {
+            _acivePlayerController.DisposePlayerGameObject();
+            _acivePlayerController = null;
+            Object.Destroy(_playerCamera.gameObject);
+        }
     }
 }

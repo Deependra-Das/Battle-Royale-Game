@@ -15,5 +15,10 @@ namespace BattleRoyale.Player
         }
 
         public GameObject PlayerCameraRoot { get { return _playerView.PlayerCameraRoot; } }
+
+        public void DisposePlayerGameObject()
+        {
+            Object.Destroy(_playerView.gameObject);
+        }
     }
 }

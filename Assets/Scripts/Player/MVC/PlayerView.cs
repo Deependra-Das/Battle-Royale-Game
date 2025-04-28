@@ -18,8 +18,6 @@ namespace BattleRoyale.Player
 
         private bool Grounded = true;
         public LayerMask GroundLayers;
-        public LayerMask pushLayers;
-        public bool canPush;
         [Range(0.5f, 5f)] public float strength = 1.1f;
 
         [Header("Cinemachine")]
@@ -68,7 +66,6 @@ namespace BattleRoyale.Player
             _jumpTimeoutDelta = _playerModel.JumpTimeout;
             _fallTimeoutDelta = _playerModel.FallTimeout;
         }
-
 
         private void Update()
         {
@@ -164,6 +161,7 @@ namespace BattleRoyale.Player
                 _verticalVelocity += _playerModel.Gravity * Time.deltaTime;
             }
         }
+
         private void GroundedCheck()
         {
             Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - _playerModel.GroundedOffset,

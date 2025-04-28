@@ -16,6 +16,7 @@ namespace BattleRoyale.Level
         private float _radius;
         private int _numberOfPlayers;
         private GameObject _activelevel;
+        private GameObject basePlane;
         private Transform _parentTansform;
 
         private List<GameObject> _floorsList = new List<GameObject>();
@@ -50,7 +51,7 @@ namespace BattleRoyale.Level
 
         private void GenerateBasePlane()
         {
-            GameObject basePlane = Object.Instantiate(_basePlane);
+            basePlane = Object.Instantiate(_basePlane);
             basePlane.transform.parent = _parentTansform;
         }
 
@@ -108,6 +109,13 @@ namespace BattleRoyale.Level
                 Object.Destroy(floor);
             }
             _floorsList.Clear();
+        }
+
+        public void Dispose()
+        {
+            DestroyAllFloors();
+            Object.Destroy(basePlane);
+            Object.Destroy(_parentTansform.gameObject);
         }
     }
 }
