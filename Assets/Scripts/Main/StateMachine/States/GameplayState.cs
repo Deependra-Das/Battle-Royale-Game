@@ -1,7 +1,7 @@
 using BattleRoyale.Level;
 using BattleRoyale.Player;
+using BattleRoyale.Scene;
 using System.Collections.Generic;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 namespace BattleRoyale.Main
@@ -13,8 +13,8 @@ namespace BattleRoyale.Main
 
         public void Enter()
         {
-            SceneLoader.SceneLoader.Instance.LoadSceneAsync("GameScene");
-            SceneLoader.SceneLoader.Instance.OnSceneLoaded += HandleGameplayState;
+            SceneLoader.Instance.LoadSceneAsync(SceneName.GameScene);
+            SceneLoader.Instance.OnSceneLoaded += HandleGameplayState;
         }
 
         private void HandleGameplayState()
@@ -31,7 +31,7 @@ namespace BattleRoyale.Main
 
         public void Exit()
         {
-            SceneLoader.SceneLoader.Instance.OnSceneLoaded -= HandleGameplayState;
+            SceneLoader.Instance.OnSceneLoaded -= HandleGameplayState;
             Cleanup();
             UnegisterGameplayServices();
         }

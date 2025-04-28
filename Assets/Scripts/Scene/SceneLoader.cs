@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace BattleRoyale.SceneLoader
+namespace BattleRoyale.Scene
 {
     public class SceneLoader : GenericMonoSingleton<SceneLoader>
     {
@@ -12,9 +12,9 @@ namespace BattleRoyale.SceneLoader
         public delegate void SceneLoadedEvent();
         public event SceneLoadedEvent OnSceneLoaded;
 
-        public void LoadSceneAsync(string sceneName)
+        public void LoadSceneAsync(SceneName sceneName)
         {
-            StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
+            StartCoroutine(LoadSceneAsyncCoroutine(sceneName.ToString()));
         }
 
         private IEnumerator LoadSceneAsyncCoroutine(string sceneName)
