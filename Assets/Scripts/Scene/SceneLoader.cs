@@ -1,3 +1,4 @@
+using BattleRoyale.Event;
 using BattleRoyale.Utilities;
 using System;
 using System.Collections;
@@ -8,10 +9,6 @@ namespace BattleRoyale.Scene
 {
     public class SceneLoader : GenericMonoSingleton<SceneLoader>
     {
-        // For Testing
-        public delegate void SceneLoadedEvent();
-        public event SceneLoadedEvent OnSceneLoaded;
-
         public void LoadSceneAsync(SceneName sceneName)
         {
             StartCoroutine(LoadSceneAsyncCoroutine(sceneName.ToString()));
@@ -26,8 +23,13 @@ namespace BattleRoyale.Scene
                 Debug.Log("Loading scene: " + asyncLoad.progress * 100 + "%");
                 yield return null;
             }
-            Debug.Log("Scene loaded successfully.");
-            OnSceneLoaded?.Invoke();
+
+            OnSceneLoaded();
+        }
+
+        private void OnSceneLoaded()
+        {
+            EventBusManager.Instance.RaiseNoParams(EventName.GameplaySceneLoadedEvent);
         }
     }
 }

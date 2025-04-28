@@ -1,3 +1,4 @@
+using BattleRoyale.Event;
 using BattleRoyale.Level;
 using BattleRoyale.Player;
 using BattleRoyale.Scene;
@@ -14,10 +15,10 @@ namespace BattleRoyale.Main
         public void Enter()
         {
             SceneLoader.Instance.LoadSceneAsync(SceneName.GameScene);
-            SceneLoader.Instance.OnSceneLoaded += HandleGameplayState;
+            EventBusManager.Instance.Subscribe(EventName.GameplaySceneLoadedEvent, HandleGameplayState);
         }
 
-        private void HandleGameplayState()
+        private void HandleGameplayState(object[] parameters)
         {
             RegisterGameplayServices();
 
@@ -31,7 +32,7 @@ namespace BattleRoyale.Main
 
         public void Exit()
         {
-            SceneLoader.Instance.OnSceneLoaded -= HandleGameplayState;
+            EventBusManager.Instance.Unsubscribe(EventName.GameplaySceneLoadedEvent, HandleGameplayState);
             Cleanup();
             UnegisterGameplayServices();
         }
