@@ -15,22 +15,20 @@ namespace BattleRoyale.UI
             SubscribeToEvents();
         }
 
-        ~GameplayUIService() => UnsubscribeToEvents();
-
         private void SubscribeToEvents()
         {
-            EventBusManager.Instance.Subscribe(EventName.PlayerSpawnCompleted, OnPlayerSpawnCompleted);
+            EventBusManager.Instance.Subscribe(EventName.PlayerSpawnCompleted, HandleGameplayUI);
         }
 
         private void UnsubscribeToEvents()
         {
-            EventBusManager.Instance.Unsubscribe(EventName.PlayerSpawnCompleted, OnPlayerSpawnCompleted);
+            EventBusManager.Instance.Unsubscribe(EventName.PlayerSpawnCompleted, HandleGameplayUI);
         }
 
-        private void OnPlayerSpawnCompleted(object[] parameters)
+        private void HandleGameplayUI(object[] parameters)
         {
             ShowUI();
-            _gameplayUIView.StartCoundown();
+            EventBusManager.Instance.RaiseNoParams(EventName.StartGameplayCountdown);       
         }
 
         public void ShowUI()
@@ -45,6 +43,7 @@ namespace BattleRoyale.UI
 
         public void Dispose()
         {
+            UnsubscribeToEvents();
             Object.Destroy(_gameplayUIView.gameObject);
             _gameplayUIView = null;
         }

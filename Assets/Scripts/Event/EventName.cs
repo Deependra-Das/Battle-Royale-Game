@@ -9,6 +9,8 @@ namespace BattleRoyale.Event
         GameplaySceneLoadedEvent,
         GameOverSceneLoadedEvent,
         PlayerSpawnCompleted,
-        StartGameplayCountdown
+        StartGameplayCountdown,
+        ActivateTilesForGameplay,
+        ActivatePlayerForGameplay
     }
 }

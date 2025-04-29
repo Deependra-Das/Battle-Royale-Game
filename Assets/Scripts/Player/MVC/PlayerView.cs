@@ -2,6 +2,7 @@ using BattleRoyale.Tile;
 using BattleRoyale.Level;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using BattleRoyale.Event;
 
 namespace BattleRoyale.Player
 {
@@ -15,7 +16,6 @@ namespace BattleRoyale.Player
       
         private PlayerModel _playerModel;
         private bool _isPlayerInitialized = false;
-
         private bool Grounded = true;
         public LayerMask GroundLayers;
         [Range(0.5f, 5f)] public float strength = 1.1f;
@@ -55,16 +55,51 @@ namespace BattleRoyale.Player
         public bool cursorInputForLook = true;
         private bool IsCurrentDeviceMouse { get { return _playerInput.currentControlScheme == "KeyboardMouse"; } }
 
+        private void OnEnable()
+        {
+            _playerInput.ActivateInput();
+            SubscribeToEvents();
+        }
+
+        private void OnDisable()
+        {
+            UnsubscribeToEvents();
+            _playerInput.DeactivateInput();
+        }
+
+        private void SubscribeToEvents()
+        {
+            EventBusManager.Instance.Subscribe(EventName.ActivatePlayerForGameplay, HandlePlayerInputActivation);
+        }
+
+        private void UnsubscribeToEvents()
+        {
+            EventBusManager.Instance.Unsubscribe(EventName.ActivatePlayerForGameplay, HandlePlayerInputActivation);
+        }
 
         public void Initialize(PlayerModel playerModel)
         {
             _playerModel = playerModel;
             _isPlayerInitialized = true;
+            _playerInput.DeactivateInput();
             _cinemachineTargetYaw = _cinemachineCameraTarget.transform.rotation.eulerAngles.y;
             AssignAnimationIDs();
 
             _jumpTimeoutDelta = _playerModel.JumpTimeout;
             _fallTimeoutDelta = _playerModel.FallTimeout;
+        }
+
+        private void HandlePlayerInputActivation(object[] parameters)
+        {
+            Debug.Log((bool)parameters[0]);
+            if((bool)parameters[0])
+            {
+                _playerInput.ActivateInput();
+            }
+            else
+            {
+                _playerInput.DeactivateInput();
+            }
         }
 
         private void Update()

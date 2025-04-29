@@ -19,7 +19,21 @@ namespace BattleRoyale.UI
         private float _currentTime;
 
 
-        public void StartCoundown()
+        private void OnEnable() => SubscribeToEvents();
+
+        private void OnDisable() => UnsubscribeToEvents();
+
+        private void SubscribeToEvents()
+        {
+            EventBusManager.Instance.Subscribe(EventName.StartGameplayCountdown, StartCoundown);
+        }
+
+        private void UnsubscribeToEvents()
+        {
+            EventBusManager.Instance.Unsubscribe(EventName.StartGameplayCountdown, StartCoundown);
+        }
+
+        public void StartCoundown(object[] parameters)
         {
             _originalScale = _countdownText.transform.localScale;
             _countdownText.gameObject.SetActive(true);
@@ -38,6 +52,8 @@ namespace BattleRoyale.UI
             }
 
             _countdownText.gameObject.SetActive(false);
+            EventBusManager.Instance.Raise(EventName.ActivatePlayerForGameplay, true);
+            EventBusManager.Instance.Raise(EventName.ActivateTilesForGameplay, true);            
         }
 
         void UpdateCountdownText(float time)
