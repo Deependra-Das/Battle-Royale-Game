@@ -10,7 +10,7 @@ namespace BattleRoyale.Main
 {
     public class StartState : IGameState
     {
-        StartMenuUIService startMenuUIObj;
+        private StartMenuUIService _startMenuUIObj;
 
         public void Enter()
         {
@@ -21,9 +21,9 @@ namespace BattleRoyale.Main
         private void HandleStartState(object[] parameters)
         {
             RegisterGameplayServices();
-            startMenuUIObj = GameManager.Instance.Get<StartMenuUIService>();
+            _startMenuUIObj = GameManager.Instance.Get<StartMenuUIService>();
 
-            startMenuUIObj.ShowUI();
+            _startMenuUIObj.ShowUI();
         }
 
         public void Exit()
@@ -35,7 +35,7 @@ namespace BattleRoyale.Main
 
         public void Cleanup()
         {
-            startMenuUIObj.Dispose();
+            _startMenuUIObj.Dispose();
         }
 
         private void RegisterGameplayServices()

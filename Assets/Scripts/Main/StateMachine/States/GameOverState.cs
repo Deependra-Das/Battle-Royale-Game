@@ -7,7 +7,7 @@ namespace BattleRoyale.Main
 {
     public class GameOverState : IGameState
     {
-        private GameOverUIService gameOverUIObj;
+        private GameOverUIService _gameOverUIObj;
 
         public void Enter()
         {
@@ -18,22 +18,22 @@ namespace BattleRoyale.Main
         private void HandleGameOverState(object[] parameters)
         {
             RegisterGameOverServices();
-            gameOverUIObj = GameManager.Instance.Get<GameOverUIService>();
+            _gameOverUIObj = GameManager.Instance.Get<GameOverUIService>();
 
-            gameOverUIObj.ShowUI();
+            _gameOverUIObj.ShowUI();
         }
 
         public void Exit()
         {
             EventBusManager.Instance.Unsubscribe(EventName.GameOverSceneLoadedEvent, HandleGameOverState);
-            gameOverUIObj.HideUI();
+            _gameOverUIObj.HideUI();
             Cleanup();
             UnegisterGameOverServices();
         }
 
         public void Cleanup()
         {
-            gameOverUIObj.Dispose();
+            _gameOverUIObj.Dispose();
         }
 
         private void RegisterGameOverServices()
