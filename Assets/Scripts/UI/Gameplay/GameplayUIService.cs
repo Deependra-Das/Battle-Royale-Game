@@ -1,3 +1,4 @@
+using BattleRoyale.Event;
 using UnityEngine;
 
 namespace BattleRoyale.UI
@@ -11,6 +12,25 @@ namespace BattleRoyale.UI
             Transform canvasTransform = CanvasUIManager.Instance.canvasTransform;
             _gameplayUIView = Object.Instantiate(GameplayUIPrefab, canvasTransform);
             HideUI();
+            SubscribeToEvents();
+        }
+
+        ~GameplayUIService() => UnsubscribeToEvents();
+
+        private void SubscribeToEvents()
+        {
+            EventBusManager.Instance.Subscribe(EventName.PlayerSpawnCompleted, OnPlayerSpawnCompleted);
+        }
+
+        private void UnsubscribeToEvents()
+        {
+            EventBusManager.Instance.Unsubscribe(EventName.PlayerSpawnCompleted, OnPlayerSpawnCompleted);
+        }
+
+        private void OnPlayerSpawnCompleted(object[] parameters)
+        {
+            ShowUI();
+            _gameplayUIView.StartCoundown();
         }
 
         public void ShowUI()
