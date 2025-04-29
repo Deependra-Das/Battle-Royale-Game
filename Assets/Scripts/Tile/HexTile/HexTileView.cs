@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using BattleRoyale.Event;
 
 namespace BattleRoyale.Tile
 {
@@ -10,10 +11,27 @@ namespace BattleRoyale.Tile
         [SerializeField] private float _lifetime;
         [SerializeField] private Vector3 _targetScale = new Vector3(1f, 0.5f, 1f);
         private HexTileStates _currentTileState;
+        private bool _isTileActive;
+
+        private void OnEnable()
+        {
+            EventBusManager.Instance.Subscribe(EventName.ActivateTilesForGameplay, HandleTileActivation);
+        }
+
+        private void OnDisable()
+        {
+            EventBusManager.Instance.Unsubscribe(EventName.ActivateTilesForGameplay, HandleTileActivation);
+        }
 
         void Start()
         {
             _currentTileState = HexTileStates.Untouched;
+            _isTileActive = false;
+        }
+
+        private void HandleTileActivation(object[] parameters)
+        {
+            _isTileActive = (bool)parameters[0];
         }
 
         private IEnumerator DeactivateCoroutine()
@@ -25,7 +43,7 @@ namespace BattleRoyale.Tile
 
         public void PlayerOnTheTileDetected()
         {
-            if (_currentTileState == HexTileStates.Untouched)
+            if (_currentTileState == HexTileStates.Untouched && _isTileActive)
             {
                 _currentTileState = HexTileStates.Touched;
                 StartCoroutine(DeactivateCoroutine());
