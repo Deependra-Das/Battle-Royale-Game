@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: UI_SO
   m_EditorClassIdentifier: 
   startMenuUIPrefab: {fileID: 7929930397085061309, guid: 52ed101945e0cdb4a8ff05cbb638edd5, type: 3}
+  gameOverUIPrefab: {fileID: 5326468102242051605, guid: 4438e482f6efbf345996237b2d3cd007, type: 3}
