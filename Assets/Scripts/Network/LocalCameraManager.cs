@@ -21,12 +21,12 @@ public class LocalCameraManager : MonoBehaviour
 
     private void Awake()
     {
-        NetworkGameManager.OnPlayerSpawnedEvent += OnPlayerSpawned;
+        NetworkGameManager.OnAddPlayerCameraEvent += AddPlayerCamera;
     }
 
     void OnDestroy()
     {
-        NetworkGameManager.OnPlayerSpawnedEvent -= OnPlayerSpawned;
+        NetworkGameManager.OnAddPlayerCameraEvent -= AddPlayerCamera;
     }
 
     private void LateUpdate()
@@ -62,7 +62,7 @@ public class LocalCameraManager : MonoBehaviour
         return Mathf.Clamp(lfAngle, lfMin, lfMax);
     }
 
-    private void OnPlayerSpawned(NetworkRunner runner, NetworkPlayer playerObject)
+    private void AddPlayerCamera(NetworkRunner runner, NetworkPlayer playerObject)
     {
         if (playerObject.Object.HasStateAuthority)
         {   
