@@ -263,8 +263,8 @@ MonoBehaviour:
   cinemachineCameraTarget: {fileID: 4175570277514096108}
   _controller: {fileID: 5660048427546987223}
   _playerInput: {fileID: 572835239326760961}
-  MoveSpeed: 10
-  RotationSmoothTime: 0.12
+  MoveSpeed: 5
+  RotationSmoothTime: 0.005
   SpeedChangeRate: 20
   jumpHeight: 1.2
   gravity: -20

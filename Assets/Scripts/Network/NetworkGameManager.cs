@@ -6,27 +6,17 @@ using Fusion;
 using Fusion.Sockets;
 using Unity.Cinemachine;
 
-public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
+public class NetworkGameManager : MonoBehaviour, INetworkRunnerCallbacks
 {
-    public NetworkPlayer playerPrefab;
-
-    NetworkPlayer networkPlayer;
-
-    CharacterInputManager characterInputManager;
+    [SerializeField] private NetworkPlayer playerPrefab;
     [SerializeField] private CinemachineCamera playerCameraPrefab;
 
-    private CinemachineCamera _playerCamera;
+    NetworkPlayer networkPlayer;
+    CharacterInputManager characterInputManager;
+    CinemachineCamera localPlayerCamera;
 
     void Start()
     {
-        
-    }
-
-    public void SetPlayerCamera(Vector3 camIntialPosition)
-    {
-        _playerCamera = Instantiate(playerCameraPrefab, camIntialPosition, Quaternion.identity);
-        CharacterMovementController charMoveCon = networkPlayer.gameObject.GetComponent<CharacterMovementController>();
-        _playerCamera.Follow = charMoveCon.cinemachineCameraTarget.transform;
     }
 
     public void OnConnectedToServer(NetworkRunner runner) 
@@ -41,13 +31,27 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
             Debug.Log("OnPlayerJoined | We are Server. Spawning Player.");
             networkPlayer = runner.Spawn(playerPrefab, transform.position, Quaternion.identity, player);
 
-            SetPlayerCamera(transform.position);
+            if (networkPlayer.HasStateAuthority)
+            {
+                InitializePlayerCamera(transform.position);
+                OnAddPlayerCameraEvent?.Invoke(runner, networkPlayer);
+            }
         }
         else
         {
             Debug.Log("OnPlayerJoined");
         }
     }
+
+    public void InitializePlayerCamera(Vector3 camIntialPosition)
+    {
+        localPlayerCamera = Instantiate(playerCameraPrefab, camIntialPosition, Quaternion.identity);
+        CharacterMovementController charMoveCon = NetworkPlayer.Local.GetComponent<CharacterMovementController>();
+        localPlayerCamera.Follow = charMoveCon.cinemachineCameraTarget.transform;
+
+        //localPlayerCamera.name = $"Camera for Player {player.PlayerId}";
+    }
+
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
@@ -142,18 +146,6 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
     {
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public static event System.Action<NetworkRunner, NetworkPlayer> OnAddPlayerCameraEvent;
 
 }

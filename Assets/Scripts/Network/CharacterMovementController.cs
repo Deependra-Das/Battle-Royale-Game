@@ -12,11 +12,8 @@ public class CharacterMovementController : NetworkBehaviour
 
     private CharacterInputManager _characterInputManager;
 
-    // Movement variables
-    private const float _threshold = 0.01f;
-
     // Device check for mouse
-    private bool IsCurrentDeviceMouse
+    public bool IsCurrentDeviceMouse
     {
         get
         {
@@ -49,15 +46,6 @@ public class CharacterMovementController : NetworkBehaviour
     private bool Grounded = true;
     public LayerMask GroundLayers;
 
-    [Header("Cinemachine")]
-    public float TopClamp = 70.0f;
-    public float BottomClamp = -30.0f;
-    public float CameraAngleOverride = 0.0f;
-    public bool LockCameraPosition = false;
-
-    private float _cinemachineTargetYaw;
-    private float _cinemachineTargetPitch;
-
     
     void Awake()
     {
@@ -67,13 +55,8 @@ public class CharacterMovementController : NetworkBehaviour
     private void Start()
     {
         _characterInputManager = GetComponent<CharacterInputManager>();
-        _cinemachineTargetYaw = cinemachineCameraTarget.transform.rotation.eulerAngles.y;
     }
 
-    private void LateUpdate()
-    {
-        CameraRotation();
-    }
 
     public override void FixedUpdateNetwork()
     {
@@ -170,24 +153,6 @@ public class CharacterMovementController : NetworkBehaviour
             QueryTriggerInteraction.Ignore);
 
         //_animator.SetBool(_animIDGrounded, Grounded);
-    }
-
-
-    private void CameraRotation()
-    {
-        Debug.Log(_characterInputManager.lookInputVector);
-        if (_characterInputManager.lookInputVector.sqrMagnitude >= _threshold && !LockCameraPosition)
-        {
-            float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Runner.DeltaTime;
-
-            _cinemachineTargetYaw += _characterInputManager.lookInputVector.x * deltaTimeMultiplier;
-            _cinemachineTargetPitch += _characterInputManager.lookInputVector.y * deltaTimeMultiplier;
-        }
-
-        _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
-        _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
-
-        cinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride, _cinemachineTargetYaw, 0.0f);
     }
 
     private static float ClampAngle(float lfAngle, float lfMin, float lfMax)

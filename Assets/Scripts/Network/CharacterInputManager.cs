@@ -42,7 +42,7 @@ public class CharacterInputManager : MonoBehaviour
     public NetworkInputData GetNetworkInput()
     {
         NetworkInputData networkInputData = new NetworkInputData();
-        networkInputData.rotationInput = lookInputVector.x;
+        networkInputData.lookInput = lookInputVector;
         networkInputData.movementInput = moveInputVector;
         networkInputData.isJumpPressed = jumpInput;
 
