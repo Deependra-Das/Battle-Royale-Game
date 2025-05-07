@@ -4,10 +4,16 @@ using System.Collections.Generic;
 using Fusion;
 using TMPro;
 using static Fusion.NetworkBehaviour;
+using Unity.Cinemachine;
+using static Unity.Collections.Unicode;
 
 public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 {
     public TextMeshProUGUI playerNameText;
+    [SerializeField] private CinemachineCamera playerCameraPrefab;
+    [SerializeField] public Transform cinemachineCameraTarget;
+
+    CinemachineCamera localPlayerCamera;
     public static NetworkPlayer Local { get; set; }
 
     [Networked]
@@ -31,6 +37,9 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
             RPC_SetPlayerName(PlayerPrefs.GetString("PlayerName")); ;
 
             Debug.Log("Spawned local player");
+
+            InitializePlayerCamera();
+            OnAddPlayerCameraEvent?.Invoke(this);
         }
         else
         {
@@ -71,5 +80,12 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
     {
         this.playerName = playerName;
     }
-    
+
+    public void InitializePlayerCamera()
+    {
+       localPlayerCamera = Instantiate(playerCameraPrefab, transform.position, Quaternion.identity);
+       localPlayerCamera.Follow = cinemachineCameraTarget;
+    }
+
+    public static event System.Action<NetworkPlayer> OnAddPlayerCameraEvent;
 }

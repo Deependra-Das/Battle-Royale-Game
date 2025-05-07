@@ -179,8 +179,8 @@ GameObject:
   - component: {fileID: 1219651444932681031}
   - component: {fileID: 5660048427546987223}
   - component: {fileID: 572835239326760961}
-  - component: {fileID: 5765728663006488462}
   - component: {fileID: 2509280547413686479}
+  - component: {fileID: 5765728663006488462}
   - component: {fileID: 6190223137381808615}
   - component: {fileID: 4010039041617979302}
   m_Layer: 0
@@ -353,23 +353,6 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &5765728663006488462
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4891796983237039176}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04435c971a1ca174490285f4bfb729ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerNameText: {fileID: 7588635935196401366}
-  _playerName:
-    _length: 0
-    _data:
-      Data: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 --- !u!114 &2509280547413686479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -390,6 +373,25 @@ MonoBehaviour:
   - {fileID: 5765728663006488462}
   - {fileID: 6190223137381808615}
   ForceRemoteRenderTimeframe: 0
+--- !u!114 &5765728663006488462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4891796983237039176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04435c971a1ca174490285f4bfb729ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerNameText: {fileID: 7588635935196401366}
+  playerCameraPrefab: {fileID: 2106433250033077998, guid: a1a802ecaf6775746bb2a929fb554ad8, type: 3}
+  cinemachineCameraTarget: {fileID: 6990956804432262979}
+  _playerName:
+    _length: 0
+    _data:
+      Data: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 --- !u!114 &6190223137381808615
 MonoBehaviour:
   m_ObjectHideFlags: 0

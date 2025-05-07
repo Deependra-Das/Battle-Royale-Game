@@ -5,15 +5,14 @@ using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
 using Unity.Cinemachine;
+using System.Globalization;
 
 public class NetworkGameManager : MonoBehaviour, INetworkRunnerCallbacks
 {
     [SerializeField] private NetworkPlayer playerPrefab;
-    [SerializeField] private CinemachineCamera playerCameraPrefab;
 
     NetworkPlayer networkPlayer;
     CharacterInputManager characterInputManager;
-    CinemachineCamera localPlayerCamera;
 
     void Start()
     {
@@ -30,28 +29,12 @@ public class NetworkGameManager : MonoBehaviour, INetworkRunnerCallbacks
         {
             Debug.Log("OnPlayerJoined | We are Server. Spawning Player.");
             networkPlayer = runner.Spawn(playerPrefab, transform.position, Quaternion.identity, player);
-
-            if (networkPlayer.HasStateAuthority)
-            {
-                InitializePlayerCamera(transform.position);
-                OnAddPlayerCameraEvent?.Invoke(runner, networkPlayer);
-            }
         }
         else
         {
-            Debug.Log("OnPlayerJoined");
+            Debug.Log("OnPlayerJoined | This is Client");
         }
     }
-
-    public void InitializePlayerCamera(Vector3 camIntialPosition)
-    {
-        localPlayerCamera = Instantiate(playerCameraPrefab, camIntialPosition, Quaternion.identity);
-        CharacterMovementController charMoveCon = NetworkPlayer.Local.GetComponent<CharacterMovementController>();
-        localPlayerCamera.Follow = charMoveCon.cinemachineCameraTarget.transform;
-
-        //localPlayerCamera.name = $"Camera for Player {player.PlayerId}";
-    }
-
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
@@ -145,7 +128,5 @@ public class NetworkGameManager : MonoBehaviour, INetworkRunnerCallbacks
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data)
     {
     }
-
-    public static event System.Action<NetworkRunner, NetworkPlayer> OnAddPlayerCameraEvent;
 
 }

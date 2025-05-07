@@ -21,12 +21,12 @@ public class LocalCameraManager : MonoBehaviour
 
     private void Awake()
     {
-        NetworkGameManager.OnAddPlayerCameraEvent += AddPlayerCamera;
+        NetworkPlayer.OnAddPlayerCameraEvent += AddPlayerCamera;
     }
 
     void OnDestroy()
     {
-        NetworkGameManager.OnAddPlayerCameraEvent -= AddPlayerCamera;
+        NetworkPlayer.OnAddPlayerCameraEvent -= AddPlayerCamera;
     }
 
     private void LateUpdate()
@@ -38,7 +38,6 @@ public class LocalCameraManager : MonoBehaviour
 
     private void CameraRotation()
     {
-        Debug.Log(_characterInputManager.lookInputVector);
         if (_characterInputManager.lookInputVector.sqrMagnitude >= _threshold && !LockCameraPosition)
         {
             _cinemachineTargetYaw += _characterInputManager.lookInputVector.x * deltaTimeMultiplier;
@@ -62,15 +61,12 @@ public class LocalCameraManager : MonoBehaviour
         return Mathf.Clamp(lfAngle, lfMin, lfMax);
     }
 
-    private void AddPlayerCamera(NetworkRunner runner, NetworkPlayer playerObject)
+    private void AddPlayerCamera(NetworkPlayer playerObject)
     {
-        if (playerObject.Object.HasStateAuthority)
-        {   
-             _characterMovementController = playerObject.gameObject.GetComponent<CharacterMovementController>();
-            _cinemachineCameraTarget = _characterMovementController.cinemachineCameraTarget.transform;
-            _cinemachineTargetYaw = _cinemachineCameraTarget.transform.rotation.eulerAngles.y;
-            _characterInputManager = playerObject.gameObject.GetComponent<CharacterInputManager>();
-            deltaTimeMultiplier = _characterMovementController.IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
-        }
+        _characterMovementController = playerObject.gameObject.GetComponent<CharacterMovementController>();
+        _cinemachineCameraTarget = _characterMovementController.cinemachineCameraTarget.transform;
+        _cinemachineTargetYaw = _cinemachineCameraTarget.transform.rotation.eulerAngles.y;
+        _characterInputManager = playerObject.gameObject.GetComponent<CharacterInputManager>();
+        deltaTimeMultiplier = _characterMovementController.IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
     }
 }
