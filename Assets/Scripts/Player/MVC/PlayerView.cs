@@ -3,10 +3,11 @@ using BattleRoyale.Level;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using BattleRoyale.Event;
+using Unity.Netcode;
 
 namespace BattleRoyale.Player
 {
-    public class PlayerView : MonoBehaviour
+    public class PlayerView : NetworkBehaviour
     {
         [SerializeField] private GameObject _cinemachineCameraTarget;
         [SerializeField] private CharacterController _charController;

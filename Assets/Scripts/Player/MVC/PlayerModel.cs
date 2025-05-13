@@ -1,4 +1,3 @@
-using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 namespace BattleRoyale.Player
