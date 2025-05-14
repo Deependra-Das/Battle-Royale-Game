@@ -11,7 +11,7 @@ namespace BattleRoyale.Player
         {
             _playerModel = new PlayerModel(player_SO);
             _playerView = Object.Instantiate(player_SO.playerPrefab, spawnPostion, Quaternion.identity);
-            _playerView.Initialize(_playerModel);
+            //_playerView.Initialize(_playerModel);
         }
 
         public GameObject PlayerCameraRoot { get { return _playerView.PlayerCameraRoot; } }

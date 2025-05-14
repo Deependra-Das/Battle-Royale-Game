@@ -12,10 +12,21 @@ namespace BattleRoyale.Player
         [SerializeField] private GameObject _cinemachineCameraTarget;
         [SerializeField] private CharacterController _charController;
         [SerializeField] private Animator _animator;
-        [SerializeField] private PlayerInput _playerInput;
+        private PlayerInput _playerInput;
 
-      
-        private PlayerModel _playerModel;
+
+        //private PlayerModel _playerModel;
+        public float moveSpeed = 10.0f;
+        public float speedChangeRate = 10.0f;
+        [Range(0.0f, 0.3f)]
+        public float rotationSmoothTime  = 0.12f;
+        public float jumpHeight = 1.2f;
+        public float gravity = -15.0f;
+        public float terminalVelocity  = 53.0f;
+        public float jumpTimeout  = 0.50f;
+        public float fallTimeout  = 0.15f;
+        public float groundedOffset  = -0.14f;
+        public float groundedRadius  = 0.28f;
         private bool _isPlayerInitialized = false;
         private bool Grounded = true;
         public LayerMask GroundLayers;
@@ -56,17 +67,23 @@ namespace BattleRoyale.Player
         public bool cursorInputForLook = true;
         private bool IsCurrentDeviceMouse { get { return _playerInput.currentControlScheme == "KeyboardMouse"; } }
 
-        private void OnEnable()
-        {
-            _playerInput.ActivateInput();
-            SubscribeToEvents();
-        }
+        //private void OnEnable()
+        //{
+        //    if(IsOwner)
+        //    {
+        //        _playerInput.ActivateInput();
+        //    }       
+        // //   SubscribeToEvents();
+        //}
 
-        private void OnDisable()
-        {
-            UnsubscribeToEvents();
-            _playerInput.DeactivateInput();
-        }
+        //private void OnDisable()
+        //{
+        //    //UnsubscribeToEvents();
+        //    if (IsOwner)
+        //    {
+        //        _playerInput.DeactivateInput();
+        //    }
+        //}
 
         private void SubscribeToEvents()
         {
@@ -78,16 +95,27 @@ namespace BattleRoyale.Player
             EventBusManager.Instance.Unsubscribe(EventName.ActivatePlayerForGameplay, HandlePlayerInputActivation);
         }
 
-        public void Initialize(PlayerModel playerModel)
+        public void Awake(/*PlayerModel playerModel*/)
         {
-            _playerModel = playerModel;
-            _isPlayerInitialized = true;
-            _playerInput.DeactivateInput();
+            //_playerModel = playerModel;
+            //_isPlayerInitialized = true;
+            //_playerInput.DeactivateInput();
             _cinemachineTargetYaw = _cinemachineCameraTarget.transform.rotation.eulerAngles.y;
             AssignAnimationIDs();
 
-            _jumpTimeoutDelta = _playerModel.JumpTimeout;
-            _fallTimeoutDelta = _playerModel.FallTimeout;
+            _jumpTimeoutDelta = jumpTimeout;
+            _fallTimeoutDelta = fallTimeout;
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+            if (IsOwner)
+            {
+                _playerInput = GetComponent<PlayerInput>();
+                _playerInput.enabled = true;
+                _playerInput.SwitchCurrentControlScheme(Keyboard.current, Mouse.current);
+            }
         }
 
         private void HandlePlayerInputActivation(object[] parameters)
@@ -105,16 +133,18 @@ namespace BattleRoyale.Player
 
         private void Update()
         {
-            if (_isPlayerInitialized)
-            {
-                HandleJumpAndGravity();
-                GroundedCheck();
-                HandleMovement();
-            }
+            if (!IsOwner) return;
+            
+            HandleJumpAndGravity();
+            GroundedCheck();
+            HandleMovement();
+            
         }
 
         private void LateUpdate()
         {
+            if (!IsOwner) return;
+
             HandleCameraRotation();
         }
 
@@ -128,10 +158,11 @@ namespace BattleRoyale.Player
 
         private void HandleMovement()
         {
-            float targetSpeed = _playerModel.MoveSpeed;
+            move = _playerInput.actions["Move"].ReadValue<Vector2>();
+            float targetSpeed = moveSpeed;
             if (move == Vector2.zero) targetSpeed = 0.0f;
 
-            _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * _playerModel.SpeedChangeRate);
+            _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * speedChangeRate);
             if (_animationBlend < 0.01f) _animationBlend = 0f;
             Vector3 inputDirection = new Vector3(move.x, 0.0f, move.y).normalized;
 
@@ -140,7 +171,7 @@ namespace BattleRoyale.Player
                 _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
                                   Camera.main.gameObject.transform.eulerAngles.y;
                 float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
-                    _playerModel.RotationSmoothTime);
+                    rotationSmoothTime);
 
                 transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
             }
@@ -158,7 +189,7 @@ namespace BattleRoyale.Player
         {
             if (Grounded)
             {
-                _fallTimeoutDelta = _playerModel.FallTimeout;
+                _fallTimeoutDelta = fallTimeout;
                 _animator.SetBool(_animIDJump, false);
                 _animator.SetBool(_animIDFreeFall, false);
 
@@ -168,7 +199,7 @@ namespace BattleRoyale.Player
                 }
                 if (jump && _jumpTimeoutDelta <= 0.0f)
                 {
-                    _verticalVelocity = Mathf.Sqrt(_playerModel.JumpHeight * -2f * _playerModel.Gravity);
+                    _verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
                     _animator.SetBool(_animIDJump, true);
                 }
                 if (_jumpTimeoutDelta >= 0.0f)
@@ -178,7 +209,7 @@ namespace BattleRoyale.Player
             }
             else
             {
-                _jumpTimeoutDelta = _playerModel.JumpTimeout;
+                _jumpTimeoutDelta = jumpTimeout;
 
                 if (_fallTimeoutDelta >= 0.0f)
                 {
@@ -192,17 +223,17 @@ namespace BattleRoyale.Player
                 jump = false;
             }
 
-            if (_verticalVelocity < _playerModel.TerminalVelocity)
+            if (_verticalVelocity < terminalVelocity)
             {
-                _verticalVelocity += _playerModel.Gravity * Time.deltaTime;
+                _verticalVelocity += gravity * Time.deltaTime;
             }
         }
 
         private void GroundedCheck()
         {
-            Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - _playerModel.GroundedOffset,
+            Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - groundedOffset,
                 transform.position.z);
-            Grounded = Physics.CheckSphere(spherePosition, _playerModel.GroundedRadius, GroundLayers,
+            Grounded = Physics.CheckSphere(spherePosition, groundedRadius, GroundLayers,
                 QueryTriggerInteraction.Ignore);
 
             _animator.SetBool(_animIDGrounded, Grounded);
@@ -243,10 +274,10 @@ namespace BattleRoyale.Player
         //        _playerModel.GroundedRadius);
         //}
 
-        public void OnMove(InputValue value)
-        {
-            move = value.Get<Vector2>();
-        }
+        //public void OnMove(InputValue value)
+        //{
+        //    move = value.Get<Vector2>();
+        //}
 
         public void OnLook(InputValue value)
         {
