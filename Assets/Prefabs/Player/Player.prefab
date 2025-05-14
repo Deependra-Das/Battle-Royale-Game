@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -3374205618571349519}
   - component: {fileID: 606758117999298598}
   - component: {fileID: 7595405929447427900}
+  - component: {fileID: -1442552624499810344}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -225,7 +226,6 @@ MonoBehaviour:
   _cinemachineCameraTarget: {fileID: 5112655210393307609}
   _charController: {fileID: 1063341598028967511}
   _animator: {fileID: 7103471529918078927}
-  _playerInput: {fileID: 8608270715702665693}
   moveSpeed: 10
   speedChangeRate: 10
   rotationSmoothTime: 0.12
@@ -296,6 +296,21 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &-1442552624499810344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960737045345932907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d16e7a119e3fc94e9e6f1f295ccf585, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 7103471529918078927}
 --- !u!1 &5112655210393307609
 GameObject:
   m_ObjectHideFlags: 0
