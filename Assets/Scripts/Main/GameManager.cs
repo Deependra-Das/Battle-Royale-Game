@@ -36,6 +36,10 @@ namespace BattleRoyale.Main
                     _stateMachine.ChangeGameState(new StartState());
                     break;
 
+                case GameState.Lobby:
+                    _stateMachine.ChangeGameState(new LobbyState());
+                    break;
+
                 case GameState.Gameplay:
                     _stateMachine.ChangeGameState(new GameplayState());
                     break;

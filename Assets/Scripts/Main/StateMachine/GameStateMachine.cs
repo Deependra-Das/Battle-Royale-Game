@@ -19,6 +19,7 @@ namespace BattleRoyale.Main
         private void CreateStates()
         {
             _states.Add(GameState.Start, new StartState());
+            _states.Add(GameState.Lobby, new LobbyState());
             _states.Add(GameState.Gameplay, new GameplayState());
             _states.Add(GameState.GameOver, new GameOverState());
         }

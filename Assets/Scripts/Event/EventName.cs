@@ -6,6 +6,7 @@ namespace BattleRoyale.Event
     {
         ChangeGameState,
         StartSceneLoadedEvent,
+        LobbySceneLoadedEvent,
         GameplaySceneLoadedEvent,
         GameOverSceneLoadedEvent,
         PlayerSpawnCompleted,

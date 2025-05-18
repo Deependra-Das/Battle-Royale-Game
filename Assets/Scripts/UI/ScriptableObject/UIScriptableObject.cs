@@ -6,6 +6,7 @@ namespace BattleRoyale.UI
     public class UIScriptableObject : ScriptableObject
     {
         public StartMenuUIView startMenuUIPrefab;
+        public LobbyUIView lobbyUIPrefab;
         public GameplayUIView gameplayUIPrefab;
         public GameOverUIView gameOverUIPrefab;
     }

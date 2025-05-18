@@ -34,6 +34,9 @@ namespace BattleRoyale.Scene
                 case SceneName.StartScene:
                     EventBusManager.Instance.RaiseNoParams(EventName.StartSceneLoadedEvent);
                     break;
+                case SceneName.LobbyScene:
+                    EventBusManager.Instance.RaiseNoParams(EventName.LobbySceneLoadedEvent);
+                    break;
                 case SceneName.GameScene:
                     EventBusManager.Instance.RaiseNoParams(EventName.GameplaySceneLoadedEvent);
                     break;
