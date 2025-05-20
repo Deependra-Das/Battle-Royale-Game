@@ -16,28 +16,22 @@ namespace BattleRoyale.Main
 
         public void Enter()
         {
-            SceneLoader.Instance.LoadSceneAsync(SceneName.GameScene);
-            EventBusManager.Instance.Subscribe(EventName.GameplaySceneLoadedEvent, HandleGameplayState);
-        }
+           
+            RegisterGameplayServices();
+            _gameplayUIObj = GameManager.Instance.Get<GameplayUIService>();
+            _levelObj = GameManager.Instance.Get<LevelService>();
+            _playerObj = GameManager.Instance.Get<PlayerService>();
 
-        private void HandleGameplayState(object[] parameters)
-        {
-            //RegisterGameplayServices();
-            //_gameplayUIObj = GameManager.Instance.Get<GameplayUIService>();
-            //_levelObj = GameManager.Instance.Get<LevelService>();
-            //_playerObj = GameManager.Instance.Get<PlayerService>();            
-
-            //_levelObj.StartLevel();
-            //List<Vector3> spawnPoints = _levelObj.GetPlayerSpawnPoints();
-            //_playerObj.SpawnPlayer(spawnPoints);
-            //EventBusManager.Instance.RaiseNoParams(EventName.PlayerSpawnCompleted);
+            _levelObj.StartLevel();
+            List<Vector3> spawnPoints = _levelObj.GetPlayerSpawnPoints();
+            _playerObj.SpawnAllConnectedPlayers(spawnPoints);
+            EventBusManager.Instance.RaiseNoParams(EventName.PlayerSpawnCompleted);
         }
 
         public void Exit()
         {
-            EventBusManager.Instance.Unsubscribe(EventName.GameplaySceneLoadedEvent, HandleGameplayState);
-            //Cleanup();
-            //UnegisterGameplayServices();
+            Cleanup();
+            UnegisterGameplayServices();
         }
 
         public void Cleanup()

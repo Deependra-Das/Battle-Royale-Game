@@ -6,6 +6,7 @@ namespace BattleRoyale.Main
     {
         Start,
         Lobby,
+        CharacterSelection,
         Gameplay,
         GameOver
     }

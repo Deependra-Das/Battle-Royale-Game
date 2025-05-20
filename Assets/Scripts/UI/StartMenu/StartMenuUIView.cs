@@ -1,4 +1,5 @@
 using BattleRoyale.Main;
+using BattleRoyale.Scene;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,7 +28,7 @@ namespace BattleRoyale.UI
 
         private void OnNewGameButtonClicked()
         {
-            GameManager.Instance.ChangeGameState(GameState.Gameplay);
+            SceneLoader.Instance.LoadScene(SceneName.LobbyScene, false);
         }
 
         private void OnQuitGameButtonClicked()

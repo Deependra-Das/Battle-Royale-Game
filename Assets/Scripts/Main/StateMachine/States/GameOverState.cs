@@ -11,12 +11,6 @@ namespace BattleRoyale.Main
 
         public void Enter()
         {
-            SceneLoader.Instance.LoadSceneAsync(SceneName.GameOverScene);
-            EventBusManager.Instance.Subscribe(EventName.GameOverSceneLoadedEvent, HandleGameOverState);
-        }
-
-        private void HandleGameOverState(object[] parameters)
-        {
             RegisterGameOverServices();
             _gameOverUIObj = GameManager.Instance.Get<GameOverUIService>();
 
@@ -25,7 +19,6 @@ namespace BattleRoyale.Main
 
         public void Exit()
         {
-            EventBusManager.Instance.Unsubscribe(EventName.GameOverSceneLoadedEvent, HandleGameOverState);
             _gameOverUIObj.HideUI();
             Cleanup();
             UnegisterGameOverServices();

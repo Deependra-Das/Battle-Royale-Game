@@ -11,12 +11,6 @@ namespace BattleRoyale.Main
 
         public void Enter()
         {
-            SceneLoader.Instance.LoadSceneAsync(SceneName.LobbyScene);
-            EventBusManager.Instance.Subscribe(EventName.LobbySceneLoadedEvent, HandleLobbyState);
-        }
-
-        private void HandleLobbyState(object[] parameters)
-        {
             RegisterLobbyServices();
             _lobbyUIObj = GameManager.Instance.Get<LobbyUIService>();
 
@@ -25,7 +19,6 @@ namespace BattleRoyale.Main
 
         public void Exit()
         {
-            EventBusManager.Instance.Unsubscribe(EventName.LobbySceneLoadedEvent, HandleLobbyState);
             _lobbyUIObj.HideUI();
             Cleanup();
             UnegisterLobbyServices();

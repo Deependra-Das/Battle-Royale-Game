@@ -4,6 +4,7 @@ namespace BattleRoyale.Scene
     {
         StartScene,
         LobbyScene,
+        CharacterSelectionScene,
         GameScene,
         GameOverScene
     }

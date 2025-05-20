@@ -6,6 +6,8 @@ using BattleRoyale.Level;
 using BattleRoyale.Player;
 using BattleRoyale.Event;
 using BattleRoyale.UI;
+using BattleRoyale.Scene;
+using Unity.Netcode;
 
 namespace BattleRoyale.Main
 {
@@ -25,7 +27,7 @@ namespace BattleRoyale.Main
         private void Start()
         {
             _stateMachine = new GameStateMachine();
-            ChangeGameState(GameState.Start);
+            SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
 
         public void ChangeGameState(GameState newState)
@@ -38,6 +40,10 @@ namespace BattleRoyale.Main
 
                 case GameState.Lobby:
                     _stateMachine.ChangeGameState(new LobbyState());
+                    break;
+
+                case GameState.CharacterSelection:
+                    _stateMachine.ChangeGameState(new CharacterSelectionState());
                     break;
 
                 case GameState.Gameplay:
