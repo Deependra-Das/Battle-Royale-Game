@@ -6,7 +6,7 @@ namespace BattleRoyale.Event
     {
         ChangeGameState,
         PlayerSpawnCompleted,
-        StartGameplayCountdown,
+        CountdownTick,
         ActivateTilesForGameplay,
         ActivatePlayerForGameplay
     }

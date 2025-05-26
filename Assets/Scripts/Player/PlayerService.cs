@@ -3,6 +3,7 @@ using BattleRoyale.Level;
 using BattleRoyale.Main;
 using System.Collections.Generic;
 using Unity.Cinemachine;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace BattleRoyale.Player
@@ -10,30 +11,32 @@ namespace BattleRoyale.Player
     public class PlayerService
     {
         private PlayerScriptableObject _player_SO;
+        private Dictionary<ulong, PlayerView> players = new();
         private CinemachineCamera _playerCamera;
-        private PlayerController _acivePlayerController;
 
         public PlayerService(PlayerScriptableObject player_SO)
         {
             _player_SO = player_SO;
         }
 
-        public void SpawnPlayer(List<Vector3> playerSpawnPositionList)
+        public void SpawnPlayer(ulong clientId, Vector3 spawnPosition)
         {
-            _acivePlayerController = new PlayerController(_player_SO, playerSpawnPositionList[0]);
-            SetPlayerCamera(playerSpawnPositionList[0]);
+            PlayerView playerView = null;
+            playerView = Object.Instantiate(_player_SO.playerPrefab, spawnPosition, Quaternion.identity);
+            playerView.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+
+            players[clientId] = playerView;
         }
 
-        public void SetPlayerCamera(Vector3 camIntialPosition)
+        public void SetupPlayerCam(Transform playerCameraRoot)
         {
-            _playerCamera = Object.Instantiate(_player_SO.playerCameraPrefab , camIntialPosition , Quaternion.identity);
-            _playerCamera.Follow = _acivePlayerController.PlayerCameraRoot.transform;
+            _playerCamera = Object.Instantiate(_player_SO.playerCameraPrefab);
+            _playerCamera.Follow = playerCameraRoot;
         }
 
         public void Dispose()
         {
-            _acivePlayerController.DisposePlayerGameObject();
-            _acivePlayerController = null;
+            players.Clear();
             Object.Destroy(_playerCamera.gameObject);
         }
     }

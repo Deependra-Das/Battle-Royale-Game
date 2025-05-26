@@ -1,9 +1,11 @@
-using BattleRoyale.Tile;
+using BattleRoyale.Event;
 using BattleRoyale.Level;
+using BattleRoyale.Main;
+using BattleRoyale.Tile;
+using Unity.Cinemachine;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using BattleRoyale.Event;
-using Unity.Netcode;
 
 namespace BattleRoyale.Player
 {
@@ -14,30 +16,27 @@ namespace BattleRoyale.Player
         [SerializeField] private Animator _animator;
         private PlayerInput _playerInput;
 
-
-        //private PlayerModel _playerModel;
-        public float moveSpeed = 10.0f;
-        public float speedChangeRate = 10.0f;
+        [SerializeField] private float _moveSpeed = 10.0f;
+        [SerializeField] private float _speedChangeRate = 10.0f;
         [Range(0.0f, 0.3f)]
-        public float rotationSmoothTime  = 0.12f;
-        public float jumpHeight = 1.2f;
-        public float gravity = -15.0f;
-        public float terminalVelocity  = 53.0f;
-        public float jumpTimeout  = 0.50f;
-        public float fallTimeout  = 0.15f;
-        public float groundedOffset  = -0.14f;
-        public float groundedRadius  = 0.28f;
-        private bool _isPlayerInitialized = false;
-        private bool Grounded = true;
-        public LayerMask GroundLayers;
-        [Range(0.5f, 5f)] public float strength = 1.1f;
+        [SerializeField] private float _rotationSmoothTime = 0.12f;
+        [SerializeField] private float _jumpHeight = 1.2f;
+        [SerializeField] private float _gravity = -15.0f;
+        [SerializeField] private float _terminalVelocity = 53.0f;
+        [SerializeField] private float _jumpTimeout = 0.50f;
+        [SerializeField] private float _fallTimeout = 0.15f;
+        [SerializeField] private float _groundedOffset = -0.14f;
+        [SerializeField] private float _groundedRadius  = 0.28f;
+        private bool _grounded = true;
+        [SerializeField] private LayerMask _groundLayers;
+        [Range(0.5f, 5f)] [SerializeField] private float strength = 1.1f;
 
         [Header("Cinemachine")]
-        public float TopClamp = 70.0f;
-        public float BottomClamp = -30.0f;
-        public float CameraAngleOverride = 0.0f;
+        [SerializeField] private float TopClamp = 70.0f;
+        [SerializeField] private float BottomClamp = -30.0f;
+        [SerializeField] private float CameraAngleOverride = 0.0f;
 
-        public bool LockCameraPosition = false;
+        [SerializeField] private bool LockCameraPosition = false;
 
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
@@ -67,23 +66,6 @@ namespace BattleRoyale.Player
         public bool cursorInputForLook = true;
         private bool IsCurrentDeviceMouse { get { return _playerInput.currentControlScheme == "KeyboardMouse"; } }
 
-        //private void OnEnable()
-        //{
-        //    if(IsOwner)
-        //    {
-        //        _playerInput.ActivateInput();
-        //    }       
-        // //   SubscribeToEvents();
-        //}
-
-        //private void OnDisable()
-        //{
-        //    //UnsubscribeToEvents();
-        //    if (IsOwner)
-        //    {
-        //        _playerInput.DeactivateInput();
-        //    }
-        //}
 
         private void SubscribeToEvents()
         {
@@ -95,26 +77,30 @@ namespace BattleRoyale.Player
             EventBusManager.Instance.Unsubscribe(EventName.ActivatePlayerForGameplay, HandlePlayerInputActivation);
         }
 
-        public void Awake(/*PlayerModel playerModel*/)
+        public void Awake()
         {
-            //_playerModel = playerModel;
-            //_isPlayerInitialized = true;
             //_playerInput.DeactivateInput();
             _cinemachineTargetYaw = _cinemachineCameraTarget.transform.rotation.eulerAngles.y;
             AssignAnimationIDs();
 
-            _jumpTimeoutDelta = jumpTimeout;
-            _fallTimeoutDelta = fallTimeout;
+            _jumpTimeoutDelta = _jumpTimeout;
+            _fallTimeoutDelta = _fallTimeout;
         }
 
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
+            _playerInput = GetComponent<PlayerInput>();
+
             if (IsOwner)
             {
-                _playerInput = GetComponent<PlayerInput>();
                 _playerInput.enabled = true;
                 _playerInput.SwitchCurrentControlScheme(Keyboard.current, Mouse.current);
+                GameManager.Instance.Get<PlayerService>().SetupPlayerCam(PlayerCameraRoot.transform);
+            }
+            else
+            {
+                _playerInput.enabled = false;
             }
         }
 
@@ -137,8 +123,7 @@ namespace BattleRoyale.Player
             
             HandleJumpAndGravity();
             GroundedCheck();
-            HandleMovement();
-            
+            HandleMovement();           
         }
 
         private void LateUpdate()
@@ -159,10 +144,10 @@ namespace BattleRoyale.Player
         private void HandleMovement()
         {
             move = _playerInput.actions["Move"].ReadValue<Vector2>();
-            float targetSpeed = moveSpeed;
+            float targetSpeed = _moveSpeed;
             if (move == Vector2.zero) targetSpeed = 0.0f;
 
-            _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * speedChangeRate);
+            _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * _speedChangeRate);
             if (_animationBlend < 0.01f) _animationBlend = 0f;
             Vector3 inputDirection = new Vector3(move.x, 0.0f, move.y).normalized;
 
@@ -171,7 +156,7 @@ namespace BattleRoyale.Player
                 _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
                                   Camera.main.gameObject.transform.eulerAngles.y;
                 float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
-                    rotationSmoothTime);
+                    _rotationSmoothTime);
 
                 transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
             }
@@ -187,9 +172,9 @@ namespace BattleRoyale.Player
 
         private void HandleJumpAndGravity()
         {
-            if (Grounded)
+            if (_grounded)
             {
-                _fallTimeoutDelta = fallTimeout;
+                _fallTimeoutDelta = _fallTimeout;
                 _animator.SetBool(_animIDJump, false);
                 _animator.SetBool(_animIDFreeFall, false);
 
@@ -199,7 +184,7 @@ namespace BattleRoyale.Player
                 }
                 if (jump && _jumpTimeoutDelta <= 0.0f)
                 {
-                    _verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                    _verticalVelocity = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
                     _animator.SetBool(_animIDJump, true);
                 }
                 if (_jumpTimeoutDelta >= 0.0f)
@@ -209,7 +194,7 @@ namespace BattleRoyale.Player
             }
             else
             {
-                _jumpTimeoutDelta = jumpTimeout;
+                _jumpTimeoutDelta = _jumpTimeout;
 
                 if (_fallTimeoutDelta >= 0.0f)
                 {
@@ -223,20 +208,20 @@ namespace BattleRoyale.Player
                 jump = false;
             }
 
-            if (_verticalVelocity < terminalVelocity)
+            if (_verticalVelocity < _terminalVelocity)
             {
-                _verticalVelocity += gravity * Time.deltaTime;
+                _verticalVelocity += _gravity * Time.deltaTime;
             }
         }
 
         private void GroundedCheck()
         {
-            Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - groundedOffset,
+            Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - _groundedOffset,
                 transform.position.z);
-            Grounded = Physics.CheckSphere(spherePosition, groundedRadius, GroundLayers,
+            _grounded = Physics.CheckSphere(spherePosition, _groundedRadius, _groundLayers,
                 QueryTriggerInteraction.Ignore);
 
-            _animator.SetBool(_animIDGrounded, Grounded);
+            _animator.SetBool(_animIDGrounded, _grounded);
         }
 
         private void HandleCameraRotation()

@@ -4,6 +4,7 @@ using BattleRoyale.Player;
 using BattleRoyale.Scene;
 using BattleRoyale.UI;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace BattleRoyale.Main
@@ -16,16 +17,34 @@ namespace BattleRoyale.Main
 
         public void Enter()
         {
-           
             RegisterGameplayServices();
             _gameplayUIObj = GameManager.Instance.Get<GameplayUIService>();
             _levelObj = GameManager.Instance.Get<LevelService>();
-            _playerObj = GameManager.Instance.Get<PlayerService>();
+            _playerObj = GameManager.Instance.Get<PlayerService>();             
 
-            _levelObj.StartLevel();
-            List<Vector3> spawnPoints = _levelObj.GetPlayerSpawnPoints();
-            _playerObj.SpawnAllConnectedPlayers(spawnPoints);
-            EventBusManager.Instance.RaiseNoParams(EventName.PlayerSpawnCompleted);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                _levelObj.StartLevel(NetworkManager.Singleton.ConnectedClientsIds.Count);
+                HandlePlayerSpawn();
+            }
+        }
+
+        private void HandlePlayerSpawn()
+        {
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                List<Vector3> spawnPoints = _levelObj.GetPlayerSpawnPoints();
+
+                int spawnIndex = 0;
+                foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+                {
+                    _playerObj.SpawnPlayer(clientId, spawnPoints[spawnIndex]);
+                    spawnIndex++;
+                }
+
+                GameplayManager.Instance.NotifyClientsToShowGameplayUIClientRpc();
+                GameplayManager.Instance.StartCountdown(GameManager.Instance.ui_SO.countDownDuration);
+            }
         }
 
         public void Exit()
