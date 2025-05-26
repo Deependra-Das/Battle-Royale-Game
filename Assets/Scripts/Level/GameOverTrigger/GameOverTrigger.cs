@@ -19,7 +19,7 @@ namespace BattleRoyale.Level
         void TriggerGameOver()
         {
             Debug.Log("Game Over!");
-            GameManager.Instance.ChangeGameState(GameState.GameOver);
+            //GameManager.Instance.ChangeGameState(GameState.GameOver);
         }
     }
 }

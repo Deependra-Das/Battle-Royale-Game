@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 4143328445719126984}
   - component: {fileID: 6867002860916560648}
   - component: {fileID: 4408749501471372059}
+  - component: {fileID: -5285595776446336170}
   - component: {fileID: 7845598811733508655}
   m_Layer: 6
-  m_Name: HexTile
+  m_Name: HexTile_Green
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -67,7 +68,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5322628078ace9949bf382e57b5667c8, type: 2}
+  - {fileID: 2100000, guid: 324e1575215bd4a4e92543e4ab9c925c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -138,6 +139,31 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &-5285595776446336170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2916693813902238934}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3172025716
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &7845598811733508655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,12 +171,17 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2916693813902238934}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3856aced7e9260d46aa685efdd2f1d79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   _meshRenderer: {fileID: 4143328445719126984}
   _deactivateMaterial: {fileID: 2100000, guid: 235149f6d58787747a2b662520dc46c1, type: 2}
   _lifetime: 1
   _targetScale: {x: 1, y: 0.5, z: 1}
+  _networkTileState:
+    m_InternalValue: 0
+  _networkIsTileActive:
+    m_InternalValue: 0

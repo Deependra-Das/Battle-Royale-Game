@@ -226,17 +226,18 @@ MonoBehaviour:
   _cinemachineCameraTarget: {fileID: 5112655210393307609}
   _charController: {fileID: 1063341598028967511}
   _animator: {fileID: 7103471529918078927}
-  moveSpeed: 10
-  speedChangeRate: 10
-  rotationSmoothTime: 0.12
-  jumpHeight: 1.2
-  gravity: -15
-  terminalVelocity: 53
-  jumpTimeout: 0.5
-  fallTimeout: 0.15
-  groundedOffset: -0.14
-  groundedRadius: 0.28
-  GroundLayers:
+  _playerCameraPrefab: {fileID: 2106433250033077998, guid: a1a802ecaf6775746bb2a929fb554ad8, type: 3}
+  _moveSpeed: 10
+  _speedChangeRate: 10
+  _rotationSmoothTime: 0.12
+  _jumpHeight: 1.2
+  _gravity: -15
+  _terminalVelocity: 53
+  _jumpTimeout: 0.5
+  _fallTimeout: 0.15
+  _groundedOffset: -0.14
+  _groundedRadius: 0.28
+  _groundLayers:
     serializedVersion: 2
     m_Bits: 64
   strength: 1.1

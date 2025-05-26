@@ -8,7 +8,7 @@ namespace BattleRoyale.Tile
     public class HexTileGeneratorService : MonoBehaviour
     {
         [SerializeField] private Transform containerTransform;
-        [SerializeField] private HexTileView _hexTilePrefab;
+        [SerializeField] private GameObject _hexTilePrefab;
         [SerializeField] private int _mapWidth = 25;
         [SerializeField] private int _mapHeight = 12;
         [SerializeField] private float _tileOffset_X = 1.8f;
@@ -30,7 +30,7 @@ namespace BattleRoyale.Tile
             {
                 for (float j = mapMin_Z; j <= mapMax_Z; j++)
                 {
-                    HexTileView newTile = Instantiate(_hexTilePrefab);
+                    GameObject newTile = Instantiate(_hexTilePrefab);
                     Vector3 tilePosition;
 
                     if (j % 2 == 0)
@@ -47,12 +47,12 @@ namespace BattleRoyale.Tile
             }
         }
 
-        IEnumerator SetTileData(HexTileView hexTileView,float i, float j, Vector3 tilePosition, Transform containerTransform)
+        IEnumerator SetTileData(GameObject hexTileView,float i, float j, Vector3 tilePosition, Transform containerTransform)
         {
             yield return new WaitForSeconds(0.00001f);
-            hexTileView.gameObject.transform.position = tilePosition;
-            hexTileView.gameObject.transform.parent = containerTransform;
-            hexTileView.gameObject.name = i.ToString()+","+j.ToString();
+            hexTileView.transform.position = tilePosition;
+            hexTileView.transform.parent = containerTransform;
+            hexTileView.name = i.ToString()+","+j.ToString();
         }
 
         void OnTriggerExit(Collider other)

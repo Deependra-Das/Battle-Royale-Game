@@ -2,99 +2,186 @@ using BattleRoyale.Floor;
 using BattleRoyale.Tile;
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Netcode;
+using BattleRoyale.Event;
 
 namespace BattleRoyale.Level
 {
-
     public class LevelService
     {
-        private List<GameObject> _floorPrefabList;
-        private GameObject _spawnTileCluster;
+        private GameObject _levelContainerPrefab;
+        private List<GameObject> _hexTilePrefabList;
+        private GameObject _floorPrefab;
+        private GameObject _spawnContainerPrefab;
         private GameObject _gameOverTrigger;
         private GameObject _basePlane;
-        private float _floorHeightIncrement;    
-        private float _radius;
-        private int _numberOfPlayers;
-        private GameObject _activelevel;
-        private GameObject basePlane;
-        private Transform _parentTansform;
+        private float _floorHeightIncrement;
+        private int _mapFloorRadius;
+        private int _spawnFloorRadius;
+        private int _spawnClusterRadius;
+        private float _tileOffset_X;
+        private float _tileOffset_Z;
+        private int _floorCount;
+        private GameObject _activeLevel;
+        private Transform _parentTransform;
 
         private List<GameObject> _floorsList = new List<GameObject>();
-        private List<Vector3> _playerSpawnPontsList = new List<Vector3>();
+        private List<Vector3> _playerSpawnPointsList = new List<Vector3>();
 
         public LevelService(LevelScriptableObject level_SO)
         {
-            _floorPrefabList = level_SO.floorPrefabList;
-            _spawnTileCluster = level_SO.spawnTileCluster;
+            _hexTilePrefabList = level_SO.hexTilePrefabList;
+            _levelContainerPrefab = level_SO.levelContainerPrefab;
+            _floorPrefab = level_SO.floorPrefab;
+            _spawnContainerPrefab = level_SO.spawnContainerPrefab;
             _gameOverTrigger = level_SO.gameOverTrigger;
             _basePlane = level_SO.basePlane;
             _floorHeightIncrement = level_SO.floorHeightIncrement;
-            _radius = level_SO.radius;
-            _numberOfPlayers = level_SO.numberOfPlayers;
+            _mapFloorRadius = level_SO.mapFloorRadius;
+            _spawnFloorRadius = level_SO.spawnFloorRadius;
+            _spawnClusterRadius = level_SO.spawnClusterRadius;
+            _tileOffset_X = level_SO.tileOffset_X;
+            _tileOffset_Z = level_SO.tileOffset_Z;
+            _floorCount = level_SO.floorCount;
         }
 
-        public void StartLevel()
+        public void StartLevel(int numberOfPlayers)
         {
-            GenerateLevelContainer();
-            GenerateBasePlane();
-            GenerateTileFloors();
-            GenerateSpawnTileCluster();
-            GenerateGameOverTrigger();
+            if (NetworkManager.Singleton.IsServer)
+            {
+                GenerateLevelContainer();
+                GenerateBasePlane();
+                GenerateFloors();
+                GenerateSpawnTileCluster(numberOfPlayers);
+                GenerateGameOverTrigger();
+            }
         }
 
         private void GenerateLevelContainer()
         {
-            _activelevel = new GameObject();
-            _activelevel.name = "LevelContainer";
-            _parentTansform = _activelevel.transform;
+            _activeLevel = Object.Instantiate(_levelContainerPrefab);
+            NetworkObject networkObject = _activeLevel.GetComponent<NetworkObject>();
+            _parentTransform = _activeLevel.transform;
+
+            if (networkObject != null)
+            {
+                networkObject.Spawn();
+            }
         }
 
         private void GenerateBasePlane()
         {
-            basePlane = Object.Instantiate(_basePlane);
-            basePlane.transform.parent = _parentTansform;
+            GameObject basePlaneObject = Object.Instantiate(_basePlane);
+            NetworkObject networkObject = basePlaneObject.GetComponent<NetworkObject>();
+
+            if (networkObject != null)
+            {
+                networkObject.Spawn();
+            }
+            basePlaneObject.transform.parent = _parentTransform;
         }
 
-        private void GenerateTileFloors()
+        private void GenerateFloors()
         {
-            for (int i = 1; i <= _floorPrefabList.Count; i++)
+            for (int i = 1; i <= _floorCount; i++)
             {
                 Vector3 position = new Vector3(0, i * _floorHeightIncrement, 0);
-                GameObject newFloor = Object.Instantiate(_floorPrefabList[i-1]);
-
-                newFloor.transform.position = position;
-                newFloor.transform.parent = _parentTansform;
+                GameObject newFloor = Object.Instantiate(_floorPrefab, position, Quaternion.identity);
+                
                 newFloor.name = "Floor_" + i;
+                
                 _floorsList.Add(newFloor);
+
+                NetworkObject networkObject = newFloor.GetComponent<NetworkObject>();
+
+                if (networkObject != null)
+                {
+                    networkObject.Spawn();
+                }
+
+                newFloor.transform.parent = _parentTransform;
+
+                GenerateHexTileMap(_mapFloorRadius, newFloor.transform, _hexTilePrefabList[i]);
             }
         }
 
-        private void GenerateSpawnTileCluster()
+        private void GenerateSpawnTileCluster(int numberOfPlayers)
         {
-            float angleIncrement = 360f / _numberOfPlayers;
+            float angleIncrement = 360f / numberOfPlayers;
 
-            for (int i = 0; i < _numberOfPlayers; i++)
+            for (int i = 0; i < numberOfPlayers; i++)
             {
                 float angle = i * angleIncrement;
                 float radian = angle * Mathf.Deg2Rad;
-                Vector3 position = new Vector3(Mathf.Cos(radian) * _radius, ((_floorPrefabList.Count + 1) * _floorHeightIncrement), Mathf.Sin(radian) * _radius);
-                GameObject newSpawnTileCluster = Object.Instantiate(_spawnTileCluster, position, Quaternion.identity);
-                newSpawnTileCluster.transform.parent = _parentTansform;
-                newSpawnTileCluster.name = "SpawnTileCluster_" + (i+1).ToString();
-                _playerSpawnPontsList.Add(position);
+                Vector3 position = new Vector3(Mathf.Cos(radian) * _spawnFloorRadius, ((_floorCount+1) * _floorHeightIncrement), Mathf.Sin(radian) * _spawnFloorRadius);
+                GameObject newSpawnTileCluster = Object.Instantiate(_spawnContainerPrefab, position, Quaternion.identity);
+
+                newSpawnTileCluster.name = "SpawnTileCluster_" + (i + 1);
+
+                _playerSpawnPointsList.Add(position);
                 _floorsList.Add(newSpawnTileCluster);
+
+                NetworkObject networkObject = newSpawnTileCluster.GetComponent<NetworkObject>();
+
+                if (networkObject != null)
+                {
+                    networkObject.Spawn();
+                }
+
+                newSpawnTileCluster.transform.parent = _parentTransform;
+
+                GenerateHexTileMap(_spawnClusterRadius, newSpawnTileCluster.transform, _hexTilePrefabList[0]);
             }
         }
 
-        public List<Vector3> GetPlayerSpawnPoints()
+        public void GenerateHexTileMap(int radius, Transform container, GameObject hexTilePrefab)
         {
-            return _playerSpawnPontsList;
+            for (int q = -radius; q <= radius; q++)
+            {
+                int radiusMin = Mathf.Max(-radius, -q - radius);
+                int radiusMax = Mathf.Min(radius, -q + radius);
+
+                for (int r = radiusMin; r <= radiusMax; r++)
+                {
+                    Vector3 localPosition = HexToLocal(q, r);
+                    GameObject newTile = Object.Instantiate(hexTilePrefab, container);
+                    newTile.transform.localPosition = localPosition;
+                    newTile.name = $"Hex_{q},{r}";
+
+                    NetworkObject networkObject = newTile.GetComponent<NetworkObject>();
+
+                    if (networkObject != null)
+                    {
+                        networkObject.Spawn();
+                    }
+                    newTile.transform.parent = container;
+                }
+            }
+        }
+
+        private Vector3 HexToLocal(int q, int r)
+        {
+            float x = _tileOffset_X * (q + r / 2f);
+            float z = _tileOffset_Z * r;
+            return new Vector3(x, 0f, z);
         }
 
         private void GenerateGameOverTrigger()
         {
-            GameObject trigger = Object.Instantiate(_gameOverTrigger, new Vector3(_parentTansform.position.x, (_parentTansform.position.y), _parentTansform.position.z), Quaternion.identity);
-            trigger.transform.parent = _parentTansform;
+            GameObject trigger = Object.Instantiate(_gameOverTrigger, new Vector3(_parentTransform.position.x, _parentTransform.position.y, _parentTransform.position.z), Quaternion.identity);
+
+            NetworkObject networkObject = trigger.GetComponent<NetworkObject>();
+            if (networkObject != null)
+            {
+                networkObject.Spawn();
+            }
+
+            trigger.transform.parent = _parentTransform;
+        }
+
+        public List<Vector3> GetPlayerSpawnPoints()
+        {
+            return _playerSpawnPointsList;
         }
 
         public List<GameObject> GetFloors()
@@ -106,7 +193,10 @@ namespace BattleRoyale.Level
         {
             foreach (GameObject floor in _floorsList)
             {
-                Object.Destroy(floor);
+                if (floor != null)
+                {
+                    Object.Destroy(floor);
+                }
             }
             _floorsList.Clear();
         }
@@ -114,8 +204,7 @@ namespace BattleRoyale.Level
         public void Dispose()
         {
             DestroyAllFloors();
-            Object.Destroy(basePlane);
-            Object.Destroy(_parentTansform.gameObject);
+            Object.Destroy(_parentTransform.gameObject);
         }
     }
 }
