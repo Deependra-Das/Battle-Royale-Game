@@ -27,8 +27,7 @@ namespace BattleRoyale.UI
 
         private void HandleGameplayUI(object[] parameters)
         {
-            ShowUI();
-            EventBusManager.Instance.RaiseNoParams(EventName.StartGameplayCountdown);       
+            ShowUI();    
         }
 
         public void ShowUI()

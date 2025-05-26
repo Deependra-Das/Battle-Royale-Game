@@ -12,11 +12,11 @@ namespace BattleRoyale.UI
         [SerializeField] private GameObject _currentEliminationsPanel;
         [SerializeField] private TMP_Text _currentEliminationsText;
         [SerializeField] private TMP_Text _countdownText;
-        [SerializeField] private float _countdownTime;
-        [SerializeField] private float _animationSpeed;
+        [SerializeField] private float _animationSpeed = 3f;
 
         private Vector3 _originalScale;
-        private float _currentTime;
+        private int _currentCountdownValue = -1;
+        private bool _isCountingDown = false;
 
 
         private void OnEnable() => SubscribeToEvents();
@@ -25,50 +25,59 @@ namespace BattleRoyale.UI
 
         private void SubscribeToEvents()
         {
-            EventBusManager.Instance.Subscribe(EventName.StartGameplayCountdown, StartCoundown);
+            EventBusManager.Instance.Subscribe(EventName.CountdownTick, HandleCountdownTick);
         }
 
         private void UnsubscribeToEvents()
         {
-            EventBusManager.Instance.Unsubscribe(EventName.StartGameplayCountdown, StartCoundown);
+            EventBusManager.Instance.Unsubscribe(EventName.CountdownTick, HandleCountdownTick);
         }
 
-        public void StartCoundown(object[] parameters)
+        private void Start()
         {
             _originalScale = _countdownText.transform.localScale;
-            _countdownText.gameObject.SetActive(true);
-            StartCoroutine(CountdownCoroutine());
         }
 
-        IEnumerator CountdownCoroutine()
+        private void Update()
         {
-            _currentTime = _countdownTime;
-            while (_currentTime > 0)
+            if (_isCountingDown)
             {
-                _currentTime -= Time.deltaTime;
-                UpdateCountdownText(_currentTime);
-                AnimateText(_currentTime);
-                yield return null;
+                AnimateText();
             }
+        }
 
+        private void HandleCountdownTick(object[] parameters)
+        {
+            int secondsRemaining = (int) parameters[0];
+
+            if (secondsRemaining > 0)
+            {
+                _countdownText.text = secondsRemaining.ToString();
+                _countdownText.gameObject.SetActive(true);
+                _currentCountdownValue = secondsRemaining;
+                _isCountingDown = true;
+            }
+            else
+            {
+                _countdownText.text = "GO!";
+                _isCountingDown = false;
+                _countdownText.transform.localScale = _originalScale;
+                Invoke(nameof(HideCountdown), 1f);
+            }
+        }
+
+        private void HideCountdown()
+        {
             _countdownText.gameObject.SetActive(false);
-            EventBusManager.Instance.Raise(EventName.ActivatePlayerForGameplay, true);
-            EventBusManager.Instance.Raise(EventName.ActivateTilesForGameplay, true);            
+            _countdownText.transform.localScale = _originalScale;
         }
 
-        void UpdateCountdownText(float time)
-        {
-            if (_countdownText != null)
-            {
-                _countdownText.text = Mathf.Ceil(time).ToString();
-            }
-        }
-
-        void AnimateText(float time)
+        private void AnimateText()
         {
             float scaleFactor = Mathf.PingPong(Time.time * _animationSpeed, 0.5f) + 1f;
             _countdownText.transform.localScale = _originalScale * scaleFactor;
         }
+
 
         public void EnableView()
         {
