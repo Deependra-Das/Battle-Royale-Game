@@ -10,48 +10,50 @@ namespace BattleRoyale.Tile
     {
         [SerializeField] private MeshRenderer _meshRenderer;
         [SerializeField] private Material _deactivateMaterial;
-        [SerializeField] private float _lifetime;
+        [SerializeField] private float _lifetime = 2f;
         [SerializeField] private Vector3 _targetScale = new Vector3(1f, 0.5f, 1f);
 
-        private HexTileStates _currentTileState;
-        private bool _isTileActive;
+        private Vector3 _originalScale;
 
-        [SerializeField] private NetworkVariable<HexTileStates> _networkTileState = new NetworkVariable<HexTileStates>(HexTileStates.Untouched);
-        [SerializeField] private NetworkVariable<bool> _networkIsTileActive = new NetworkVariable<bool>(false);
+        [SerializeField]
+        private NetworkVariable<HexTileStates> _networkTileState =
+            new NetworkVariable<HexTileStates>(HexTileStates.Untouched, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-        //private void OnEnable()
-        //{
-        //    EventBusManager.Instance.Subscribe(EventName.ActivateTilesForGameplay, HandleTileActivation);
-        //}
+        [SerializeField]
+        private NetworkVariable<bool> _networkIsTileActive =
+            new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-        //private void OnDisable()
-        //{
-        //    EventBusManager.Instance.Unsubscribe(EventName.ActivateTilesForGameplay, HandleTileActivation);
-        //}
-
-        void Start()
+        private void OnEnable()
         {
-            _currentTileState = HexTileStates.Untouched;
-            _isTileActive = false;
+            EventBusManager.Instance.Subscribe(EventName.ActivateTilesForGameplay, HandleTileActivation);
+            _networkTileState.OnValueChanged += OnTileStateChanged;
         }
 
+        private void OnDisable()
+        {
+            EventBusManager.Instance.Unsubscribe(EventName.ActivateTilesForGameplay, HandleTileActivation);
+            _networkTileState.OnValueChanged -= OnTileStateChanged;
+        }
+
+        private void Start()
+        {
+            _originalScale = transform.localScale;
+            UpdateTileVisual(_networkTileState.Value);
+        }
+   
         private void HandleTileActivation(object[] parameters)
         {
-            _isTileActive = (bool)parameters[0];
-            _networkIsTileActive.Value = _isTileActive;
-        }
+            if (!IsServer) return;
 
-        private IEnumerator DeactivateCoroutine()
-        {
-            yield return new WaitForSeconds(_lifetime);
-            _currentTileState = HexTileStates.Inactive;
-            _networkTileState.Value = _currentTileState;
-            gameObject.SetActive(false);
+            bool activate = (bool)parameters[0];
+            _networkIsTileActive.Value = activate;
         }
 
         public void PlayerOnTheTileDetected()
         {
-            if (_currentTileState == HexTileStates.Untouched && _isTileActive)
+            if (IsServer &&
+                _networkTileState.Value == HexTileStates.Untouched &&
+                _networkIsTileActive.Value)
             {
                 SetTileTouchedServerRpc();
             }
@@ -60,12 +62,48 @@ namespace BattleRoyale.Tile
         [ServerRpc(RequireOwnership = false)]
         private void SetTileTouchedServerRpc()
         {
-            _currentTileState = HexTileStates.Touched;
-            _networkTileState.Value = _currentTileState;
+            if (_networkTileState.Value != HexTileStates.Untouched) return;
 
-            StartCoroutine(DeactivateCoroutine());
+            _networkTileState.Value = HexTileStates.Touched;
+            PlayTileTouchedVisualsClientRpc();
+            StartCoroutine(DeactivateTileAfterDelay());
+        }
+
+        [ClientRpc]
+        private void PlayTileTouchedVisualsClientRpc()
+        {
             StartCoroutine(ChangeMaterial());
             StartCoroutine(ScaleObject(transform.localScale, _targetScale, _lifetime));
+        }
+
+        private IEnumerator DeactivateTileAfterDelay()
+        {
+            yield return new WaitForSeconds(_lifetime);
+
+            _networkTileState.Value = HexTileStates.Inactive;
+        }
+
+        private void OnTileStateChanged(HexTileStates previous, HexTileStates current)
+        {
+            UpdateTileVisual(current);
+        }
+
+        private void UpdateTileVisual(HexTileStates state)
+        {
+            switch (state)
+            {
+                case HexTileStates.Untouched:
+                    gameObject.SetActive(true);
+                    transform.localScale = _originalScale;
+                    break;
+
+                case HexTileStates.Touched:
+                    break;
+
+                case HexTileStates.Inactive:
+                    gameObject.SetActive(false);
+                    break;
+            }
         }
 
         private IEnumerator ChangeMaterial()
@@ -77,27 +115,16 @@ namespace BattleRoyale.Tile
             }
         }
 
-        private IEnumerator ScaleObject(Vector3 initialScale, Vector3 finalScale, float time)
+        private IEnumerator ScaleObject(Vector3 initialScale, Vector3 finalScale, float duration)
         {
-            float elapsedTime = 0f;
-
-            while (elapsedTime < time)
+            float elapsed = 0f;
+            while (elapsed < duration)
             {
-                transform.localScale = Vector3.Lerp(initialScale, finalScale, elapsedTime / time);
-                elapsedTime += Time.deltaTime;
+                transform.localScale = Vector3.Lerp(initialScale, finalScale, elapsed / duration);
+                elapsed += Time.deltaTime;
                 yield return null;
             }
-
             transform.localScale = finalScale;
-        }
-
-        private void Update()
-        {
-            if (IsOwner)
-            {
-                _currentTileState = _networkTileState.Value;
-                _isTileActive = _networkIsTileActive.Value;
-            }
         }
     }
 }

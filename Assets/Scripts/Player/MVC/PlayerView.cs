@@ -297,7 +297,21 @@ namespace BattleRoyale.Player
 
                 if (groundHexTile != null)
                 {
-                    groundHexTile.PlayerOnTheTileDetected();
+                    ulong tileNetId = groundHexTile.NetworkObject.NetworkObjectId;
+                    NotifyTileTouchedServerRpc(tileNetId);
+                }
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void NotifyTileTouchedServerRpc(ulong tileNetworkObjectId)
+        {
+            if (NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(tileNetworkObjectId, out NetworkObject tileObj))
+            {
+                HexTileView tile = tileObj.GetComponent<HexTileView>();
+                if (tile != null)
+                {
+                    tile.PlayerOnTheTileDetected(); // Now runs on server!
                 }
             }
         }

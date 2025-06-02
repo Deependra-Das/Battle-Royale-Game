@@ -20,31 +20,21 @@ namespace BattleRoyale.Main
             RegisterGameplayServices();
             _gameplayUIObj = GameManager.Instance.Get<GameplayUIService>();
             _levelObj = GameManager.Instance.Get<LevelService>();
-            _playerObj = GameManager.Instance.Get<PlayerService>();             
+            _playerObj = GameManager.Instance.Get<PlayerService>();
 
-            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            if (NetworkManager.Singleton.IsServer)
             {
-                _levelObj.StartLevel(NetworkManager.Singleton.ConnectedClientsIds.Count);
-                HandlePlayerSpawn();
+                SpawnGameplayManager();
             }
         }
 
-        private void HandlePlayerSpawn()
+        private void SpawnGameplayManager()
         {
-            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
-            {
-                List<Vector3> spawnPoints = _levelObj.GetPlayerSpawnPoints();
+            if (GameplayManager.Instance != null) return;
 
-                int spawnIndex = 0;
-                foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
-                {
-                    _playerObj.SpawnPlayer(clientId, spawnPoints[spawnIndex]);
-                    spawnIndex++;
-                }
-
-                GameplayManager.Instance.NotifyClientsToShowGameplayUIClientRpc();
-                GameplayManager.Instance.StartCountdown(GameManager.Instance.ui_SO.countDownDuration);
-            }
+            GameObject managerObj = Object.Instantiate(GameManager.Instance.network_SO.gameplayManagerPrefab);
+            managerObj.name = "GameplayManager";
+            managerObj.GetComponent<NetworkObject>().Spawn(true);
         }
 
         public void Exit()

@@ -16,6 +16,7 @@ namespace BattleRoyale.Main
         [SerializeField] public LevelScriptableObject level_SO;
         [SerializeField] public PlayerScriptableObject player_SO;
         [SerializeField] public UIScriptableObject ui_SO;
+        [SerializeField] public NetworkScriptableObject network_SO;
 
         private GameStateMachine _stateMachine;
 
