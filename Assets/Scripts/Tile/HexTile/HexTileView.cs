@@ -1,8 +1,10 @@
-using UnityEngine;
-using System.Collections;
 using BattleRoyale.Event;
+using BattleRoyale.Level;
+using BattleRoyale.Main;
+using System.Collections;
 using System.Globalization;
 using Unity.Netcode;
+using UnityEngine;
 
 namespace BattleRoyale.Tile
 {
@@ -40,7 +42,15 @@ namespace BattleRoyale.Tile
             _originalScale = transform.localScale;
             UpdateTileVisual(_networkTileState.Value);
         }
-   
+
+        public override void OnNetworkSpawn()
+        {
+            if (IsClient)
+            {
+                TileRegistry.Instance?.RegisterTile(this);
+            }
+        }
+
         private void HandleTileActivation(object[] parameters)
         {
             if (!IsServer) return;

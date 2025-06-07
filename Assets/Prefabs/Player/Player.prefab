@@ -226,7 +226,6 @@ MonoBehaviour:
   _cinemachineCameraTarget: {fileID: 5112655210393307609}
   _charController: {fileID: 1063341598028967511}
   _animator: {fileID: 7103471529918078927}
-  _playerCameraPrefab: {fileID: 2106433250033077998, guid: a1a802ecaf6775746bb2a929fb554ad8, type: 3}
   _moveSpeed: 10
   _speedChangeRate: 10
   _rotationSmoothTime: 0.12

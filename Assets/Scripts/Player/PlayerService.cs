@@ -21,17 +21,27 @@ namespace BattleRoyale.Player
 
         public void SpawnPlayer(ulong clientId, Vector3 spawnPosition)
         {
-            PlayerView playerView = null;
-            playerView = Object.Instantiate(_player_SO.playerPrefab, spawnPosition, Quaternion.identity);
-            playerView.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                PlayerView playerView = Object.Instantiate(_player_SO.playerPrefab, spawnPosition, Quaternion.identity);
+                Vector3 directionToCenter = Vector3.zero - spawnPosition;
+                directionToCenter.y = 0f;
+                if (directionToCenter != Vector3.zero)
+                {
+                    playerView.transform.rotation = Quaternion.LookRotation(directionToCenter);
+                }
+                playerView.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+                playerView.SetupInitialPostionClientRpc(spawnPosition);
 
-            players[clientId] = playerView;
+                players[clientId] = playerView;
+            }     
         }
 
         public void SetupPlayerCam(Transform playerCameraRoot)
         {
             _playerCamera = Object.Instantiate(_player_SO.playerCameraPrefab);
             _playerCamera.Follow = playerCameraRoot;
+            _playerCamera.transform.rotation = playerCameraRoot.rotation;
         }
 
         public void Dispose()

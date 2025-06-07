@@ -32,7 +32,7 @@ namespace BattleRoyale.Main
         {
             if (GameplayManager.Instance != null) return;
 
-            GameObject managerObj = Object.Instantiate(GameManager.Instance.network_SO.gameplayManagerPrefab);
+            GameObject managerObj = Object.Instantiate(GameManager.Instance.network_SO.gameplayManagerPrefab.gameObject);
             managerObj.name = "GameplayManager";
             managerObj.GetComponent<NetworkObject>().Spawn(true);
         }

@@ -79,7 +79,6 @@ namespace BattleRoyale.Player
 
         public void Awake()
         {
-            //_playerInput.DeactivateInput();
             _cinemachineTargetYaw = _cinemachineCameraTarget.transform.rotation.eulerAngles.y;
             AssignAnimationIDs();
 
@@ -87,33 +86,38 @@ namespace BattleRoyale.Player
             _fallTimeoutDelta = _fallTimeout;
         }
 
+        public override void OnDestroy()
+        {
+            UnsubscribeToEvents();
+            Destroy(gameObject);    
+        }
+
         public override void OnNetworkSpawn()
         {
-            base.OnNetworkSpawn();
+            SubscribeToEvents();
             _playerInput = GetComponent<PlayerInput>();
 
             if (IsOwner)
             {
-                _playerInput.enabled = true;
                 _playerInput.SwitchCurrentControlScheme(Keyboard.current, Mouse.current);
                 GameManager.Instance.Get<PlayerService>().SetupPlayerCam(PlayerCameraRoot.transform);
             }
-            else
-            {
-                _playerInput.enabled = false;
-            }
+
+            _playerInput.enabled = false;
         }
 
         private void HandlePlayerInputActivation(object[] parameters)
         {
-            Debug.Log((bool)parameters[0]);
-            if((bool)parameters[0])
+            if (IsOwner)
             {
-                _playerInput.ActivateInput();
-            }
-            else
-            {
-                _playerInput.DeactivateInput();
+                if ((bool)parameters[0])
+                {
+                    _playerInput.enabled = true;
+                }
+                else
+                {
+                    _playerInput.enabled = false;
+                }
             }
         }
 
@@ -311,11 +315,22 @@ namespace BattleRoyale.Player
                 HexTileView tile = tileObj.GetComponent<HexTileView>();
                 if (tile != null)
                 {
-                    tile.PlayerOnTheTileDetected(); // Now runs on server!
+                    tile.PlayerOnTheTileDetected();
                 }
             }
         }
 
         public GameObject PlayerCameraRoot { get { return _cinemachineCameraTarget; } }
+
+        [ClientRpc]
+        public void SetupInitialPostionClientRpc(Vector3 targetPosition)
+        {
+            if (IsOwner)
+            {
+                GetComponent<CharacterController>().enabled = false;
+                transform.position = targetPosition;
+                GetComponent<CharacterController>().enabled = true;
+            }
+        }
     }
 }
