@@ -8,6 +8,9 @@ namespace BattleRoyale.Event
         PlayerSpawnCompleted,
         CountdownTick,
         ActivateTilesForGameplay,
-        ActivatePlayerForGameplay
+        ActivatePlayerForGameplay,
+        PlayerEliminated,
+        PlayerAssignedRank,
+        UpdateEliminationCount,
     }
 }

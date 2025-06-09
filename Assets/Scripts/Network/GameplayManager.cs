@@ -2,13 +2,16 @@ using BattleRoyale.Event;
 using BattleRoyale.Level;
 using BattleRoyale.Main;
 using BattleRoyale.Player;
+using BattleRoyale.Scene;
 using BattleRoyale.Tile;
 using BattleRoyale.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameplayManager : NetworkBehaviour
 {
@@ -20,6 +23,9 @@ public class GameplayManager : NetworkBehaviour
     private PlayerService _playerObj;
 
     private HashSet<ulong> _tileReadyClients = new();
+
+    private Dictionary<ulong, PlayerSessionData> _playerResults = new();
+    private bool _gameEnded = false;
 
     private enum GameplayState
     {
@@ -47,6 +53,16 @@ public class GameplayManager : NetworkBehaviour
 
             SpawnTileRegistry();
             StartCoroutine(InitializeLevelCoroutine());
+
+            foreach (var clientId in NetworkManager.Singleton.ConnectedClientsIds)
+            {
+                if (!_playerResults.ContainsKey(clientId))
+                {
+                    _playerResults[clientId] = new PlayerSessionData(clientId);
+                }
+            }
+
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
         }
     }
 
@@ -65,9 +81,6 @@ public class GameplayManager : NetworkBehaviour
 
         yield return new WaitUntil(() => _levelObj.IsLevelReady);
 
-        List<Vector3> spawnPoints = _levelObj.GetPlayerSpawnPoints();
-
-        int spawnIndex = 0;
         SendExpectedTileCountClientRpc(_levelObj.ServerSpawnedTileCount);        
     }
 
@@ -139,10 +152,15 @@ public class GameplayManager : NetworkBehaviour
             timeRemaining -= 1f;
         }
 
+        InitializeGameplay();
+    }
+
+    private void InitializeGameplay()
+    {
         UpdateCountdownClientRpc(0);
         _state.Value = GameplayState.GamePlaying;
-        EventBusManager.Instance.Raise(EventName.ActivatePlayerForGameplay, true);
-        EventBusManager.Instance.Raise(EventName.ActivateTilesForGameplay, true);
+        ActivatePlayerForGameplayClientRpc();
+        //EventBusManager.Instance.Raise(EventName.ActivateTilesForGameplay, true);
     }
 
     [ClientRpc]
@@ -151,4 +169,95 @@ public class GameplayManager : NetworkBehaviour
         EventBusManager.Instance.Raise(EventName.CountdownTick, secondsRemaining);
     }
 
+    [ClientRpc]
+    private void ActivatePlayerForGameplayClientRpc()
+    {
+        EventBusManager.Instance.Raise(EventName.ActivatePlayerForGameplay, true);
+    }
+
+    private void OnClientDisconnected(ulong clientId)
+    {
+        if (_playerResults.TryGetValue(clientId, out var player) && !player.IsEliminated)
+        {
+            player.MarkDisconnected();
+            HandlePlayerGameOver(clientId);
+        }
+    }
+
+    public void HandlePlayerGameOver(ulong clientId)
+    {
+        if (!_playerResults.TryGetValue(clientId, out var player) || player.IsEliminated)
+            return;
+
+        int assignedRank = GetNextRank();
+        player.MarkEliminated(assignedRank);
+        int eliminatedCount = _playerResults.Count(p => p.Value.IsEliminated);
+
+        NotifyClientEliminatedClientRpc(clientId);
+        NotifyClientOfRankClientRpc(clientId, assignedRank);
+        UpdateEliminationCountClientRpc(eliminatedCount);
+
+        CheckEndGameCondition();
+    }
+
+    private int GetNextRank()
+    {
+        int totalPlayers = _playerResults.Count;
+        int eliminatedCount = _playerResults.Count(player => player.Value.IsEliminated);
+
+        return totalPlayers - eliminatedCount;
+    }
+
+    private void CheckEndGameCondition()
+    {
+        if (_gameEnded) return;
+
+        int remaining = _playerResults.Values.Count(player => !player.IsEliminated);
+        if (remaining <= 1)
+        {
+            _gameEnded = true;
+            EndGameForAll();
+        }
+    }
+
+    private void EndGameForAll()
+    {
+        foreach (var player in _playerResults.Values.Where(player => !player.IsEliminated))
+        {
+            int assignedRank = GetNextRank();
+            player.MarkEliminated(assignedRank);
+            NotifyClientOfRankClientRpc(player.ClientId, assignedRank);
+        }
+
+        StartCoroutine(DelayedGameOverSceneChange());
+    }
+
+    private IEnumerator DelayedGameOverSceneChange()
+    {
+        yield return new WaitForSeconds(3f);
+        SceneLoader.Instance.LoadScene(SceneName.GameOverScene, true);
+    }
+
+
+    [ClientRpc]
+    private void NotifyClientEliminatedClientRpc(ulong clientId)
+    {
+        if (NetworkManager.Singleton.LocalClientId != clientId) return;
+
+        EventBusManager.Instance.RaiseNoParams(EventName.PlayerEliminated);
+    }
+
+    [ClientRpc]
+    private void NotifyClientOfRankClientRpc(ulong clientId, int rank)
+    {
+        if (NetworkManager.Singleton.LocalClientId != clientId) return;
+
+        EventBusManager.Instance.Raise(EventName.PlayerAssignedRank, rank);
+    }
+
+    [ClientRpc]
+    private void UpdateEliminationCountClientRpc(int count)
+    {
+        EventBusManager.Instance.Raise(EventName.UpdateEliminationCount, count);
+    }
 }

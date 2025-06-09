@@ -112,7 +112,8 @@ namespace BattleRoyale.Level
             Vector3 position = new Vector3(Mathf.Cos(radian) * _spawnFloorRadius, (_floorCount + 1) * _floorHeightIncrement, Mathf.Sin(radian) * _spawnFloorRadius);
             GameObject newSpawnTileCluster = Object.Instantiate(_spawnContainerPrefab, position, Quaternion.identity);
             newSpawnTileCluster.name = "SpawnTileCluster_" + (i + 1);
-            _playerSpawnPointsList.Add(position);
+
+            _playerSpawnPointsList.Add(position + new Vector3(0,0.5f,0));
             _floorsList.Add(newSpawnTileCluster);
 
             NetworkObject networkObject = newSpawnTileCluster.GetComponent<NetworkObject>();

@@ -65,16 +65,16 @@ namespace BattleRoyale.Player
         public bool cursorLocked = true;
         public bool cursorInputForLook = true;
         private bool IsCurrentDeviceMouse { get { return _playerInput.currentControlScheme == "KeyboardMouse"; } }
-
+        private bool _canMove = false;
 
         private void SubscribeToEvents()
         {
-            EventBusManager.Instance.Subscribe(EventName.ActivatePlayerForGameplay, HandlePlayerInputActivation);
+            EventBusManager.Instance.Subscribe(EventName.ActivatePlayerForGameplay, HandlePlayerActivationForGameplay);
         }
 
         private void UnsubscribeToEvents()
         {
-            EventBusManager.Instance.Unsubscribe(EventName.ActivatePlayerForGameplay, HandlePlayerInputActivation);
+            EventBusManager.Instance.Unsubscribe(EventName.ActivatePlayerForGameplay, HandlePlayerActivationForGameplay);
         }
 
         public void Awake()
@@ -99,24 +99,27 @@ namespace BattleRoyale.Player
 
             if (IsOwner)
             {
+                _playerInput.enabled = true;
                 _playerInput.SwitchCurrentControlScheme(Keyboard.current, Mouse.current);
                 GameManager.Instance.Get<PlayerService>().SetupPlayerCam(PlayerCameraRoot.transform);
             }
-
-            _playerInput.enabled = false;
+            else
+            {
+                _playerInput.enabled = false;
+            }
         }
 
-        private void HandlePlayerInputActivation(object[] parameters)
+        private void HandlePlayerActivationForGameplay(object[] parameters)
         {
             if (IsOwner)
             {
                 if ((bool)parameters[0])
                 {
-                    _playerInput.enabled = true;
+                    _canMove = true;
                 }
                 else
                 {
-                    _playerInput.enabled = false;
+                    _canMove = false;
                 }
             }
         }
@@ -124,10 +127,21 @@ namespace BattleRoyale.Player
         private void Update()
         {
             if (!IsOwner) return;
-            
-            HandleJumpAndGravity();
+
             GroundedCheck();
-            HandleMovement();           
+
+            if (_canMove)
+            {
+                HandleJumpAndGravity();
+                HandleMovement();
+            }
+            else
+            {
+                _verticalVelocity = 0f;
+                _animator.SetFloat(_animIDSpeed, 0f);
+                _animator.SetBool(_animIDJump, false);
+                _animator.SetBool(_animIDFreeFall, false);
+            }
         }
 
         private void LateUpdate()

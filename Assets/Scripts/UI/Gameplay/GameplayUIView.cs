@@ -2,6 +2,7 @@ using BattleRoyale.Event;
 using BattleRoyale.Main;
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,15 +10,25 @@ namespace BattleRoyale.UI
 {
     public class GameplayUIView : MonoBehaviour
     {
-        [SerializeField] private GameObject _currentEliminationsPanel;
-        [SerializeField] private TMP_Text _currentEliminationsText;
+        [SerializeField] private GameObject _eliminationsPanel;
+        [SerializeField] private TMP_Text _eliminatedCounterText;
         [SerializeField] private TMP_Text _countdownText;
         [SerializeField] private float _animationSpeed = 3f;
+        [SerializeField] private GameObject _rankPanel;
+        [SerializeField] private TMP_Text _rankText;
+        [SerializeField] private GameObject _eliminationPopup;
+        [SerializeField] private float _popupDuration = 2f;
+        [SerializeField] private AnimationCurve _popupScaleCurve;
 
         private Vector3 _originalScale;
         private int _currentCountdownValue = -1;
         private bool _isCountingDown = false;
 
+        private int _totalPlayers = 0;
+        private int _currentEliminatedCount = 0;
+
+        private Coroutine _popupCoroutine;
+        private Vector3 _popupOriginalScale;
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -36,6 +47,9 @@ namespace BattleRoyale.UI
         private void Start()
         {
             _originalScale = _countdownText.transform.localScale;
+            _popupOriginalScale = _eliminationPopup.transform.localScale;
+            _eliminationPopup.SetActive(false);
+            _rankPanel.SetActive(false);
         }
 
         private void Update()
@@ -87,6 +101,61 @@ namespace BattleRoyale.UI
         public void DisableView()
         {
             gameObject.SetActive(false);
+        }
+
+        public void SetTotalPlayers(int total)
+        {
+            _totalPlayers = total;
+            UpdateEliminatedCounter();
+        }
+
+        public void UpdateEliminatedCount(int newCount)
+        {
+            _currentEliminatedCount = newCount;
+            UpdateEliminatedCounter();
+        }
+
+
+        private void UpdateEliminatedCounter()
+        {
+            _eliminatedCounterText.text = $"Eliminated: {_currentEliminatedCount} / {_totalPlayers}";
+        }
+
+        public void ShowEliminatedPopup()
+        {
+            if (_popupCoroutine != null)
+                StopCoroutine(_popupCoroutine);
+
+            _popupCoroutine = StartCoroutine(EliminationPopupSequence());
+        }
+
+        private IEnumerator EliminationPopupSequence()
+        {
+            _eliminationPopup.SetActive(true);
+            _eliminationPopup.transform.localScale = Vector3.zero;
+
+            float time = 0f;
+            float duration = 0.5f;
+
+            while (time < duration)
+            {
+                float scale = _popupScaleCurve.Evaluate(time / duration);
+                _eliminationPopup.transform.localScale = _popupOriginalScale * scale;
+                time += Time.deltaTime;
+                yield return null;
+            }
+
+            _eliminationPopup.transform.localScale = _popupOriginalScale;
+
+            yield return new WaitForSeconds(_popupDuration);
+
+            _eliminationPopup.SetActive(false);
+        }
+
+        public void UpdatePlayerRank(int rank)
+        {
+            _rankText.text = $"Rank: {rank}";
+            _rankPanel.SetActive(true);
         }
     }
 }
