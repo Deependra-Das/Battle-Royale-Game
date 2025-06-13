@@ -23,6 +23,8 @@ namespace BattleRoyale.Level
         private int _floorCount;
         private GameObject _activeLevel;
         private Transform _parentTransform;
+        private Transform _gameOverTriggerTransform;
+        private Transform _basePlaneTransform;
 
         private List<GameObject> _floorsList = new List<GameObject>();
         private List<GameObject> _hexTileList = new List<GameObject>();
@@ -83,6 +85,7 @@ namespace BattleRoyale.Level
                 networkObject.Spawn();
             }
             basePlaneObject.transform.parent = _parentTransform;
+            _basePlaneTransform = basePlaneObject.transform;
         }
 
         private IEnumerator GenerateFloorsCoroutine()
@@ -170,7 +173,7 @@ namespace BattleRoyale.Level
             {
                 networkObject.Spawn();
             }
-
+            _gameOverTriggerTransform = trigger.transform;
             trigger.transform.parent = _parentTransform;
         }
 
@@ -184,22 +187,101 @@ namespace BattleRoyale.Level
             return _floorsList;
         }
 
-        public void DestroyAllFloors()
+        private void DestroyAllHexTiles()
+        {
+            foreach (GameObject hexTile in _hexTileList)
+            {
+                if (hexTile != null)
+                {
+                    NetworkObject networkObject = hexTile.GetComponent<NetworkObject>();
+                    if (networkObject != null && networkObject.IsSpawned)
+                    {
+                        networkObject.Despawn();
+                    }
+                }
+            }
+            _hexTileList.Clear();
+        }
+
+        private void DestroyAllFloors()
         {
             foreach (GameObject floor in _floorsList)
             {
                 if (floor != null)
                 {
-                    Object.Destroy(floor);
+                    NetworkObject networkObject = floor.GetComponent<NetworkObject>();
+                    if (networkObject != null && networkObject.IsSpawned)
+                    {
+                        networkObject.Despawn();
+                    }
                 }
             }
             _floorsList.Clear();
         }
 
+        private void DestroyAllSpawnClusters()
+        {
+            foreach (GameObject spawnCluster in _floorsList)
+            {
+                if (spawnCluster != null)
+                {
+                    NetworkObject networkObject = spawnCluster.GetComponent<NetworkObject>();
+                    if (networkObject != null && networkObject.IsSpawned)
+                    {
+                        networkObject.Despawn();
+                    }
+                }
+            }
+            _floorsList.Clear();
+        }
+
+        private void DestroyGameOverTrigger()
+        {
+            if (_gameOverTriggerTransform.gameObject != null)
+            {
+                NetworkObject networkObject = _gameOverTriggerTransform.gameObject.GetComponent<NetworkObject>();
+                if (networkObject != null && networkObject.IsSpawned)
+                {
+                    networkObject.Despawn();
+                }
+            }
+        }
+
+        private void DestroyBasePlane()
+        {
+            if (_basePlaneTransform.gameObject != null)
+            {
+                NetworkObject networkObject = _basePlaneTransform.gameObject.GetComponent<NetworkObject>();
+                if (networkObject != null && networkObject.IsSpawned)
+                {
+                    networkObject.Despawn();
+                }
+            }
+        }
+
+        private void DestroyLevelContainer()
+        {
+            if (_parentTransform.gameObject != null)
+            {
+                NetworkObject networkObject = _parentTransform.gameObject.GetComponent<NetworkObject>();
+                if (networkObject != null && networkObject.IsSpawned)
+                {
+                    networkObject.Despawn();
+                }
+            }
+        }
+
         public void Dispose()
         {
-            DestroyAllFloors();
-            Object.Destroy(_parentTransform.gameObject);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                DestroyAllHexTiles();
+                DestroyAllFloors();
+                DestroyAllSpawnClusters();
+                DestroyGameOverTrigger();
+                DestroyBasePlane();
+                DestroyLevelContainer();
+            }
         }
     }
 }
