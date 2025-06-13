@@ -23,8 +23,6 @@ public class GameplayManager : NetworkBehaviour
     private PlayerService _playerObj;
 
     private HashSet<ulong> _tileReadyClients = new();
-
-    private Dictionary<ulong, PlayerSessionData> _playerResults = new();
     private bool _gameEnded = false;
 
     private enum GameplayState
@@ -41,7 +39,13 @@ public class GameplayManager : NetworkBehaviour
             Destroy(gameObject);
             return;
         }
+
         Instance = this;
+
+        foreach (var playerSession in PlayerSessionManager.Instance.GetAllPlayerSessionData())
+        {
+            Debug.Log($"Registered Player ClientId: {playerSession.Key}");
+        }    
     }
 
     public override void OnNetworkSpawn()
@@ -53,14 +57,6 @@ public class GameplayManager : NetworkBehaviour
 
             SpawnTileRegistry();
             StartCoroutine(InitializeLevelCoroutine());
-
-            foreach (var clientId in NetworkManager.Singleton.ConnectedClientsIds)
-            {
-                if (!_playerResults.ContainsKey(clientId))
-                {
-                    _playerResults[clientId] = new PlayerSessionData(clientId);
-                }
-            }
 
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
         }
@@ -94,8 +90,6 @@ public class GameplayManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void RegisterClientTileReadyServerRpc(ulong clientId, ServerRpcParams rpcParams = default)
     {
-        Debug.Log(clientId);
-
         if (_tileReadyClients.Add(clientId))
         {
             Debug.Log($"Client {clientId} finished tile loading. ({_tileReadyClients.Count}/{NetworkManager.Singleton.ConnectedClientsIds.Count})");
@@ -119,8 +113,18 @@ public class GameplayManager : NetworkBehaviour
             int spawnIndex = 0;
             foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
             {
-                _playerObj.SpawnPlayer(clientId, spawnPoints[spawnIndex]);
-                spawnIndex++;
+                PlayerSessionData playerSessionData = PlayerSessionManager.Instance.GetPlayerSessionData(clientId);
+
+                if (playerSessionData != null)
+                {
+                    _playerObj.SpawnPlayer(clientId, spawnPoints[spawnIndex]);
+                    PlayerSessionManager.Instance.SetPlayerStatus(clientId, PlayerState.Playing);
+                    spawnIndex++;
+                }
+                else
+                {
+                    Debug.Log("Player does not have Session Data.");
+                }
             }
         }
     }
@@ -177,33 +181,47 @@ public class GameplayManager : NetworkBehaviour
 
     private void OnClientDisconnected(ulong clientId)
     {
-        if (_playerResults.TryGetValue(clientId, out var player) && !player.IsEliminated)
+        PlayerSessionData playerSessionData = PlayerSessionManager.Instance.GetPlayerSessionData(clientId);
+
+        if (playerSessionData != null && playerSessionData.PlayerStatus!=PlayerState.Eliminated)
         {
-            player.MarkDisconnected();
+            PlayerSessionManager.Instance.SetPlayerStatus(clientId, PlayerState.Eliminated);
             HandlePlayerGameOver(clientId);
+        }
+        else
+        {
+            Debug.Log("Player does not have Session Data.");
         }
     }
 
     public void HandlePlayerGameOver(ulong clientId)
     {
-        if (!_playerResults.TryGetValue(clientId, out var player) || player.IsEliminated)
-            return;
+        PlayerSessionData playerSessionData = PlayerSessionManager.Instance.GetPlayerSessionData(clientId);
+        if (playerSessionData != null && playerSessionData.PlayerStatus != PlayerState.Eliminated)
+        {
+            int assignedRank = GetNextRank();
+            PlayerSessionManager.Instance.SetPlayerStatus(clientId, PlayerState.Eliminated);
+            PlayerSessionManager.Instance.SetPlayerRank(clientId, assignedRank);
+            int eliminatedCount = PlayerSessionManager.Instance.GetAllPlayerSessionData().Count(p => p.Value.PlayerStatus == PlayerState.Eliminated);
 
-        int assignedRank = GetNextRank();
-        player.MarkEliminated(assignedRank);
-        int eliminatedCount = _playerResults.Count(p => p.Value.IsEliminated);
+            NotifyClientEliminatedClientRpc(clientId);
+            NotifyClientOfRankClientRpc(clientId, assignedRank);
+            UpdateEliminationCountClientRpc(eliminatedCount);
 
-        NotifyClientEliminatedClientRpc(clientId);
-        NotifyClientOfRankClientRpc(clientId, assignedRank);
-        UpdateEliminationCountClientRpc(eliminatedCount);
+            CheckEndGameCondition();
+        }
+        else
+        {
+            Debug.Log("Player does not have Session Data.");
+        }
 
-        CheckEndGameCondition();
+
     }
 
     private int GetNextRank()
     {
-        int totalPlayers = _playerResults.Count;
-        int eliminatedCount = _playerResults.Count(player => player.Value.IsEliminated);
+        int totalPlayers = PlayerSessionManager.Instance.GetAllPlayerSessionData().Count();
+        int eliminatedCount = PlayerSessionManager.Instance.GetAllPlayerSessionData().Count(p => p.Value.PlayerStatus == PlayerState.Eliminated);
 
         return totalPlayers - eliminatedCount;
     }
@@ -212,7 +230,7 @@ public class GameplayManager : NetworkBehaviour
     {
         if (_gameEnded) return;
 
-        int remaining = _playerResults.Values.Count(player => !player.IsEliminated);
+        int remaining = PlayerSessionManager.Instance.GetAllPlayerSessionData().Count(p => p.Value.PlayerStatus != PlayerState.Eliminated);
         if (remaining <= 1)
         {
             _gameEnded = true;
@@ -222,10 +240,12 @@ public class GameplayManager : NetworkBehaviour
 
     private void EndGameForAll()
     {
-        foreach (var player in _playerResults.Values.Where(player => !player.IsEliminated))
+        var playerResults = PlayerSessionManager.Instance.GetAllPlayerSessionData();
+        foreach (var player in playerResults.Values.Where(player => player.PlayerStatus!= PlayerState.Eliminated))
         {
             int assignedRank = GetNextRank();
-            player.MarkEliminated(assignedRank);
+            PlayerSessionManager.Instance.SetPlayerStatus(player.ClientId, PlayerState.Eliminated);
+            PlayerSessionManager.Instance.SetPlayerRank(player.ClientId, assignedRank);
             NotifyClientOfRankClientRpc(player.ClientId, assignedRank);
         }
 

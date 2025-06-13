@@ -3,8 +3,8 @@ using UnityEngine;
 public class PlayerSessionData
 {
     public ulong ClientId { get; private set; }
-    public bool IsEliminated { get; private set; } = false;
-    public bool IsDisconnected { get; private set; } = false;
+    public PlayerState PlayerStatus { get; private set; } = PlayerState.Waiting;
+    public PlayerConnectionState ConnectionStatus { get; private set; } = PlayerConnectionState.Connected;
     public int Rank { get; private set; } = -1;
 
     public PlayerSessionData(ulong clientId)
@@ -12,15 +12,40 @@ public class PlayerSessionData
         ClientId = clientId;
     }
 
-    public void MarkEliminated(int rank)
+    public void SetRank(int rank)
     {
-        IsEliminated = true;
         Rank = rank;
     }
 
-    public void MarkDisconnected()
+    public void SetGameplayStatus(PlayerState status)
     {
-        IsDisconnected = true;
-        IsEliminated = true;
+        PlayerStatus = status;
+    }
+
+    public void SetConnectionStatus(PlayerConnectionState status)
+    {
+        ConnectionStatus = status;
+    }
+
+    public void Reset()
+    {
+        PlayerStatus = PlayerState.Waiting;
+        Rank = -1;
     }
 }
+
+public enum PlayerState
+{
+    Waiting,
+    Playing,
+    Eliminated,
+}
+
+public enum PlayerConnectionState
+{
+    Disconnected,
+    Connected,
+}
+
+
+

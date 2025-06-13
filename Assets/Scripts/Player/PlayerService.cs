@@ -47,7 +47,7 @@ namespace BattleRoyale.Player
         public void Dispose()
         {
             players.Clear();
-            Object.Destroy(_playerCamera.gameObject);
+            if(_playerCamera!=null) Object.Destroy(_playerCamera.gameObject);
         }
     }
 }
