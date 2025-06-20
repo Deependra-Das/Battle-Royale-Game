@@ -1,6 +1,7 @@
 using BattleRoyale.Event;
 using BattleRoyale.Scene;
 using BattleRoyale.UI;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace BattleRoyale.Main

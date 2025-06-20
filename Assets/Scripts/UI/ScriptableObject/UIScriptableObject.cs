@@ -10,7 +10,7 @@ namespace BattleRoyale.UI
         public CharacterSelectionUIView characterSelectionUIPrefab;
         public GameplayUIView gameplayUIPrefab;
         public GameOverUIView gameOverUIPrefab;
-
+        public ScoreboardEntryUIView scoreboardEntryUIPrefab;
         public float countDownDuration;
     }
 }

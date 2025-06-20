@@ -1,4 +1,5 @@
 using BattleRoyale.Event;
+using BattleRoyale.Main;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -44,4 +45,5 @@ public class MultiplayerManager : NetworkBehaviour
     {
         PlayerSessionManager.Instance.RegisterPlayer(clientId);
     }
+
 }

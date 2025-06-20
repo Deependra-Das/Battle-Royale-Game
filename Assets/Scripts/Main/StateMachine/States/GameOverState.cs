@@ -32,13 +32,13 @@ namespace BattleRoyale.Main
         private void RegisterGameOverServices()
         {
             GameOverUIView gameOverUIPrefab = GameManager.Instance.ui_SO.gameOverUIPrefab;
-            ServiceLocator.Register(new GameOverUIService(gameOverUIPrefab));
+            ScoreboardEntryUIView scoreboardEntryUIPrefab = GameManager.Instance.ui_SO.scoreboardEntryUIPrefab;
+            ServiceLocator.Register(new GameOverUIService(gameOverUIPrefab, scoreboardEntryUIPrefab));
         }
 
         private void UnegisterGameOverServices()
         {
             ServiceLocator.Unregister<GameOverUIService>();
         }
-
     }
 }

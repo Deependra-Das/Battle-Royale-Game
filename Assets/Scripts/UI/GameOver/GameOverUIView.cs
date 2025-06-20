@@ -1,4 +1,5 @@
 using BattleRoyale.Main;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,7 +7,8 @@ namespace BattleRoyale.UI
 {
     public class GameOverUIView : MonoBehaviour
     {
-        [SerializeField] private Button _backToStartMenuButtonPrefab;
+        [SerializeField] private GameObject _scoreboardUI;
+        [SerializeField] private Transform _scoreboardContentTransform;
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -14,17 +16,10 @@ namespace BattleRoyale.UI
 
         private void SubscribeToEvents()
         {
-            _backToStartMenuButtonPrefab.onClick.AddListener(OnBackToStartMenuButtonClicked);
         }
 
         private void UnsubscribeToEvents()
         {
-            _backToStartMenuButtonPrefab.onClick.RemoveListener(OnBackToStartMenuButtonClicked);
-        }
-
-        private void OnBackToStartMenuButtonClicked()
-        {
-            GameManager.Instance.ChangeGameState(GameState.Start);
         }
 
         public void EnableView()
@@ -35,6 +30,20 @@ namespace BattleRoyale.UI
         public void DisableView()
         {
             gameObject.SetActive(false);
+        }
+
+        public void ShowScoreboard()
+        {
+            _scoreboardUI.SetActive(true);
+        }
+        public void HideScoreboard()
+        {
+            _scoreboardUI.SetActive(false);
+        }
+
+        public Transform GetScoreboardContentTransform()
+        {
+            return _scoreboardContentTransform;
         }
     }
 }
