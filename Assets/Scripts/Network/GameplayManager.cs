@@ -91,7 +91,7 @@ public class GameplayManager : NetworkBehaviour
                 HandlePlayerSpawn();
 
                 NotifyClientsToShowGameplayUIClientRpc();
-                StartCountdown(GameManager.Instance.ui_SO.countDownDuration);
+                StartCountdown(GameManager.Instance.ui_SO.gameplayCountdownDuration);
             }
         }
     }
@@ -129,21 +129,21 @@ public class GameplayManager : NetworkBehaviour
 
     public void StartCountdown(float duration)
     {
-        if (IsServer)
+        if (IsServer && _state.Value == GameplayState.WaitingToStart)
         {
             _state.Value = GameplayState.Countdown;
-            StartCoroutine(CountdownCoroutine(duration));
+            StartCoroutine(GameplayCountdownCoroutine(duration));
         }
     }
 
-    private IEnumerator CountdownCoroutine(float duration)
+    private IEnumerator GameplayCountdownCoroutine(float duration)
     {
         float timeRemaining = duration;
 
         while (timeRemaining > 0)
         {
             int displayValue = Mathf.CeilToInt(timeRemaining);
-            UpdateCountdownClientRpc(displayValue);
+            UpdateGameplayCountdownClientRpc(displayValue);
             yield return new WaitForSeconds(1f);
             timeRemaining -= 1f;
         }
@@ -153,16 +153,16 @@ public class GameplayManager : NetworkBehaviour
 
     private void InitializeGameplay()
     {
-        UpdateCountdownClientRpc(0);
+        UpdateGameplayCountdownClientRpc(0);
         _state.Value = GameplayState.GamePlaying;
         ActivatePlayerForGameplayClientRpc();
         //EventBusManager.Instance.Raise(EventName.ActivateTilesForGameplay, true);
     }
 
     [ClientRpc]
-    private void UpdateCountdownClientRpc(int secondsRemaining)
+    private void UpdateGameplayCountdownClientRpc(int secondsRemaining)
     {
-        EventBusManager.Instance.Raise(EventName.CountdownTick, secondsRemaining);
+        EventBusManager.Instance.Raise(EventName.GameplayCountdownTick, secondsRemaining);
     }
 
     [ClientRpc]

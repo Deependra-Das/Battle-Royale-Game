@@ -1,6 +1,7 @@
 using BattleRoyale.Event;
 using BattleRoyale.Scene;
 using BattleRoyale.UI;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace BattleRoyale.Main
@@ -15,6 +16,11 @@ namespace BattleRoyale.Main
             _gameOverUIObj = GameManager.Instance.Get<GameOverUIService>();
 
             _gameOverUIObj.ShowUI();
+
+            if (NetworkManager.Singleton.IsServer)
+            {
+                MultiplayerManager.Instance.StartCountdown(GameManager.Instance.ui_SO.gameOverCountdownDuration);
+            }
         }
 
         public void Exit()

@@ -1,5 +1,7 @@
+using BattleRoyale.Event;
 using BattleRoyale.Main;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +11,8 @@ namespace BattleRoyale.UI
     {
         [SerializeField] private GameObject _scoreboardUI;
         [SerializeField] private Transform _scoreboardContentTransform;
+        [SerializeField] private TMP_Text _countdownText;
+        private int _currentCountdownValue = -1;
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -16,10 +20,12 @@ namespace BattleRoyale.UI
 
         private void SubscribeToEvents()
         {
+            EventBusManager.Instance.Subscribe(EventName.GameOverCountdownTick, HandleCountdownTick);
         }
 
         private void UnsubscribeToEvents()
         {
+            EventBusManager.Instance.Unsubscribe(EventName.GameOverCountdownTick, HandleCountdownTick);
         }
 
         public void EnableView()
@@ -39,6 +45,17 @@ namespace BattleRoyale.UI
         public void HideScoreboard()
         {
             _scoreboardUI.SetActive(false);
+        }
+
+        private void HandleCountdownTick(object[] parameters)
+        {
+            int secondsRemaining = (int)parameters[0];
+
+            if (secondsRemaining > 0)
+            {
+                _countdownText.text = "Returning To Lobby In... " +secondsRemaining.ToString() +"s";
+                _currentCountdownValue = secondsRemaining;
+            }
         }
 
         public Transform GetScoreboardContentTransform()

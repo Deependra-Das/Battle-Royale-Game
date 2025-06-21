@@ -36,12 +36,12 @@ namespace BattleRoyale.UI
 
         private void SubscribeToEvents()
         {
-            EventBusManager.Instance.Subscribe(EventName.CountdownTick, HandleCountdownTick);
+            EventBusManager.Instance.Subscribe(EventName.GameplayCountdownTick, HandleCountdownTick);
         }
 
         private void UnsubscribeToEvents()
         {
-            EventBusManager.Instance.Unsubscribe(EventName.CountdownTick, HandleCountdownTick);
+            EventBusManager.Instance.Unsubscribe(EventName.GameplayCountdownTick, HandleCountdownTick);
         }
 
         private void Start()
