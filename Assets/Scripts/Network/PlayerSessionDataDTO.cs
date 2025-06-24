@@ -7,6 +7,7 @@ public struct PlayerSessionDataDTO : INetworkSerializable
     public PlayerState Status;
     public PlayerConnectionState ConnectionStatus;
     public int Rank;
+    public string Username;
 
     public PlayerSessionDataDTO(PlayerSessionData data)
     {
@@ -14,6 +15,7 @@ public struct PlayerSessionDataDTO : INetworkSerializable
         Status = data.PlayerStatus;
         ConnectionStatus = data.ConnectionStatus;
         Rank = data.Rank;
+        Username = data.Username;
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
@@ -22,5 +24,6 @@ public struct PlayerSessionDataDTO : INetworkSerializable
         serializer.SerializeValue(ref Status);
         serializer.SerializeValue(ref ConnectionStatus);
         serializer.SerializeValue(ref Rank);
+        serializer.SerializeValue(ref Username);
     }
 }

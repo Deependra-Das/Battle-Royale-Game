@@ -10,11 +10,12 @@ using UnityEngine.SceneManagement;
 public class MultiplayerManager : NetworkBehaviour
 {
     public static MultiplayerManager Instance { get; private set; }
+    public string PlayerUsername { get; private set; }
 
     private void Awake()
     {
         Instance = this;
-
+        PlayerUsername = PlayerPrefs.GetString(GameManager.UsernameKey).ToString();
         DontDestroyOnLoad(gameObject);
     }
 
@@ -22,7 +23,7 @@ public class MultiplayerManager : NetworkBehaviour
     {
         NetworkManager.Singleton.ConnectionApprovalCallback += NetworkManager_ConnectionApprovalCallback;
         NetworkManager.Singleton.StartHost();
-        PlayerSessionManager.Instance.RegisterPlayer(NetworkManager.Singleton.LocalClientId);
+        PlayerSessionManager.Instance.RegisterPlayer(NetworkManager.Singleton.LocalClientId, PlayerUsername);
     }
 
     private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
@@ -38,13 +39,13 @@ public class MultiplayerManager : NetworkBehaviour
 
     private void OnClientConnected(ulong clientId)
     {
-        RequestPlayerRegistrationServerRpc(clientId);
+        RequestPlayerRegistrationServerRpc(clientId, PlayerUsername);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void RequestPlayerRegistrationServerRpc(ulong clientId)
+    public void RequestPlayerRegistrationServerRpc(ulong clientId, string username)
     {
-        PlayerSessionManager.Instance.RegisterPlayer(clientId);
+        PlayerSessionManager.Instance.RegisterPlayer(clientId, username);
     }
 
     public void StartCountdown(float duration)

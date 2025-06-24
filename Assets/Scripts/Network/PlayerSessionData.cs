@@ -7,20 +7,28 @@ public class PlayerSessionData : INetworkSerializable
     private PlayerState _playerStatus = PlayerState.Waiting;
     private PlayerConnectionState _connectionStatus = PlayerConnectionState.Connected;
     private int _rank = -1;
+    private string _username = "Player";
 
     public ulong ClientId => _clientId;
     public PlayerState PlayerStatus => _playerStatus;
     public PlayerConnectionState ConnectionStatus => _connectionStatus;
     public int Rank => _rank;
+    public string Username => _username;
 
-    public PlayerSessionData(ulong clientId)
+    public PlayerSessionData(ulong clientId, string username)
     {
         _clientId = clientId;
+        SetUsername(username);
     }
 
     public void SetRank(int rank)
     {
         _rank = rank;
+    }
+
+    public void SetUsername(string username)
+    {
+        _username = username;
     }
 
     public void SetGameplayStatus(PlayerState status)
@@ -45,6 +53,7 @@ public class PlayerSessionData : INetworkSerializable
         serializer.SerializeValue(ref _playerStatus);
         serializer.SerializeValue(ref _connectionStatus);
         serializer.SerializeValue(ref _rank);
+        serializer.SerializeValue(ref _username);
     }
 }
 

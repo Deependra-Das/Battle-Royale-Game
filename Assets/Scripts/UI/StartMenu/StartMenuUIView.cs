@@ -21,8 +21,6 @@ namespace BattleRoyale.UI
         [SerializeField] private GameObject _topBar;
         [SerializeField] private TMP_Text usernameDisplayText;
 
-        private const string UsernameKey = "Username";
-
         private void OnEnable() => SubscribeToEvents();
 
         private void OnDisable() => UnsubscribeToEvents();
@@ -81,7 +79,7 @@ namespace BattleRoyale.UI
 
         void CheckPlayerNameExists()
         {
-            string username = PlayerPrefs.GetString(UsernameKey).ToString();
+            string username = PlayerPrefs.GetString(GameManager.UsernameKey).ToString();
 
             if (string.IsNullOrEmpty(username))
             {
@@ -119,7 +117,7 @@ namespace BattleRoyale.UI
                 return;
             }
 
-            PlayerPrefs.SetString(UsernameKey, username);
+            PlayerPrefs.SetString(GameManager.UsernameKey, username);
             PlayerPrefs.Save();
 
             errorMessageText.text = string.Empty;

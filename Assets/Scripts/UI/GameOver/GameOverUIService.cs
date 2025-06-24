@@ -51,7 +51,7 @@ namespace BattleRoyale.UI
 
                 entry.SetupEntry(
                     player.Rank,
-                    player.ClientId.ToString()
+                    player.Username.ToString()
                 );
             }
         }

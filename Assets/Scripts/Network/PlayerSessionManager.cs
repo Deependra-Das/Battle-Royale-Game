@@ -21,20 +21,20 @@ public class PlayerSessionManager : NetworkBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void RegisterPlayer(ulong clientId)
+    public void RegisterPlayer(ulong clientId, string username)
     {
         if (IsServer)
         {
-            RegisterPlayerServerRpc(clientId);
+            RegisterPlayerServerRpc(clientId, username);
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void RegisterPlayerServerRpc(ulong clientId, ServerRpcParams rpcParams = default)
+    private void RegisterPlayerServerRpc(ulong clientId, string username, ServerRpcParams rpcParams = default)
     {
         if (!_sessionData.ContainsKey(clientId))
         {
-            _sessionData[clientId] = new PlayerSessionData(clientId);
+            _sessionData[clientId] = new PlayerSessionData(clientId, username);
         }
 
         SyncSessionDataToClient(clientId);
@@ -70,6 +70,16 @@ public class PlayerSessionManager : NetworkBehaviour
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void SetPlayerUsernameServerRpc(ulong clientId, string username)
+    {
+        if (_sessionData.TryGetValue(clientId, out var data))
+        {
+            data.SetUsername(username);
+            SyncPlayerUsernameClientRpc(clientId, username);
+        }
+    }
+
     [ClientRpc]
     private void SyncPlayerStatusClientRpc(ulong clientId, PlayerState gameplayState)
     {
@@ -98,13 +108,22 @@ public class PlayerSessionManager : NetworkBehaviour
     }
 
     [ClientRpc]
+    private void SyncPlayerUsernameClientRpc(ulong clientId, string username)
+    {
+        if (_sessionData.TryGetValue(clientId, out var data))
+        {
+            data.SetUsername(username);
+        }
+    }
+
+    [ClientRpc]
     private void SyncAllSessionDataClientRpc(PlayerSessionDataDTO[] dataArray, ClientRpcParams clientRpcParams = default)
     {
         foreach (var dto in dataArray)
         {
             if (!_sessionData.ContainsKey(dto.ClientId))
             {
-                _sessionData[dto.ClientId] = new PlayerSessionData(dto.ClientId);
+                _sessionData[dto.ClientId] = new PlayerSessionData(dto.ClientId, dto.Username);
             }
 
             _sessionData[dto.ClientId].SetGameplayStatus(dto.Status);

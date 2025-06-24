@@ -20,6 +20,8 @@ namespace BattleRoyale.Main
 
         private GameStateMachine _stateMachine;
 
+        public const string UsernameKey = "Username";
+
         protected override void Awake()
         {
             base.Awake();
