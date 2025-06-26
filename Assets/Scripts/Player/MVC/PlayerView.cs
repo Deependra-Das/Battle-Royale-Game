@@ -2,6 +2,7 @@ using BattleRoyale.Event;
 using BattleRoyale.Level;
 using BattleRoyale.Main;
 using BattleRoyale.Tile;
+using TMPro;
 using Unity.Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace BattleRoyale.Player
         [SerializeField] private GameObject _cinemachineCameraTarget;
         [SerializeField] private CharacterController _charController;
         [SerializeField] private Animator _animator;
+        [SerializeField] private TMP_Text _usernameText;
         private PlayerInput _playerInput;
 
         [SerializeField] private float _moveSpeed = 10.0f;
@@ -96,9 +98,10 @@ namespace BattleRoyale.Player
         {
             SubscribeToEvents();
             _playerInput = GetComponent<PlayerInput>();
-
+            
             if (IsOwner)
             {
+                _usernameText.text = PlayerPrefs.GetString(GameManager.UsernameKey).ToString();
                 _playerInput.enabled = true;
                 _playerInput.SwitchCurrentControlScheme(Keyboard.current, Mouse.current);
                 GameManager.Instance.Get<PlayerService>().SetupPlayerCam(PlayerCameraRoot.transform);
@@ -128,6 +131,7 @@ namespace BattleRoyale.Player
         {
             if (!IsOwner) return;
 
+            UsernameTextFaceToCam();
             GroundedCheck();
 
             if (_canMove)
@@ -344,6 +348,18 @@ namespace BattleRoyale.Player
                 GetComponent<CharacterController>().enabled = false;
                 transform.position = targetPosition;
                 GetComponent<CharacterController>().enabled = true;
+            }
+        }
+
+        void UsernameTextFaceToCam()
+        {
+            Vector3 directionToCamera = Camera.main.transform.position - _usernameText.transform.position;
+            directionToCamera.y = 0; 
+
+            if (directionToCamera != Vector3.zero)
+            {
+                Quaternion lookRotation = Quaternion.LookRotation(directionToCamera);
+                _usernameText.transform.rotation = lookRotation;
             }
         }
     }
