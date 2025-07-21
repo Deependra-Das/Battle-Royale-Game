@@ -1,0 +1,80 @@
+using BattleRoyale.Level;
+using BattleRoyale.Main;
+using BattleRoyale.Player;
+using BattleRoyale.Scene;
+using BattleRoyale.UI;
+using System.Collections.Generic;
+using Unity.Netcode;
+using UnityEngine;
+
+public class PlayerLobbyStateManager : NetworkBehaviour
+{
+    public static PlayerLobbyStateManager Instance { get; private set; }
+
+    private Dictionary<ulong, (string playerName, bool isReady)> _playerStateDictionary;
+
+
+    private void Awake()
+    {
+        Instance = this;
+        _playerStateDictionary = new Dictionary<ulong, (string, bool)>();
+    }
+
+    private void OnEnable()
+    {
+        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
+    }
+
+    private void OnDisable()
+    {
+        NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+    }
+
+    private void OnClientDisconnect(ulong clientId)
+    {
+        if (_playerStateDictionary.ContainsKey(clientId))
+        {
+            _playerStateDictionary.Remove(clientId);
+        }
+    }
+
+    public void SetPlayerReady()
+    {
+        SetPlayerReadyServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerReadyServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        ulong clientId = serverRpcParams.Receive.SenderClientId;
+
+        if (!_playerStateDictionary.ContainsKey(clientId))
+        {
+            _playerStateDictionary.Add(clientId, ("Player" + clientId, true));
+        }
+        else
+        {
+            _playerStateDictionary[clientId] = (_playerStateDictionary[clientId].playerName, true);
+        }
+
+        bool allClientsReady = true;
+
+        foreach (ulong clientID in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            if (!_playerStateDictionary.ContainsKey(clientID) || !_playerStateDictionary[clientID].isReady)
+            {
+                allClientsReady = false;
+                break;
+            }
+        }
+
+        if (allClientsReady)
+        {
+            SceneLoader.Instance.LoadScene(SceneName.GameScene, true);
+        }
+    }
+}

@@ -1,4 +1,7 @@
 using BattleRoyale.Main;
+using BattleRoyale.Scene;
+using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,12 +30,13 @@ namespace BattleRoyale.UI
 
         private void OnReadyButtonClicked()
         {
-            PlayerStateManager.Instance.SetPlayerReady();
+            PlayerLobbyStateManager.Instance.SetPlayerReady();
         }
 
         private void OnBackToStartMenuButtonClicked()
         {
-         
+            NetworkManager.Singleton.Shutdown();
+            SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
 
         public void EnableView()
