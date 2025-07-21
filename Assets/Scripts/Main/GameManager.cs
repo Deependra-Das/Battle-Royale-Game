@@ -7,6 +7,7 @@ using BattleRoyale.Player;
 using BattleRoyale.Event;
 using BattleRoyale.UI;
 using BattleRoyale.Scene;
+using BattleRoyale.Network;
 using Unity.Netcode;
 
 namespace BattleRoyale.Main

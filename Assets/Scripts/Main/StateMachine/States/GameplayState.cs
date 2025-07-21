@@ -2,6 +2,7 @@ using BattleRoyale.Event;
 using BattleRoyale.Level;
 using BattleRoyale.Player;
 using BattleRoyale.Scene;
+using BattleRoyale.Network;
 using BattleRoyale.UI;
 using System.Collections.Generic;
 using Unity.Netcode;

@@ -1,5 +1,6 @@
 using BattleRoyale.Main;
 using BattleRoyale.Scene;
+using BattleRoyale.Network;
 using UnityEngine;
 using UnityEngine.UI;
 

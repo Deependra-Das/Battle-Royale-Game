@@ -1,6 +1,7 @@
 using BattleRoyale.Event;
 using BattleRoyale.Level;
 using BattleRoyale.Main;
+using BattleRoyale.Network;
 using System.Collections;
 using System.Globalization;
 using Unity.Netcode;

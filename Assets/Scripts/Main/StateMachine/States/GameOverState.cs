@@ -1,5 +1,6 @@
 using BattleRoyale.Event;
 using BattleRoyale.Scene;
+using BattleRoyale.Network;
 using BattleRoyale.UI;
 using Unity.Netcode;
 using UnityEngine;
