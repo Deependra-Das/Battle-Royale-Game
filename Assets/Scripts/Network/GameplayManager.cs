@@ -175,19 +175,19 @@ namespace BattleRoyale.Network
 
         private void OnClientDisconnected(ulong clientId)
         {
-            PlayerSessionData playerSessionData = PlayerSessionManager.Instance.GetPlayerSessionData(clientId);
-
-            if (playerSessionData != null)
+            if (NetworkManager.Singleton.IsServer)
             {
-                if (playerSessionData.PlayerStatus != PlayerState.Eliminated)
+                PlayerSessionData playerSessionData = PlayerSessionManager.Instance.GetPlayerSessionData(clientId);
+
+                if (playerSessionData != null)
                 {
-                    PlayerSessionManager.Instance.SetPlayerStatusServerRpc(clientId, PlayerState.Eliminated);
+                    PlayerSessionManager.Instance.SetPlayerConnectionStatusServerRpc(clientId, PlayerConnectionState.Disconnected);
                     HandlePlayerGameOver(clientId);
                 }
-            }
-            else
-            {
-                Debug.Log("Player does not have Session Data.");
+                else
+                {
+                    Debug.Log("Player does not have Session Data.");
+                }
             }
         }
 
@@ -196,6 +196,7 @@ namespace BattleRoyale.Network
             if (NetworkManager.Singleton.IsServer)
             {
                 PlayerSessionData playerSessionData = PlayerSessionManager.Instance.GetPlayerSessionData(clientId);
+
                 if (playerSessionData != null && playerSessionData.PlayerStatus != PlayerState.Eliminated)
                 {
                     int assignedRank = GetLowestRank();
@@ -204,10 +205,12 @@ namespace BattleRoyale.Network
 
                     int eliminatedCount = PlayerSessionManager.Instance.GetAllPlayerSessionData().Count(p => p.Value.PlayerStatus == PlayerState.Eliminated);
 
-                    NotifyClientEliminatedClientRpc(clientId);
-                    NotifyClientOfRankClientRpc(clientId, assignedRank);
-
-                    UpdateEliminationCountClientRpc(eliminatedCount);
+                    if(playerSessionData.ConnectionStatus != PlayerConnectionState.Disconnected)
+                    {
+                        NotifyClientEliminatedClientRpc(clientId);
+                        NotifyClientOfRankClientRpc(clientId, assignedRank);
+                        UpdateEliminationCountClientRpc(eliminatedCount);
+                    }
 
                     CheckEndGameCondition();
                 }
