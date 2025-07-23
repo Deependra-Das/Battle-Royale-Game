@@ -13,5 +13,7 @@ namespace BattleRoyale.Event
         PlayerEliminated,
         PlayerAssignedRank,
         UpdateEliminationCount,
+        HostDisconnected,
+        ClientDisconnected,
     }
 }

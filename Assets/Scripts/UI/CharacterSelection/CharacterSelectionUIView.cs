@@ -1,3 +1,4 @@
+using BattleRoyale.Event;
 using BattleRoyale.Main;
 using BattleRoyale.Scene;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ namespace BattleRoyale.UI
     {
         [SerializeField] private Button _readyButtonPrefab;
         [SerializeField] private Button _backToStartMenuButtonPrefab;
+        [SerializeField] private GameObject _hostDisconnectedPanel;
+        [SerializeField] private GameObject _clientDisconnectedPanel;
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -20,13 +23,20 @@ namespace BattleRoyale.UI
         {
             _readyButtonPrefab.onClick.AddListener(OnReadyButtonClicked);
             _backToStartMenuButtonPrefab.onClick.AddListener(OnBackToStartMenuButtonClicked);
+            EventBusManager.Instance.Subscribe(EventName.HostDisconnected, HandleHostDisconnectCharSelectionUI);
         }
 
         private void UnsubscribeToEvents()
         {
             _readyButtonPrefab.onClick.RemoveListener(OnReadyButtonClicked);
             _backToStartMenuButtonPrefab.onClick.RemoveListener(OnBackToStartMenuButtonClicked);
+            EventBusManager.Instance.Unsubscribe(EventName.HostDisconnected, HandleHostDisconnectCharSelectionUI);
         }
+        private void Start()
+        {
+            _hostDisconnectedPanel.SetActive(false);
+        }
+
 
         private void OnReadyButtonClicked()
         {
@@ -47,6 +57,11 @@ namespace BattleRoyale.UI
         public void DisableView()
         {
             gameObject.SetActive(false);
+        }
+
+        private void HandleHostDisconnectCharSelectionUI(object[] parameters)
+        {
+            _hostDisconnectedPanel.SetActive(true);
         }
     }
 }

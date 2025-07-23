@@ -26,6 +26,7 @@ namespace BattleRoyale.Network
             NetworkManager.Singleton.ConnectionApprovalCallback += NetworkManager_ConnectionApprovalCallback;
             NetworkManager.Singleton.StartHost();
             PlayerSessionManager.Instance.RegisterPlayer(NetworkManager.Singleton.LocalClientId, PlayerUsername);
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnHostDisconnect;
         }
 
         private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
@@ -44,10 +45,12 @@ namespace BattleRoyale.Network
             RequestPlayerRegistrationServerRpc(clientId, PlayerUsername);
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void RequestPlayerRegistrationServerRpc(ulong clientId, string username)
+        private void OnHostDisconnect(ulong clientId)
         {
-            PlayerSessionManager.Instance.RegisterPlayer(clientId, username);
+            if (!NetworkManager.Singleton.IsServer && NetworkManager.Singleton.LocalClientId == clientId)
+            {
+                EventBusManager.Instance.RaiseNoParams(EventName.HostDisconnected);
+            }
         }
 
         public void StartCountdown(float duration)
@@ -74,12 +77,6 @@ namespace BattleRoyale.Network
             LoadCharacterSelectionScene();
         }
 
-        [ClientRpc]
-        private void UpdateGameOverCountdownClientRpc(int secondsRemaining)
-        {
-            EventBusManager.Instance.Raise(EventName.GameOverCountdownTick, secondsRemaining);
-        }
-
         private void ResetPlayerSessionData()
         {
             if (IsServer)
@@ -92,5 +89,18 @@ namespace BattleRoyale.Network
         {
             SceneLoader.Instance.LoadScene(SceneName.CharacterSelectionScene, true);
         }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void RequestPlayerRegistrationServerRpc(ulong clientId, string username)
+        {
+            PlayerSessionManager.Instance.RegisterPlayer(clientId, username);
+        }
+
+        [ClientRpc]
+        private void UpdateGameOverCountdownClientRpc(int secondsRemaining)
+        {
+            EventBusManager.Instance.Raise(EventName.GameOverCountdownTick, secondsRemaining);
+        }
+
     }
 }
