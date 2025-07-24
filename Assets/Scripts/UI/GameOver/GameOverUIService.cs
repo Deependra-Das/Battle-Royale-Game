@@ -41,7 +41,6 @@ namespace BattleRoyale.UI
         public void PopulateScoreboard()
         {
             var allPlayerData = PlayerSessionManager.Instance.GetAllPlayerSessionData();
-            Debug.Log(allPlayerData.Count);
 
             List<PlayerSessionData> sortedPlayers = new List<PlayerSessionData>(allPlayerData.Values);
             sortedPlayers.Sort((a, b) => a.Rank.CompareTo(b.Rank));

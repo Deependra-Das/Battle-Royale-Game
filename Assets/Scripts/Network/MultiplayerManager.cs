@@ -38,6 +38,7 @@ namespace BattleRoyale.Network
         {
             NetworkManager.Singleton.StartClient();
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnHostDisconnect;
         }
 
         private void OnClientConnected(ulong clientId)
@@ -49,8 +50,24 @@ namespace BattleRoyale.Network
         {
             if (!NetworkManager.Singleton.IsServer && NetworkManager.Singleton.LocalClientId == clientId)
             {
+                Debug.Log("On Client : Host Disconnected");
                 EventBusManager.Instance.RaiseNoParams(EventName.HostDisconnected);
+                //HandleHostDisconnect();
+                NetworkManager.Singleton.Shutdown();
+                StartCoroutine(DelayedReturnToStartScreen(5f));
             }
+        }
+
+
+        private void HandleHostDisconnect()
+        {
+
+        }
+
+        private IEnumerator DelayedReturnToStartScreen(float duration)
+        {
+            yield return new WaitForSeconds(duration);
+            SceneLoader.Instance.LoadScene(SceneName.LobbyScene, true);
         }
 
         public void StartCountdown(float duration)
@@ -101,6 +118,6 @@ namespace BattleRoyale.Network
         {
             EventBusManager.Instance.Raise(EventName.GameOverCountdownTick, secondsRemaining);
         }
-
     }
+
 }
