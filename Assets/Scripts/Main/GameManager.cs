@@ -1,14 +1,15 @@
+using BattleRoyale.CharacterSelection;
+using BattleRoyale.Event;
+using BattleRoyale.Level;
+using BattleRoyale.Network;
+using BattleRoyale.Player;
+using BattleRoyale.Scene;
+using BattleRoyale.UI;
+using BattleRoyale.Utilities;
+using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
-using BattleRoyale.Utilities;
-using BattleRoyale.Level;
-using BattleRoyale.Player;
-using BattleRoyale.Event;
-using BattleRoyale.UI;
-using BattleRoyale.Scene;
-using BattleRoyale.Network;
-using Unity.Netcode;
 
 namespace BattleRoyale.Main
 {
@@ -18,6 +19,7 @@ namespace BattleRoyale.Main
         [SerializeField] public PlayerScriptableObject player_SO;
         [SerializeField] public UIScriptableObject ui_SO;
         [SerializeField] public NetworkScriptableObject network_SO;
+        [SerializeField] public CharacterScriptableObject character_SO;
 
         private GameStateMachine _stateMachine;
 
