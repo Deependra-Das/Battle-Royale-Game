@@ -14,11 +14,13 @@ namespace BattleRoyale.Network
         public static MultiplayerManager Instance { get; private set; }
         public string PlayerUsername { get; private set; }
 
+
         private void Awake()
         {
             Instance = this;
-            PlayerUsername = PlayerPrefs.GetString(GameManager.UsernameKey).ToString();
             DontDestroyOnLoad(gameObject);
+
+            PlayerUsername = PlayerPrefs.GetString(GameManager.UsernameKey).ToString();
         }
 
         public void StartHost()
@@ -26,7 +28,7 @@ namespace BattleRoyale.Network
             NetworkManager.Singleton.ConnectionApprovalCallback += NetworkManager_ConnectionApprovalCallback;
             NetworkManager.Singleton.StartHost();
             PlayerSessionManager.Instance.RegisterPlayer(NetworkManager.Singleton.LocalClientId, PlayerUsername);
-            NetworkManager.Singleton.OnClientDisconnectCallback += OnHostDisconnect;
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientHostDisconnected;
         }
 
         private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
@@ -38,30 +40,28 @@ namespace BattleRoyale.Network
         {
             NetworkManager.Singleton.StartClient();
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-            NetworkManager.Singleton.OnClientDisconnectCallback += OnHostDisconnect;
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientHostDisconnected;
         }
 
         private void OnClientConnected(ulong clientId)
         {
             RequestPlayerRegistrationServerRpc(clientId, PlayerUsername);
+            EventBusManager.Instance.Raise(EventName.ClientConnected, clientId);
         }
 
-        private void OnHostDisconnect(ulong clientId)
+        private void OnClientHostDisconnected(ulong clientId)
         {
             if (!NetworkManager.Singleton.IsServer && NetworkManager.Singleton.LocalClientId == clientId)
             {
                 Debug.Log("On Client : Host Disconnected");
                 EventBusManager.Instance.RaiseNoParams(EventName.HostDisconnected);
-                //HandleHostDisconnect();
                 NetworkManager.Singleton.Shutdown();
                 StartCoroutine(DelayedReturnToStartScreen(5f));
             }
-        }
-
-
-        private void HandleHostDisconnect()
-        {
-
+            else if(NetworkManager.Singleton.IsServer)
+            {
+                //EventBusManager.Instance.Raise(EventName.ClientDisconnected, clientId);
+            }
         }
 
         private IEnumerator DelayedReturnToStartScreen(float duration)

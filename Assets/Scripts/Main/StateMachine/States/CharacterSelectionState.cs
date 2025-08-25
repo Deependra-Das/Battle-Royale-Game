@@ -2,6 +2,7 @@ using BattleRoyale.CharacterSelection;
 using BattleRoyale.Event;
 using BattleRoyale.Scene;
 using BattleRoyale.UI;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace BattleRoyale.Main
@@ -16,13 +17,13 @@ namespace BattleRoyale.Main
             RegisterCharacterSelectionServices();
             _characterSelectionUIObj = GameManager.Instance.Get<CharacterSelectionUIService>();
             _characterSpawnerObj = GameManager.Instance.Get<CharacterSpawnService>();
-            _characterSpawnerObj.SpawnCharacters();
             _characterSelectionUIObj.ShowUI();
         }
 
         public void Exit()
         {
             _characterSelectionUIObj.HideUI();
+            _characterSpawnerObj.DespawnAllSpawnedCharacters();
             Cleanup();
             UnegisterCharacterSelectionServices();
         }

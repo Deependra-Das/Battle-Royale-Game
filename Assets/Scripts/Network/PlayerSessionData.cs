@@ -10,12 +10,14 @@ namespace BattleRoyale.Network
         private PlayerConnectionState _connectionStatus = PlayerConnectionState.Connected;
         private int _rank = -1;
         private string _username = "Player";
+        private bool _isCharacterVisibleInLobby = false;
 
         public ulong ClientId => _clientId;
         public PlayerState PlayerStatus => _playerStatus;
         public PlayerConnectionState ConnectionStatus => _connectionStatus;
         public int Rank => _rank;
         public string Username => _username;
+        public bool IsCharacterVisibleInLobby => _isCharacterVisibleInLobby;
 
         public PlayerSessionData(ulong clientId, string username)
         {
@@ -43,6 +45,11 @@ namespace BattleRoyale.Network
             _connectionStatus = status;
         }
 
+        public void SetCharacterVisibilityInLobby(bool isVisible)
+        {
+            _isCharacterVisibleInLobby = isVisible;
+        }
+
         public void Reset()
         {
             _playerStatus = PlayerState.Waiting;
@@ -56,6 +63,7 @@ namespace BattleRoyale.Network
             serializer.SerializeValue(ref _connectionStatus);
             serializer.SerializeValue(ref _rank);
             serializer.SerializeValue(ref _username);
+            serializer.SerializeValue(ref _isCharacterVisibleInLobby);
         }
     }
 
