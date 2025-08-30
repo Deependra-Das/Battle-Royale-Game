@@ -1,3 +1,4 @@
+using BattleRoyale.CharacterSelection;
 using BattleRoyale.Event;
 using BattleRoyale.Main;
 using BattleRoyale.Scene;
@@ -28,6 +29,7 @@ namespace BattleRoyale.Network
             NetworkManager.Singleton.ConnectionApprovalCallback += NetworkManager_ConnectionApprovalCallback;
             NetworkManager.Singleton.StartHost();
             PlayerSessionManager.Instance.RegisterPlayer(NetworkManager.Singleton.LocalClientId, PlayerUsername);
+            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientHostDisconnected;
         }
 
@@ -46,7 +48,11 @@ namespace BattleRoyale.Network
         private void OnClientConnected(ulong clientId)
         {
             RequestPlayerRegistrationServerRpc(clientId, PlayerUsername);
-            EventBusManager.Instance.Raise(EventName.ClientConnected, clientId);
+
+            if (NetworkManager.Singleton.IsServer)
+            {
+                CharacterManager.Instance.HandleLateJoin(clientId);
+            }
         }
 
         private void OnClientHostDisconnected(ulong clientId)
@@ -60,7 +66,8 @@ namespace BattleRoyale.Network
             }
             else if(NetworkManager.Singleton.IsServer)
             {
-                //EventBusManager.Instance.Raise(EventName.ClientDisconnected, clientId);
+
+                CharacterManager.Instance.DespawnCharacterForDisconnectedClient(clientId);
             }
         }
 

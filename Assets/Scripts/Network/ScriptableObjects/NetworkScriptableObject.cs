@@ -1,3 +1,4 @@
+using BattleRoyale.CharacterSelection;
 using UnityEngine;
 
 namespace BattleRoyale.Network
@@ -5,8 +6,9 @@ namespace BattleRoyale.Network
     [CreateAssetMenu(fileName = "NetworkScriptableObject", menuName = "ScriptableObjects/NetworkScriptableObject")]
     public class NetworkScriptableObject : ScriptableObject
     {
-        public GameplayManager gameplayManagerPrefab;
         public PlayerSessionManager playerSessionManagerPrefab;
-        public TileRegistry tileRegistryPrefab;
+        public CharacterManager characterManagerPrefab;
+        public GameplayManager gameplayManagerPrefab;       
+        public TileRegistry tileRegistryPrefab; 
     }
 }
