@@ -1,8 +1,10 @@
-using BattleRoyale.Event;
 using BattleRoyale.Main;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace BattleRoyale.CharacterSelection
 {
@@ -11,8 +13,7 @@ namespace BattleRoyale.CharacterSelection
         public static CharacterManager Instance { get; private set; }
 
         private CharacterScriptableObject _characterSpawnData;
-        private Dictionary<ulong, GameObject> _clientCharacterMapping;
-        private int numberOfClonesSpawned = 0;
+        private List<ClientCharacterMapping> _clientCharacterMapList;
 
         private void Awake()
         {
@@ -23,41 +24,37 @@ namespace BattleRoyale.CharacterSelection
             }
 
             Instance = this;
-
             _characterSpawnData = GameManager.Instance.character_SO;
-            _clientCharacterMapping = new Dictionary<ulong, GameObject>();
-
+            _clientCharacterMapList = new List<ClientCharacterMapping>();
         }
-
 
         public override void OnNetworkSpawn()
         {
             if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
             {
-                SpawnCharacterForConenctedClient(NetworkManager.Singleton.LocalClientId);
+                SpawnCharacterForConnectedClient(NetworkManager.Singleton.LocalClientId);
             }
         }
 
-        public void SpawnCharacterForConenctedClient(ulong clientID)
+        public void SpawnCharacterForConnectedClient(ulong clientID)
         {
             if (!IsServer) return;
 
-            if (!_clientCharacterMapping.ContainsKey(clientID))
+            if (_clientCharacterMapList.All(x => x.clientID != clientID))
             {
                 GameObject characterClone = Instantiate(
-                _characterSpawnData.PlayerCharacterPrefab,
-                _characterSpawnData.characterTransformList[numberOfClonesSpawned].characterPosition,
-                Quaternion.Euler(_characterSpawnData.characterTransformList[numberOfClonesSpawned].characterRotation));
+                    _characterSpawnData.PlayerCharacterPrefab,
+                    _characterSpawnData.characterTransformList[_clientCharacterMapList.Count].characterPosition,
+                    Quaternion.Euler(_characterSpawnData.characterTransformList[_clientCharacterMapList.Count].characterRotation)
+                );
 
-                characterClone.name = $"PlayerCharacter_{numberOfClonesSpawned + 1}";
-                characterClone.GetComponent<CharacterSelectPlayer>().Initialize(numberOfClonesSpawned);
+                characterClone.name = $"PlayerCharacter_{clientID}";
+                characterClone.GetComponent<CharacterSelectPlayer>().Initialize(_clientCharacterMapList.Count);
 
                 NetworkObject networkObject = characterClone.GetComponent<NetworkObject>();
                 networkObject.Spawn();
-                networkObject.ChangeOwnership(NetworkManager.Singleton.LocalClientId);
 
-                _clientCharacterMapping[clientID] = characterClone;
-                numberOfClonesSpawned++;
+                _clientCharacterMapList.Add(new ClientCharacterMapping(clientID, characterClone));
             }
         }
 
@@ -65,37 +62,46 @@ namespace BattleRoyale.CharacterSelection
         {
             if (!IsServer) return;
 
-            SpawnCharacterForConenctedClient((ulong)clientID);
-            
+            SpawnCharacterForConnectedClient(clientID);
         }
 
         public void DespawnCharacterForDisconnectedClient(ulong clientID)
         {
-            if (_clientCharacterMapping.TryGetValue(clientID, out var character))
+            var entry = _clientCharacterMapList.FirstOrDefault(x => x.clientID == clientID);
+
+            if (entry != null)
             {
-                if (character != null)
-                {
-                    NetworkObject networkObject = character.GetComponent<NetworkObject>();
-                    networkObject.Despawn();
-                    Destroy(character);
-                    _clientCharacterMapping.Remove(clientID);
-                    numberOfClonesSpawned--;
-                }
-                else
-                {
-                    Debug.LogWarning($"Character for client {clientID} is already destroyed or null.");
-                }
+                var character = entry.character;
+                int clientIndex = _clientCharacterMapList.IndexOf(entry);
+                NetworkObject networkObject = character.GetComponent<NetworkObject>();
+                networkObject.Despawn();
+                Destroy(character);
+
+                _clientCharacterMapList.Remove(entry);
+
+                AdjustSpawnPositions(clientIndex);
             }
-            else
+        }
+
+        private void AdjustSpawnPositions(int clientIndex)
+        {
+            if (_clientCharacterMapList.Count > 1)
             {
-                Debug.LogWarning($"No character found for client {clientID}.");
+                for (int i = clientIndex; i < _clientCharacterMapList.Count; i++)
+                {
+                    _clientCharacterMapList[i].character.transform.position =
+                          _characterSpawnData.characterTransformList[i].characterPosition;
+                    _clientCharacterMapList[i].character.transform.rotation =
+                     Quaternion.Euler(_characterSpawnData.characterTransformList[i].characterRotation);
+                }
             }
         }
 
         public void DespawnAllSpawnedCharacters()
         {
-            foreach (var character in _clientCharacterMapping.Values)
+            foreach (var entry in _clientCharacterMapList)
             {
+                var character = entry.character;
                 if (character != null && character.activeSelf)
                 {
                     NetworkObject networkObject = character.GetComponent<NetworkObject>();
@@ -104,10 +110,7 @@ namespace BattleRoyale.CharacterSelection
                 }
             }
 
-            _clientCharacterMapping.Clear();
-            numberOfClonesSpawned = 0;
+            _clientCharacterMapList.Clear();
         }
-
-
     }
 }
