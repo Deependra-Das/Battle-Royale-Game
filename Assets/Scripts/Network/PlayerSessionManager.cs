@@ -1,7 +1,8 @@
-using Unity.Netcode;
-using UnityEngine;
+using BattleRoyale.CharacterSelection;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
+using UnityEngine;
 
 namespace BattleRoyale.Network
 {
@@ -182,6 +183,25 @@ namespace BattleRoyale.Network
             if (IsServer)
             {
                 _sessionData.Clear();
+            }
+        }
+
+        public void DeregisterPlayer(ulong clientId)
+        {
+            if (IsServer && _sessionData.ContainsKey(clientId))
+            {
+                _sessionData.Remove(clientId);
+                RemovePlayerSessionClientRpc(clientId);
+            }
+        }
+
+        [ClientRpc]
+        private void RemovePlayerSessionClientRpc(ulong clientId)
+        {
+            if (_sessionData.TryGetValue(clientId, out var data))
+            {
+                _sessionData.Remove(clientId);
+                Debug.Log(_sessionData.Count);
             }
         }
     }

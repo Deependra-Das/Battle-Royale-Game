@@ -66,8 +66,8 @@ namespace BattleRoyale.Network
             }
             else if(NetworkManager.Singleton.IsServer)
             {
-
                 CharacterManager.Instance.DespawnCharacterForDisconnectedClient(clientId);
+
             }
         }
 
@@ -118,6 +118,12 @@ namespace BattleRoyale.Network
         public void RequestPlayerRegistrationServerRpc(ulong clientId, string username)
         {
             PlayerSessionManager.Instance.RegisterPlayer(clientId, username);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void RequestPlayerDeregistrationServerRpc(ulong clientId)
+        {
+            PlayerSessionManager.Instance.DeregisterPlayer(clientId);
         }
 
         [ClientRpc]
