@@ -67,7 +67,7 @@ namespace BattleRoyale.Network
             else if(NetworkManager.Singleton.IsServer)
             {
                 CharacterManager.Instance.DespawnCharacterForDisconnectedClient(clientId);
-
+                RequestPlayerDeregistrationServerRpc(clientId);
             }
         }
 

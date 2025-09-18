@@ -201,7 +201,6 @@ namespace BattleRoyale.Network
             if (_sessionData.TryGetValue(clientId, out var data))
             {
                 _sessionData.Remove(clientId);
-                Debug.Log(_sessionData.Count);
             }
         }
     }
