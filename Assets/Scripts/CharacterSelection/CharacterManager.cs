@@ -1,4 +1,5 @@
 using BattleRoyale.Main;
+using BattleRoyale.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +50,7 @@ namespace BattleRoyale.CharacterSelection
                 );
 
                 characterClone.name = $"PlayerCharacter_{clientID}";
-                characterClone.GetComponent<CharacterSelectPlayer>().Initialize(_clientCharacterMapList.Count);
+                characterClone.GetComponent<CharacterSelectPlayer>().Initialize(_clientCharacterMapList.Count, PlayerSessionManager.Instance.GetPlayerSessionData(clientID).Username);
 
                 NetworkObject networkObject = characterClone.GetComponent<NetworkObject>();
                 networkObject.Spawn();
