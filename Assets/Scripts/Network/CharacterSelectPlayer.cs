@@ -1,45 +1,68 @@
 using BattleRoyale.Event;
 using BattleRoyale.Network;
+using System;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using Unity.Collections;
 
-public class CharacterSelectPlayer : MonoBehaviour
+namespace BattleRoyale.CharacterSelection
 {
-    [SerializeField] private TMP_Text _usernameText;
-    private int _playerIndex = -1;
+    public class CharacterSelectPlayer : NetworkBehaviour
+    { 
+        [SerializeField] private TMP_Text _usernameText;
+        [SerializeField] private GameObject _readyStatusLabel;
+        [SerializeField] private GameObject _notReadyStatusLabel;
 
-    private void OnEnable() => SubscribeToEvents();
+        private NetworkVariable<FixedString128Bytes> _usernameNetworkText = new NetworkVariable<FixedString128Bytes>("Player");
 
-    private void OnDisable() => UnsubscribeToEvents();
+        private int _playerIndex = -1;
 
-    private void SubscribeToEvents()
-    {
-        
+        private void OnEnable() => SubscribeToEvents();
+        private void OnDisable() => UnsubscribeToEvents();
+
+        private void SubscribeToEvents()
+        {
+            _usernameNetworkText.OnValueChanged += UpdateCharacterUsername;
+        }
+
+        private void UnsubscribeToEvents()
+        {
+            _usernameNetworkText.OnValueChanged -= UpdateCharacterUsername;
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            _usernameText.text = _usernameNetworkText.Value.ToString();
+        }
+
+        public void Initialize(int assignedClientIndex, string usernameText)
+        {
+            if (IsServer)
+            {
+                SetPlayerIndexForCharacter(assignedClientIndex);
+                SetUsernameServerRpc(usernameText);
+            }
+        }
+
+        public void SetPlayerIndexForCharacter(int assignedClientIndex)
+        {
+            _playerIndex = assignedClientIndex;
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SetUsernameServerRpc(string newUsername)
+        {
+            _usernameNetworkText.Value = newUsername;
+        }
+
+        private void UpdateCharacterUsername(FixedString128Bytes oldValue, FixedString128Bytes newValue)
+        {
+            _usernameText.text = _usernameNetworkText.Value.ToString();
+        }
+
+
+        private void ShowCharacter() => this.gameObject.SetActive(true);
+        private void HideCharacter() => this.gameObject.SetActive(false);
     }
-
-    private void UnsubscribeToEvents()
-    {
-
-    }
-
-    public void Initialize(int assignedClientIndex, string usernameText)
-    {
-        SetPlayerIndexForCharacter(assignedClientIndex);
-        SetUsernameForCharacter(usernameText);
-    }
-
-    public void SetPlayerIndexForCharacter(int assignedClientIndex)
-    {
-        _playerIndex = assignedClientIndex;
-    }
-
-    public void SetUsernameForCharacter(string usernameText)
-    {
-        _usernameText.text = usernameText;
-    }
-
-    private void ShowCharacter() => this.gameObject.SetActive(true);
-
-    private void HideCharacter() => this.gameObject.SetActive(false);
 }

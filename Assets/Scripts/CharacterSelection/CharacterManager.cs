@@ -1,11 +1,9 @@
 using BattleRoyale.Main;
 using BattleRoyale.Network;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace BattleRoyale.CharacterSelection
 {
@@ -50,10 +48,9 @@ namespace BattleRoyale.CharacterSelection
                 );
 
                 characterClone.name = $"PlayerCharacter_{clientID}";
-                characterClone.GetComponent<CharacterSelectPlayer>().Initialize(_clientCharacterMapList.Count, PlayerSessionManager.Instance.GetPlayerSessionData(clientID).Username);
-
                 NetworkObject networkObject = characterClone.GetComponent<NetworkObject>();
                 networkObject.Spawn();
+                characterClone.GetComponent<CharacterSelectPlayer>().Initialize(_clientCharacterMapList.Count, PlayerSessionManager.Instance.GetPlayerSessionData(clientID).Username);
 
                 _clientCharacterMapList.Add(new ClientCharacterMapping(clientID, characterClone));
             }
@@ -113,5 +110,16 @@ namespace BattleRoyale.CharacterSelection
 
             _clientCharacterMapList.Clear();
         }
+
+        public void SetCharacterStatus(ulong clientID, bool isReady)
+        {
+            var entry = _clientCharacterMapList.FirstOrDefault(x => x.clientID == clientID);
+
+            if (entry != null)
+            {
+                //entry.character.GetComponent<CharacterSelectPlayer>().SetCharacterReady(isReady);
+            }
+        }
+
     }
 }

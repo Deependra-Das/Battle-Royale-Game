@@ -162,6 +162,15 @@ namespace BattleRoyale.Network
 
         public Dictionary<ulong, PlayerSessionData> GetAllPlayerSessionData()
         {
+
+            foreach (KeyValuePair<ulong, PlayerSessionData> entry in _sessionData)
+            {
+                ulong clientId = entry.Key;
+                PlayerSessionData playerData = entry.Value;
+
+                Debug.Log($"Client ID: {clientId}, Username: {playerData.Username}");
+            }
+
             return new Dictionary<ulong, PlayerSessionData>(_sessionData);
         }
 

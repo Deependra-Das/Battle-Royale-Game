@@ -157,7 +157,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &536045573700831683
 RectTransform:
   m_ObjectHideFlags: 0
@@ -363,9 +363,9 @@ GameObject:
   - component: {fileID: 8902345545029434891}
   - component: {fileID: 8552776308284127475}
   - component: {fileID: 4786529361321621432}
-  - component: {fileID: 2525444339796671105}
   - component: {fileID: -6963528833521497263}
   - component: {fileID: 6535443138575188476}
+  - component: {fileID: 849749406213238007}
   m_Layer: 0
   m_Name: PlayerCharacterPrefab
   m_TagString: Player
@@ -438,19 +438,6 @@ CharacterController:
   m_SkinWidth: 0.02
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0.93, z: 0}
---- !u!114 &2525444339796671105
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3216621522419193324}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68fd2a2896ddf7348812a30de94a782b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _usernameText: {fileID: 4222013234456696619}
 --- !u!114 &-6963528833521497263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -522,6 +509,22 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &849749406213238007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3216621522419193324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68fd2a2896ddf7348812a30de94a782b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  _usernameText: {fileID: 4222013234456696619}
+  _readyStatusLabel: {fileID: 1447977377440716535}
+  _notReadyStatusLabel: {fileID: 6526974543313536513}
 --- !u!1 &3221754992728452529
 GameObject:
   m_ObjectHideFlags: 0

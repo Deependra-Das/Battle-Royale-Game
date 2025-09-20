@@ -15,13 +15,13 @@ namespace BattleRoyale.Network
         public static MultiplayerManager Instance { get; private set; }
         public string PlayerUsername { get; private set; }
 
-
         private void Awake()
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
             PlayerUsername = PlayerPrefs.GetString(GameManager.UsernameKey).ToString();
+            Debug.Log(PlayerUsername + "--" + PlayerPrefs.GetString(GameManager.UsernameKey).ToString());
         }
 
         public void StartHost()
@@ -47,11 +47,10 @@ namespace BattleRoyale.Network
 
         private void OnClientConnected(ulong clientId)
         {
-            RequestPlayerRegistrationServerRpc(clientId, PlayerUsername);
-
-            if (NetworkManager.Singleton.IsServer)
+            if (NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsHost)
             {
-                CharacterManager.Instance.HandleLateJoin(clientId);
+                Debug.Log(PlayerUsername+"--"+PlayerPrefs.GetString(GameManager.UsernameKey).ToString());
+                RequestPlayerRegistrationServerRpc(clientId, PlayerUsername);
             }
         }
 
@@ -118,6 +117,18 @@ namespace BattleRoyale.Network
         public void RequestPlayerRegistrationServerRpc(ulong clientId, string username)
         {
             PlayerSessionManager.Instance.RegisterPlayer(clientId, username);
+
+            PlayerSessionManager.Instance.GetAllPlayerSessionData();
+            ConfirmPlayerRegistrationClientRpc(clientId);
+        }
+
+        [ClientRpc]
+        private void ConfirmPlayerRegistrationClientRpc(ulong clientId)
+        {
+            if (NetworkManager.Singleton.IsServer)
+            {
+                CharacterManager.Instance.HandleLateJoin(clientId);
+            }
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -132,5 +143,4 @@ namespace BattleRoyale.Network
             EventBusManager.Instance.Raise(EventName.GameOverCountdownTick, secondsRemaining);
         }
     }
-
 }
