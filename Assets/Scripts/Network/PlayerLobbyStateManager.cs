@@ -50,6 +50,11 @@ namespace BattleRoyale.Network
             SetPlayerReadyServerRpc();
         }
 
+        public void SetPlayerNotReady()
+        {
+            SetPlayerNotReadyServerRpc();
+        }
+
         [ServerRpc(RequireOwnership = false)]
         private void SetPlayerReadyServerRpc(ServerRpcParams serverRpcParams = default)
         {
@@ -81,6 +86,19 @@ namespace BattleRoyale.Network
             {
                 SceneLoader.Instance.LoadScene(SceneName.GameScene, true);
             }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void SetPlayerNotReadyServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            ulong clientId = serverRpcParams.Receive.SenderClientId;
+
+            if (_playerStateDictionary.ContainsKey(clientId))
+            {
+                _playerStateDictionary[clientId] = (_playerStateDictionary[clientId].playerName, false);
+            }
+
+            CharacterManager.Instance.SetCharacterStatus(clientId, false);
         }
     }
 }
