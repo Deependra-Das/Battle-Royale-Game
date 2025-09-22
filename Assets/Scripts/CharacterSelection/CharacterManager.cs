@@ -117,7 +117,7 @@ namespace BattleRoyale.CharacterSelection
 
             if (entry != null)
             {
-                //entry.character.GetComponent<CharacterSelectPlayer>().SetCharacterReady(isReady);
+                entry.character.GetComponent<CharacterSelectPlayer>().SetCharacterLobbyStatus(isReady);
             }
         }
 

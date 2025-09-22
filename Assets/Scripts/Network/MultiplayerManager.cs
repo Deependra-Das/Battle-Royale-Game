@@ -21,7 +21,6 @@ namespace BattleRoyale.Network
             DontDestroyOnLoad(gameObject);
 
             PlayerUsername = PlayerPrefs.GetString(GameManager.UsernameKey).ToString();
-            Debug.Log(PlayerUsername + "--" + PlayerPrefs.GetString(GameManager.UsernameKey).ToString());
         }
 
         public void StartHost()
@@ -49,7 +48,6 @@ namespace BattleRoyale.Network
         {
             if (NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsHost)
             {
-                Debug.Log(PlayerUsername+"--"+PlayerPrefs.GetString(GameManager.UsernameKey).ToString());
                 RequestPlayerRegistrationServerRpc(clientId, PlayerUsername);
             }
         }

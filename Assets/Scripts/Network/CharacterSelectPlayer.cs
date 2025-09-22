@@ -15,6 +15,7 @@ namespace BattleRoyale.CharacterSelection
         [SerializeField] private GameObject _notReadyStatusLabel;
 
         private NetworkVariable<FixedString128Bytes> _usernameNetworkText = new NetworkVariable<FixedString128Bytes>("Player");
+        private NetworkVariable<bool> _readyStatusNetworkBool = new NetworkVariable<bool>(false);
 
         private int _playerIndex = -1;
 
@@ -24,16 +25,20 @@ namespace BattleRoyale.CharacterSelection
         private void SubscribeToEvents()
         {
             _usernameNetworkText.OnValueChanged += UpdateCharacterUsername;
+            _readyStatusNetworkBool.OnValueChanged += UpdateCharacterLobbyStatus;
         }
 
         private void UnsubscribeToEvents()
         {
             _usernameNetworkText.OnValueChanged -= UpdateCharacterUsername;
+            _readyStatusNetworkBool.OnValueChanged -= UpdateCharacterLobbyStatus;
         }
 
         public override void OnNetworkSpawn()
         {
             _usernameText.text = _usernameNetworkText.Value.ToString();
+            _readyStatusLabel.SetActive(_readyStatusNetworkBool.Value);
+            _notReadyStatusLabel.SetActive(!_readyStatusNetworkBool.Value);
         }
 
         public void Initialize(int assignedClientIndex, string usernameText)
@@ -59,6 +64,23 @@ namespace BattleRoyale.CharacterSelection
         private void UpdateCharacterUsername(FixedString128Bytes oldValue, FixedString128Bytes newValue)
         {
             _usernameText.text = _usernameNetworkText.Value.ToString();
+        }
+
+        public void SetCharacterLobbyStatus(bool isReady)
+        {
+            SetCharacterReadyStatusServerRpc(isReady);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SetCharacterReadyStatusServerRpc(bool isReady)
+        {
+            _readyStatusNetworkBool.Value = isReady;
+        }
+
+        private void UpdateCharacterLobbyStatus(bool oldValue, bool newValue)
+        {
+            _readyStatusLabel.SetActive(_readyStatusNetworkBool.Value);
+            _notReadyStatusLabel.SetActive(!_readyStatusNetworkBool.Value);
         }
 
 
