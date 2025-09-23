@@ -16,6 +16,10 @@ namespace BattleRoyale.UI
         [SerializeField] private Button _backToStartMenuButtonPrefab;
         [SerializeField] private GameObject _hostDisconnectedPanel;
         [SerializeField] private GameObject _clientDisconnectedPanel;
+        [SerializeField] private Button _circleColorButtonPrefab;
+        [SerializeField] private GameObject _circleButtonContainer;
+        [SerializeField] private CharacterSkinColorInfo[] colorInfos;
+
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -39,9 +43,20 @@ namespace BattleRoyale.UI
 
         private void Start()
         {
+            CreateColorButtons();
             _hostDisconnectedPanel.SetActive(false);
             _notReadyButtonPrefab.gameObject.SetActive(false);
             _readyButtonPrefab.gameObject.SetActive(true);
+        }
+
+        void CreateColorButtons()
+        {
+            for (int i = 0; i < colorInfos.Length; i++)
+            {
+                GameObject button = Instantiate(_circleColorButtonPrefab.gameObject, _circleButtonContainer.transform);
+                CharacterSkinColorSelectView colorButtonSelectObj = button.GetComponent<CharacterSkinColorSelectView>();
+                colorButtonSelectObj.Initialize(colorInfos[i].colorName, colorInfos[i].colorHexValue);
+            }
         }
 
         private void OnReadyButtonClicked()
