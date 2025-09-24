@@ -121,5 +121,14 @@ namespace BattleRoyale.CharacterSelection
             }
         }
 
+        public void SetCharacterSkin(ulong clientID, int skinColorIndex)
+        {
+            var entry = _clientCharacterMapList.FirstOrDefault(x => x.clientID == clientID);
+
+            if (entry != null)
+            {
+                entry.character.GetComponent<CharacterSelectPlayer>().SetCharacterSkinMaterial(skinColorIndex);
+            }
+        }
     }
 }

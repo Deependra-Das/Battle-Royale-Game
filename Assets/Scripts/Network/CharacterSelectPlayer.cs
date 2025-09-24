@@ -52,7 +52,6 @@ namespace BattleRoyale.CharacterSelection
             {
                 SetPlayerIndexForCharacter(assignedClientIndex);
                 SetUsernameServerRpc(usernameText);
-                SetCharacterSkinMaterial(3);
             }
         }
 

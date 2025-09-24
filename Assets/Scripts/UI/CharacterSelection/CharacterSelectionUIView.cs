@@ -16,10 +16,11 @@ namespace BattleRoyale.UI
         [SerializeField] private Button _backToStartMenuButtonPrefab;
         [SerializeField] private GameObject _hostDisconnectedPanel;
         [SerializeField] private GameObject _clientDisconnectedPanel;
-        [SerializeField] private Button _circleColorButtonPrefab;
-        [SerializeField] private GameObject _circleButtonContainer;
+        [SerializeField] private Toggle _colorTogglePrefab;
+        [SerializeField] private Transform _colorToggleGroupTransform;
         [SerializeField] private CharacterSkinColorInfo[] colorInfos;
 
+        private List<Toggle> toggles = new List<Toggle>();
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -53,9 +54,23 @@ namespace BattleRoyale.UI
         {
             for (int i = 0; i < colorInfos.Length; i++)
             {
-                GameObject button = Instantiate(_circleColorButtonPrefab.gameObject, _circleButtonContainer.transform);
-                CharacterSkinColorSelectView colorButtonSelectObj = button.GetComponent<CharacterSkinColorSelectView>();
-                colorButtonSelectObj.Initialize(colorInfos[i].colorName, colorInfos[i].colorHexValue);
+                AddRadioButton(colorInfos[i].skincolorIndex, colorInfos[i].skincolorName, colorInfos[i].skincolorHexValue);
+            }
+        }
+
+        public void AddRadioButton(int togglecolorIndex, string toggleColorName, string toggleColor)
+        {
+            GameObject toggleObject = Instantiate(_colorTogglePrefab.gameObject, _colorToggleGroupTransform);
+            CharacterSkinColorSelectView colorButtonSelectObj = toggleObject.GetComponent<CharacterSkinColorSelectView>();
+            Toggle newToggle = toggleObject.GetComponent<Toggle>();
+            colorButtonSelectObj.Initialize(togglecolorIndex, toggleColorName, toggleColor);
+
+            toggles.Add(newToggle);
+            newToggle.onValueChanged.AddListener((isOn) => OnToggleChanged(newToggle, isOn, togglecolorIndex));
+
+            if (toggles.Count == 1)
+            {
+                newToggle.isOn = true;
             }
         }
 
@@ -77,6 +92,22 @@ namespace BattleRoyale.UI
         {
             NetworkManager.Singleton.Shutdown();
             SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
+        }
+
+        private void OnToggleChanged(Toggle changedToggle, bool isOn, int index)
+        {
+            if (isOn)
+            {
+                foreach (var toggle in toggles)
+                {
+                    if (toggle != changedToggle)
+                    {
+                        toggle.isOn = false;
+                    }
+                }
+
+                PlayerLobbyStateManager.Instance.ChangeCharacterSkin(index);
+            }
         }
 
         public void EnableView()

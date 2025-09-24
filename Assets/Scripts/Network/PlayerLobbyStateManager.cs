@@ -16,7 +16,6 @@ namespace BattleRoyale.Network
 
         private Dictionary<ulong, (string playerName, bool isReady)> _playerStateDictionary;
 
-
         private void Awake()
         {
             Instance = this;
@@ -99,6 +98,20 @@ namespace BattleRoyale.Network
             }
 
             CharacterManager.Instance.SetCharacterStatus(clientId, false);
+        }
+
+        public void ChangeCharacterSkin(int skinColorIndex)
+        {
+            ChangeCharacterSkinServerRpc(skinColorIndex);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void ChangeCharacterSkinServerRpc(int skinColorIndex, ServerRpcParams serverRpcParams = default)
+        {
+            ulong clientId = serverRpcParams.Receive.SenderClientId;
+            int colorIndex = skinColorIndex;
+
+            CharacterManager.Instance.SetCharacterSkin(clientId, colorIndex);                    
         }
     }
 }

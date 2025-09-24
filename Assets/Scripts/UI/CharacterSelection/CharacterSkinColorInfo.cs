@@ -5,7 +5,8 @@ namespace BattleRoyale.UI
     [System.Serializable]
     public class CharacterSkinColorInfo
     {
-        public string colorName;
-        public string colorHexValue;
+        public int skincolorIndex;
+        public string skincolorName;
+        public string skincolorHexValue;
     }
 }

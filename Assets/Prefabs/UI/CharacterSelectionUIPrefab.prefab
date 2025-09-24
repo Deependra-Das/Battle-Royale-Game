@@ -423,8 +423,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3604289040424620409}
   - component: {fileID: 7408247508526946805}
+  - component: {fileID: 7693989748571767169}
   m_Layer: 5
-  m_Name: ButtonContainer
+  m_Name: ColorToggleGroup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -447,7 +448,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -240, y: 0}
-  m_SizeDelta: {x: 400, y: 64}
+  m_SizeDelta: {x: 400, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7408247508526946805
 MonoBehaviour:
@@ -475,6 +476,19 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &7693989748571767169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074832388281341101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AllowSwitchOff: 0
 --- !u!1 &2632091237345663374
 GameObject:
   m_ObjectHideFlags: 0
@@ -709,17 +723,21 @@ MonoBehaviour:
   _backToStartMenuButtonPrefab: {fileID: 8544718788232552497}
   _hostDisconnectedPanel: {fileID: 4859855188937531025}
   _clientDisconnectedPanel: {fileID: 8350409034179647818}
-  _circleColorButtonPrefab: {fileID: 896866231482142811, guid: 8ff01f4b09ed20a4d9ba370f50c8b92f, type: 3}
-  _circleButtonContainer: {fileID: 2074832388281341101}
+  _colorTogglePrefab: {fileID: 3078891319102880724, guid: 5fbf44b6fb777d448991d7a193fbe1a8, type: 3}
+  _colorToggleGroupTransform: {fileID: 3604289040424620409}
   colorInfos:
-  - colorName: Red
-    colorHexValue: '#FF566B'
-  - colorName: Black
-    colorHexValue: '#6A6A6A'
-  - colorName: Blue
-    colorHexValue: '#58A0AC'
-  - colorName: Yellow
-    colorHexValue: '#AD8F5F'
+  - skincolorIndex: 0
+    skincolorName: Red
+    skincolorHexValue: '#FF566B'
+  - skincolorIndex: 1
+    skincolorName: Black
+    skincolorHexValue: '#6A6A6A'
+  - skincolorIndex: 2
+    skincolorName: Blue
+    skincolorHexValue: '#58A0AC'
+  - skincolorIndex: 3
+    skincolorName: Yellow
+    skincolorHexValue: '#AD8F5F'
 --- !u!1 &5611702027495004976
 GameObject:
   m_ObjectHideFlags: 0
@@ -1065,7 +1083,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 880, y: 64}
+  m_SizeDelta: {x: 880, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8119499288407989247
 GameObject:

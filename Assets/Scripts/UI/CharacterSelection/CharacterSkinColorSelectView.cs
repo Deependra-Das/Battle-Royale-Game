@@ -1,3 +1,4 @@
+using BattleRoyale.Network;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,34 +7,28 @@ namespace BattleRoyale.UI
 {
     public class CharacterSkinColorSelectView : MonoBehaviour
     {
-        [SerializeField] private Button _button;
-        [SerializeField] private Image _buttonImage;
-        private string _buttonColorName;
-        private string _buttonColorValue;
+        [SerializeField] private Toggle _colorToggle;
+        [SerializeField] private Image _toggleImage;
+        private string _toggleColorName;
+        private string _toggleColorValue;
 
-        public void Initialize(string buttonColorName, string buttonColor)
+        public void Initialize(int togglecolorIndex,string toggleColorName, string toggleColor)
         {
-            _buttonColorName = buttonColorName;
-            _buttonImage.color = GetColorFromHex(buttonColor);
-            _button.onClick.AddListener(ChangeBackgroundColor);
+            _toggleColorName = toggleColorName;
+            _toggleImage.color = GetColorFromHex(toggleColor);
         }
 
-        public Color GetColorFromHex(string buttonColor)
+        public Color GetColorFromHex(string toggleColor)
         {
-            if (UnityEngine.ColorUtility.TryParseHtmlString(buttonColor, out Color color))
+            if (UnityEngine.ColorUtility.TryParseHtmlString(toggleColor, out Color color))
             {
                 return color;
             }
             else
             {
-                Debug.LogError("Invalid Hex color: " + buttonColor);
+                Debug.LogError("Invalid Hex color: " + toggleColor);
                 return Color.white;
             }
-        }
-
-        void ChangeBackgroundColor()
-        {
-
         }
     }
 }
