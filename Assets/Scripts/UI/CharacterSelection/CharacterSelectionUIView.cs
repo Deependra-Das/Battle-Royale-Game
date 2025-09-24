@@ -40,6 +40,11 @@ namespace BattleRoyale.UI
             _notReadyButtonPrefab.onClick.RemoveListener(OnNotReadyButtonClicked);
             _backToStartMenuButtonPrefab.onClick.RemoveListener(OnBackToStartMenuButtonClicked);
             EventBusManager.Instance.Unsubscribe(EventName.HostDisconnected, HandleHostDisconnectCharSelectionUI);
+
+            foreach (var toggle in toggles)
+            {
+                toggle.onValueChanged.RemoveListener((isOn) => OnToggleChanged(toggle, isOn, toggle.group.transform.GetSiblingIndex()));
+            }
         }
 
         private void Start()
@@ -56,6 +61,8 @@ namespace BattleRoyale.UI
             {
                 AddRadioButton(colorInfos[i].skincolorIndex, colorInfos[i].skincolorName, colorInfos[i].skincolorHexValue);
             }
+
+            toggles[0].isOn = true;
         }
 
         public void AddRadioButton(int togglecolorIndex, string toggleColorName, string toggleColor)
@@ -67,10 +74,25 @@ namespace BattleRoyale.UI
 
             toggles.Add(newToggle);
             newToggle.onValueChanged.AddListener((isOn) => OnToggleChanged(newToggle, isOn, togglecolorIndex));
+        }
 
-            if (toggles.Count == 1)
+        private void OnToggleChanged(Toggle changedToggle, bool isOn, int index)
+        {
+            if (isOn)
             {
-                newToggle.isOn = true;
+                DeactivateOtherToggles(changedToggle);
+                PlayerLobbyStateManager.Instance.ChangeCharacterSkin(index);
+            }
+        }
+
+        private void DeactivateOtherToggles(Toggle changedToggle)
+        {
+            foreach (var toggle in toggles)
+            {
+                if (toggle != changedToggle)
+                {
+                    toggle.isOn = false;
+                }
             }
         }
 
@@ -92,22 +114,6 @@ namespace BattleRoyale.UI
         {
             NetworkManager.Singleton.Shutdown();
             SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
-        }
-
-        private void OnToggleChanged(Toggle changedToggle, bool isOn, int index)
-        {
-            if (isOn)
-            {
-                foreach (var toggle in toggles)
-                {
-                    if (toggle != changedToggle)
-                    {
-                        toggle.isOn = false;
-                    }
-                }
-
-                PlayerLobbyStateManager.Instance.ChangeCharacterSkin(index);
-            }
         }
 
         public void EnableView()
