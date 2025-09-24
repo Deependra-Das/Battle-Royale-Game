@@ -96,11 +96,28 @@ namespace BattleRoyale.UI
             }
         }
 
+        public void HideAllToggles()
+        {
+            foreach (var toggle in toggles)
+            {
+                toggle.gameObject.SetActive(false);
+            }
+        }
+
+        public void ShowAllToggles()
+        {
+            foreach (var toggle in toggles)
+            {
+                toggle.gameObject.SetActive(true);
+            }
+        }
+
         private void OnReadyButtonClicked()
         {
             PlayerLobbyStateManager.Instance.SetPlayerReady();
             _readyButtonPrefab.gameObject.SetActive(false);
             _notReadyButtonPrefab.gameObject.SetActive(true);
+            HideAllToggles();
         }
 
         private void OnNotReadyButtonClicked()
@@ -108,6 +125,7 @@ namespace BattleRoyale.UI
             PlayerLobbyStateManager.Instance.SetPlayerNotReady();
             _notReadyButtonPrefab.gameObject.SetActive(false);
             _readyButtonPrefab.gameObject.SetActive(true);
+            ShowAllToggles();
         }
 
         private void OnBackToStartMenuButtonClicked()
