@@ -69,14 +69,23 @@ namespace BattleRoyale.Player
         private bool IsCurrentDeviceMouse { get { return _playerInput.currentControlScheme == "KeyboardMouse"; } }
         private bool _canMove = false;
 
+        [Header("Player Skin")]
+
+        [SerializeField] private Material[] _skinMaterials;
+        [SerializeField] private SkinnedMeshRenderer[] _skinnedMeshRenderersForBodyParts;
+
+        private NetworkVariable<int> _selectedMaterialIndex = new NetworkVariable<int>(0);
+
         private void SubscribeToEvents()
         {
             EventBusManager.Instance.Subscribe(EventName.ActivatePlayerForGameplay, HandlePlayerActivationForGameplay);
+            _selectedMaterialIndex.OnValueChanged += ApplySelectedMaterial;
         }
 
         private void UnsubscribeToEvents()
         {
             EventBusManager.Instance.Unsubscribe(EventName.ActivatePlayerForGameplay, HandlePlayerActivationForGameplay);
+            _selectedMaterialIndex.OnValueChanged -= ApplySelectedMaterial;
         }
 
         public void Awake()
@@ -354,14 +363,41 @@ namespace BattleRoyale.Player
 
         public GameObject PlayerCameraRoot { get { return _cinemachineCameraTarget; } }
 
-        [ClientRpc]
-        public void SetupInitialPostionClientRpc(Vector3 targetPosition)
+        //[ClientRpc]
+        //public void SetupInitialPostionClientRpc(Vector3 targetPosition)
+        //{
+        //    if (IsOwner)
+        //    {
+        //        GetComponent<CharacterController>().enabled = false;
+        //        transform.position = targetPosition;
+        //        GetComponent<CharacterController>().enabled = true;
+        //    }
+        //}
+
+        public void SetCharacterSkinMaterial(int materialIndex)
         {
-            if (IsOwner)
+            SetMaterialIndexServerRpc(materialIndex);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SetMaterialIndexServerRpc(int materialIndex)
+        {
+            if (materialIndex >= 0 && materialIndex < _skinMaterials.Length)
             {
-                GetComponent<CharacterController>().enabled = false;
-                transform.position = targetPosition;
-                GetComponent<CharacterController>().enabled = true;
+                _selectedMaterialIndex.Value = materialIndex;
+            }
+        }
+
+        private void ApplySelectedMaterial(int oldMaterialIndex, int newMaterialIndex)
+        {
+            if (_skinnedMeshRenderersForBodyParts != null && newMaterialIndex >= 0 && newMaterialIndex < _skinMaterials.Length)
+            {
+                foreach (SkinnedMeshRenderer renderer in _skinnedMeshRenderersForBodyParts)
+                {
+                    Material[] materialsToRemap = renderer.materials;
+                    materialsToRemap[0] = _skinMaterials[newMaterialIndex];
+                    renderer.materials = materialsToRemap;
+                }
             }
         }
 

@@ -31,7 +31,7 @@ namespace BattleRoyale.Player
                     playerView.transform.rotation = Quaternion.LookRotation(directionToCenter);
                 }
                 playerView.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
-                playerView.SetupInitialPostionClientRpc(spawnPosition);
+                playerView.SetCharacterSkinMaterial(1);
 
                 players[clientId] = playerView;
             }     
