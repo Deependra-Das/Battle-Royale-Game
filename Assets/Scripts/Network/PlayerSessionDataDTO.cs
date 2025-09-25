@@ -10,6 +10,7 @@ namespace BattleRoyale.Network
         public PlayerConnectionState ConnectionStatus;
         public int Rank;
         public string Username;
+        public int SkinColorIndex;
 
         public PlayerSessionDataDTO(PlayerSessionData data)
         {
@@ -18,6 +19,7 @@ namespace BattleRoyale.Network
             ConnectionStatus = data.ConnectionStatus;
             Rank = data.Rank;
             Username = data.Username;
+            SkinColorIndex = data.SkinColorIndex;
         }
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
@@ -27,6 +29,7 @@ namespace BattleRoyale.Network
             serializer.SerializeValue(ref ConnectionStatus);
             serializer.SerializeValue(ref Rank);
             serializer.SerializeValue(ref Username);
+            serializer.SerializeValue(ref SkinColorIndex);
         }
     }
 }

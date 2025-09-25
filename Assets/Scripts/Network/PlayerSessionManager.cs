@@ -83,6 +83,16 @@ namespace BattleRoyale.Network
             }
         }
 
+        [ServerRpc(RequireOwnership = false)]
+        public void SetPlayerCharacterSkinColorServerRpc(ulong clientId, int index)
+        {
+            if (_sessionData.TryGetValue(clientId, out var data))
+            {
+                data.SetSkinColorIndex(index);
+                SyncPlayerCharacterSkinColorClientRpc(clientId, index);
+            }
+        }
+
         [ClientRpc]
         private void SyncPlayerStatusClientRpc(ulong clientId, PlayerState gameplayState)
         {
@@ -120,6 +130,15 @@ namespace BattleRoyale.Network
         }
 
         [ClientRpc]
+        private void SyncPlayerCharacterSkinColorClientRpc(ulong clientId, int index)
+        {
+            if (_sessionData.TryGetValue(clientId, out var data))
+            {
+                data.SetSkinColorIndex(index);
+            }
+        }
+
+        [ClientRpc]
         private void SyncAllSessionDataClientRpc(PlayerSessionDataDTO[] dataArray, ClientRpcParams clientRpcParams = default)
         {
             foreach (var dto in dataArray)
@@ -132,6 +151,7 @@ namespace BattleRoyale.Network
                 _sessionData[dto.ClientId].SetGameplayStatus(dto.Status);
                 _sessionData[dto.ClientId].SetConnectionStatus(dto.ConnectionStatus);
                 _sessionData[dto.ClientId].SetRank(dto.Rank);
+                _sessionData[dto.ClientId].SetSkinColorIndex(dto.SkinColorIndex);
             }
         }
 

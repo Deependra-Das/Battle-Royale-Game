@@ -1,6 +1,7 @@
 using BattleRoyale.Event;
 using BattleRoyale.Level;
 using BattleRoyale.Main;
+using BattleRoyale.Network;
 using System.Collections.Generic;
 using Unity.Cinemachine;
 using Unity.Netcode;
@@ -31,7 +32,8 @@ namespace BattleRoyale.Player
                     playerView.transform.rotation = Quaternion.LookRotation(directionToCenter);
                 }
                 playerView.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
-                playerView.SetCharacterSkinMaterial(1);
+                int charSkinColorIndex = PlayerSessionManager.Instance.GetPlayerSessionData(clientId).SkinColorIndex;
+                playerView.SetCharacterSkinMaterial(charSkinColorIndex);
 
                 players[clientId] = playerView;
             }     

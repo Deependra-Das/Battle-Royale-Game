@@ -54,6 +54,11 @@ namespace BattleRoyale.Network
             SetPlayerNotReadyServerRpc();
         }
 
+        public void ChangeCharacterSkin(int skinColorIndex)
+        {
+            ChangeCharacterSkinServerRpc(skinColorIndex);
+        }
+
         [ServerRpc(RequireOwnership = false)]
         private void SetPlayerReadyServerRpc(ServerRpcParams serverRpcParams = default)
         {
@@ -100,18 +105,14 @@ namespace BattleRoyale.Network
             CharacterManager.Instance.SetCharacterStatus(clientId, false);
         }
 
-        public void ChangeCharacterSkin(int skinColorIndex)
-        {
-            ChangeCharacterSkinServerRpc(skinColorIndex);
-        }
-
         [ServerRpc(RequireOwnership = false)]
         private void ChangeCharacterSkinServerRpc(int skinColorIndex, ServerRpcParams serverRpcParams = default)
         {
             ulong clientId = serverRpcParams.Receive.SenderClientId;
             int colorIndex = skinColorIndex;
 
-            CharacterManager.Instance.SetCharacterSkin(clientId, colorIndex);                    
+            CharacterManager.Instance.SetCharacterSkin(clientId, colorIndex);
+            PlayerSessionManager.Instance.SetPlayerCharacterSkinColorServerRpc(clientId, colorIndex);
         }
     }
 }
