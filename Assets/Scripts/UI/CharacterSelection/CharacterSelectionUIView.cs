@@ -3,6 +3,7 @@ using BattleRoyale.Main;
 using BattleRoyale.Network;
 using BattleRoyale.Scene;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,8 +15,18 @@ namespace BattleRoyale.UI
         [SerializeField] private Button _readyButtonPrefab;
         [SerializeField] private Button _notReadyButtonPrefab;
         [SerializeField] private Button _backToStartMenuButtonPrefab;
+
+        [Header ("Disconnected PopUp")] 
         [SerializeField] private GameObject _hostDisconnectedPanel;
         [SerializeField] private GameObject _clientDisconnectedPanel;
+
+        [Header("Leave Lobby PopUp")]
+        [SerializeField] private GameObject _leaveLobbyConfirmationPopUp;
+        [SerializeField] private TMP_Text _hostLobbyNoticeText;
+        [SerializeField] private Button _yesConfirmationButtonPrefab;
+        [SerializeField] private Button _noConfirmationButtonPrefab;
+
+        [Header("Character Skin Color")]
         [SerializeField] private Toggle _colorTogglePrefab;
         [SerializeField] private Transform _colorToggleGroupTransform;
         [SerializeField] private CharacterSkinColorInfo[] colorInfos;
@@ -31,6 +42,8 @@ namespace BattleRoyale.UI
             _readyButtonPrefab.onClick.AddListener(OnReadyButtonClicked);
             _notReadyButtonPrefab.onClick.AddListener(OnNotReadyButtonClicked);
             _backToStartMenuButtonPrefab.onClick.AddListener(OnBackToStartMenuButtonClicked);
+            _yesConfirmationButtonPrefab.onClick.AddListener(OnYesButtonClicked);
+            _noConfirmationButtonPrefab.onClick.AddListener(OnNoButtonClicked);
             EventBusManager.Instance.Subscribe(EventName.HostDisconnected, HandleHostDisconnectCharSelectionUI);
         }
 
@@ -39,6 +52,8 @@ namespace BattleRoyale.UI
             _readyButtonPrefab.onClick.RemoveListener(OnReadyButtonClicked);
             _notReadyButtonPrefab.onClick.RemoveListener(OnNotReadyButtonClicked);
             _backToStartMenuButtonPrefab.onClick.RemoveListener(OnBackToStartMenuButtonClicked);
+            _yesConfirmationButtonPrefab.onClick.AddListener(OnYesButtonClicked);
+            _noConfirmationButtonPrefab.onClick.AddListener(OnNoButtonClicked);
             EventBusManager.Instance.Unsubscribe(EventName.HostDisconnected, HandleHostDisconnectCharSelectionUI);
 
             foreach (var toggle in toggles)
@@ -53,6 +68,7 @@ namespace BattleRoyale.UI
             _hostDisconnectedPanel.SetActive(false);
             _notReadyButtonPrefab.gameObject.SetActive(false);
             _readyButtonPrefab.gameObject.SetActive(true);
+            HideBackToMainMenuConfirmationPopup();
         }
 
         void CreateColorButtons()
@@ -130,8 +146,19 @@ namespace BattleRoyale.UI
 
         private void OnBackToStartMenuButtonClicked()
         {
-            NetworkManager.Singleton.Shutdown();
-            SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
+            ShowBackToMainMenuConfirmationPopup();
+        }
+
+        private void OnYesButtonClicked()
+        {
+            HideBackToMainMenuConfirmationPopup();
+            //NetworkManager.Singleton.Shutdown();
+            //SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
+        }
+
+        private void OnNoButtonClicked()
+        {
+            HideBackToMainMenuConfirmationPopup();
         }
 
         public void EnableView()
@@ -147,6 +174,16 @@ namespace BattleRoyale.UI
         private void HandleHostDisconnectCharSelectionUI(object[] parameters)
         {
             _hostDisconnectedPanel.SetActive(true);
+        }
+
+        private void ShowBackToMainMenuConfirmationPopup()
+        {
+            _leaveLobbyConfirmationPopUp.SetActive(true);
+        }
+
+        private void HideBackToMainMenuConfirmationPopup()
+        {
+            _leaveLobbyConfirmationPopUp.SetActive(false);
         }
     }
 }
