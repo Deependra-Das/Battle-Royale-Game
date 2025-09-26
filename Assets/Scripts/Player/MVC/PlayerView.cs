@@ -119,20 +119,6 @@ namespace BattleRoyale.Player
             {
                 _playerInput.enabled = false;
             }
-
-            if (IsServer)
-            {
-                NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
-            }
-        }
-
-        private void NetworkManager_OnClientDisconnectCallback(ulong clientId)
-        {
-            if(clientId == OwnerClientId)
-            {
-                UnsubscribeToEvents();
-                Destroy(gameObject);
-            }
         }
 
         private void HandlePlayerActivationForGameplay(object[] parameters)

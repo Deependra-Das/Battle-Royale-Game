@@ -68,5 +68,7 @@ namespace BattleRoyale.Main
         {
             return ServiceLocator.Get<T>();
         }
+
+        public GameState CurrentGameState => _stateMachine.GetCurrentState();
     }
 }

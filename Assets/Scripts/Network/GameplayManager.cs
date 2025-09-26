@@ -49,6 +49,7 @@ namespace BattleRoyale.Network
                 _levelObj = GameManager.Instance.Get<LevelService>();
                 _playerObj = GameManager.Instance.Get<PlayerService>();
 
+                PlayerSessionManager.Instance.GetAllPlayerSessionData();
                 SpawnTileRegistry();
                 StartCoroutine(InitializeLevelCoroutine());
 

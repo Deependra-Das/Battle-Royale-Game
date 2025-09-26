@@ -189,12 +189,29 @@ namespace BattleRoyale.Network
         {
             if (IsServer)
             {
+                RemoveDisconnectedClientsServerRpc();
+
                 foreach (var data in _sessionData.Values)
                 {
                     data.Reset();
                     SyncPlayerStatusClientRpc(data.ClientId, PlayerState.Waiting);
                     SyncPlayerRankClientRpc(data.ClientId, -1);
                 }
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void RemoveDisconnectedClientsServerRpc()
+        {
+            var disconnectedPlayers = _sessionData
+           .Where(entry => entry.Value.ConnectionStatus == PlayerConnectionState.Disconnected)
+           .Select(entry => entry.Key)
+           .ToList();
+
+            foreach (var clientId in disconnectedPlayers)
+            {
+                _sessionData.Remove(clientId);
+                RemovePlayerSessionClientRpc(clientId);
             }
         }
 

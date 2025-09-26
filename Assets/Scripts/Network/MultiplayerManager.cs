@@ -2,6 +2,7 @@ using BattleRoyale.CharacterSelection;
 using BattleRoyale.Event;
 using BattleRoyale.Main;
 using BattleRoyale.Scene;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -54,6 +55,9 @@ namespace BattleRoyale.Network
 
         private void OnClientHostDisconnected(ulong clientId)
         {
+            string activeSceneName = SceneManager.GetActiveScene().name.ToString();
+            Enum.TryParse<SceneName>(activeSceneName, out var sceneEnumValue);
+
             if (!NetworkManager.Singleton.IsServer && NetworkManager.Singleton.LocalClientId == clientId)
             {
                 Debug.Log("On Client : Host Disconnected");
@@ -61,7 +65,7 @@ namespace BattleRoyale.Network
                 NetworkManager.Singleton.Shutdown();
                 StartCoroutine(DelayedReturnToStartScreen(5f));
             }
-            else if(NetworkManager.Singleton.IsServer)
+            else if(NetworkManager.Singleton.IsServer && sceneEnumValue != SceneName.GameScene)
             {
                 CharacterManager.Instance.DespawnCharacterForDisconnectedClient(clientId);
                 RequestPlayerDeregistrationServerRpc(clientId);
@@ -110,7 +114,7 @@ namespace BattleRoyale.Network
         {
             SceneLoader.Instance.LoadScene(SceneName.CharacterSelectionScene, true);
         }
-
+    
         [ServerRpc(RequireOwnership = false)]
         public void RequestPlayerRegistrationServerRpc(ulong clientId, string username)
         {

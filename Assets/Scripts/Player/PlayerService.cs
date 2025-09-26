@@ -18,6 +18,7 @@ namespace BattleRoyale.Player
         public PlayerService(PlayerScriptableObject player_SO)
         {
             _player_SO = player_SO;
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
         }
 
         public void SpawnPlayer(ulong clientId, Vector3 spawnPosition)
@@ -46,10 +47,49 @@ namespace BattleRoyale.Player
             _playerCamera.transform.rotation = playerCameraRoot.rotation;
         }
 
+        private void OnClientDisconnect(ulong clientId)
+        {
+            RemovePlayer(clientId);
+        }
+
+        public void RemovePlayer(ulong clientId)
+        {
+            if (players.ContainsKey(clientId))
+            {
+                PlayerView playerView = players[clientId];
+
+                if(playerView.NetworkObject.IsSpawned)
+                {
+                    playerView.NetworkObject.Despawn();
+                }
+
+                Object.Destroy(playerView.gameObject);
+                players.Remove(clientId);
+            }
+        }
+
         public void Dispose()
         {
+            foreach (var player in players.Values)
+            {
+                if (player != null)
+                {
+                    player.NetworkObject.Despawn();
+                    Object.Destroy(player.gameObject);
+                }
+            }
+
             players.Clear();
-            if(_playerCamera!=null) Object.Destroy(_playerCamera.gameObject);
+
+            if (_playerCamera != null)
+            {
+                Object.Destroy(_playerCamera.gameObject);
+            }
+
+            if (NetworkManager.Singleton != null)
+            {
+                NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
+            }
         }
     }
 }

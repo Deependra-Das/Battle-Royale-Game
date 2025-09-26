@@ -149,6 +149,7 @@ namespace BattleRoyale.UI
         {
             ShowBackToMainMenuConfirmationPopup();
         }
+
         private void SetHostLobbyNoticeText()
         {
             if(NetworkManager.Singleton.IsHost)
@@ -164,8 +165,7 @@ namespace BattleRoyale.UI
         private void OnYesButtonClicked()
         {
             HideBackToMainMenuConfirmationPopup();
-            //NetworkManager.Singleton.Shutdown();
-            //SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
+            SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
 
         private void OnNoButtonClicked()
