@@ -68,6 +68,7 @@ namespace BattleRoyale.UI
             _hostDisconnectedPanel.SetActive(false);
             _notReadyButtonPrefab.gameObject.SetActive(false);
             _readyButtonPrefab.gameObject.SetActive(true);
+            SetHostLobbyNoticeText();
             HideBackToMainMenuConfirmationPopup();
         }
 
@@ -147,6 +148,17 @@ namespace BattleRoyale.UI
         private void OnBackToStartMenuButtonClicked()
         {
             ShowBackToMainMenuConfirmationPopup();
+        }
+        private void SetHostLobbyNoticeText()
+        {
+            if(NetworkManager.Singleton.IsHost)
+            {
+                _hostLobbyNoticeText.gameObject.SetActive(true);
+            }
+            else
+            {
+                _hostLobbyNoticeText.gameObject.SetActive(false);
+            }
         }
 
         private void OnYesButtonClicked()
