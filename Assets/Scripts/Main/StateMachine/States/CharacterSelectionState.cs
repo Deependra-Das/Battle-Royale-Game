@@ -79,41 +79,28 @@ namespace BattleRoyale.Main
         {
             if (PlayerSessionManager.Instance != null)
             {
-                PlayerSessionManager.Instance.NetworkObject.Despawn();
+                if (PlayerSessionManager.Instance.NetworkObject.IsSpawned)
+                {
+                    PlayerSessionManager.Instance.NetworkObject.Despawn();
+                }
+
                 UnityEngine.Object.Destroy(PlayerSessionManager.Instance.gameObject);
             }
 
             if (MultiplayerManager.Instance != null)
             {
-                MultiplayerManager.Instance.NetworkObject.Despawn();
+                if (MultiplayerManager.Instance.NetworkObject.IsSpawned)
+                {
+                    MultiplayerManager.Instance.NetworkObject.Despawn();
+                }
+
                 UnityEngine.Object.Destroy(MultiplayerManager.Instance.gameObject);
             }
 
-            if (NetworkManager.Singleton.IsListening)
-            {
-                PrintNetworkObjects();
-                NetworkManager.Singleton.Shutdown();
-                UnityEngine.Object.Destroy(NetworkManager.Singleton.gameObject);
-            }
-
-            Debug.Log("Lobby resources cleaned up.");
-        }
-
-        public void PrintNetworkObjects()
-        {
             if (NetworkManager.Singleton != null)
             {
-                foreach (var networkObject in NetworkManager.Singleton.SpawnManager.SpawnedObjects)
-                {
-                    if (networkObject.Value != null)
-                    {
-                        Debug.Log($"NetworkObject: {networkObject.Value.name} (ID: {networkObject.Key})");
-                    }
-                }
-            }
-            else
-            {
-                Debug.LogWarning("NetworkManager is not initialized.");
+                NetworkManager.Singleton.Shutdown();
+                UnityEngine.Object.Destroy(NetworkManager.Singleton.gameObject);
             }
         }
     }

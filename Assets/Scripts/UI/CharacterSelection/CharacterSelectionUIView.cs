@@ -17,8 +17,8 @@ namespace BattleRoyale.UI
         [SerializeField] private Button _backToStartMenuButtonPrefab;
 
         [Header ("Disconnected PopUp")] 
-        [SerializeField] private GameObject _hostDisconnectedPanel;
-        [SerializeField] private GameObject _clientDisconnectedPanel;
+        [SerializeField] private GameObject _disconnectedPopUp;
+        [SerializeField] private Button _disconnectedBackButtonPrefab;
 
         [Header("Leave Lobby PopUp")]
         [SerializeField] private GameObject _leaveLobbyConfirmationPopUp;
@@ -44,7 +44,8 @@ namespace BattleRoyale.UI
             _backToStartMenuButtonPrefab.onClick.AddListener(OnBackToStartMenuButtonClicked);
             _yesConfirmationButtonPrefab.onClick.AddListener(OnYesButtonClicked);
             _noConfirmationButtonPrefab.onClick.AddListener(OnNoButtonClicked);
-            EventBusManager.Instance.Subscribe(EventName.HostDisconnected, HandleHostDisconnectCharSelectionUI);
+            NetworkManager.Singleton.OnClientDisconnectCallback += ShowDisconnectionCharSelectionUI;
+            _disconnectedBackButtonPrefab.onClick.AddListener(OnBackToStartMenuButtonClicked);
         }
 
         private void UnsubscribeToEvents()
@@ -54,7 +55,8 @@ namespace BattleRoyale.UI
             _backToStartMenuButtonPrefab.onClick.RemoveListener(OnBackToStartMenuButtonClicked);
             _yesConfirmationButtonPrefab.onClick.AddListener(OnYesButtonClicked);
             _noConfirmationButtonPrefab.onClick.AddListener(OnNoButtonClicked);
-            EventBusManager.Instance.Unsubscribe(EventName.HostDisconnected, HandleHostDisconnectCharSelectionUI);
+            NetworkManager.Singleton.OnClientDisconnectCallback -= ShowDisconnectionCharSelectionUI;
+            _disconnectedBackButtonPrefab.onClick.AddListener(OnBackToStartMenuButtonClicked);
 
             foreach (var toggle in toggles)
             {
@@ -65,7 +67,7 @@ namespace BattleRoyale.UI
         private void Start()
         {
             CreateColorButtons();
-            _hostDisconnectedPanel.SetActive(false);
+            _disconnectedPopUp.SetActive(false);
             _notReadyButtonPrefab.gameObject.SetActive(false);
             _readyButtonPrefab.gameObject.SetActive(true);
             SetHostLobbyNoticeText();
@@ -183,9 +185,9 @@ namespace BattleRoyale.UI
             gameObject.SetActive(false);
         }
 
-        private void HandleHostDisconnectCharSelectionUI(object[] parameters)
+        private void ShowDisconnectionCharSelectionUI(ulong clientID)
         {
-            _hostDisconnectedPanel.SetActive(true);
+            _disconnectedPopUp.SetActive(true);
         }
 
         private void ShowBackToMainMenuConfirmationPopup()
