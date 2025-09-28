@@ -1,12 +1,14 @@
 using BattleRoyale.Event;
 using BattleRoyale.Level;
+using BattleRoyale.Network;
 using BattleRoyale.Player;
 using BattleRoyale.Scene;
-using BattleRoyale.Network;
 using BattleRoyale.UI;
+using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace BattleRoyale.Main
 {
@@ -33,7 +35,7 @@ namespace BattleRoyale.Main
         {
             if (GameplayManager.Instance != null) return;
 
-            GameObject managerObj = Object.Instantiate(GameManager.Instance.network_SO.gameplayManagerPrefab.gameObject);
+            GameObject managerObj = UnityEngine.Object.Instantiate(GameManager.Instance.network_SO.gameplayManagerPrefab.gameObject);
             managerObj.name = "GameplayManager";
             managerObj.GetComponent<NetworkObject>().Spawn(true);
         }
@@ -49,6 +51,14 @@ namespace BattleRoyale.Main
             _playerObj.Dispose();
             _levelObj.Dispose();
             _gameplayUIObj.Dispose();
+
+            string activeSceneName = SceneManager.GetActiveScene().name.ToString();
+            Enum.TryParse<SceneName>(activeSceneName, out var sceneEnumValue);
+
+            if (sceneEnumValue == SceneName.StartScene)
+            {
+                CleanupNetworkResources();
+            }
         }
 
         private void RegisterGameplayServices()
@@ -56,7 +66,7 @@ namespace BattleRoyale.Main
             GameplayUIView gameplayUIPrefab = GameManager.Instance.ui_SO.gameplayUIPrefab;
 
             ServiceLocator.Register(new LevelService(GameManager.Instance.level_SO));
-            ServiceLocator.Register(new PlayerService(GameManager.Instance.player_SO));            
+            ServiceLocator.Register(new PlayerService(GameManager.Instance.player_SO));
             ServiceLocator.Register(new GameplayUIService(gameplayUIPrefab));
         }
 
@@ -65,6 +75,35 @@ namespace BattleRoyale.Main
             ServiceLocator.Unregister<LevelService>();
             ServiceLocator.Unregister<PlayerService>();
             ServiceLocator.Unregister<GameplayUIService>();
+        }
+
+        private void CleanupNetworkResources()
+        {
+            if (PlayerSessionManager.Instance != null)
+            {
+                if (PlayerSessionManager.Instance.NetworkObject.IsSpawned)
+                {
+                    PlayerSessionManager.Instance.NetworkObject.Despawn();
+                }
+
+                UnityEngine.Object.Destroy(PlayerSessionManager.Instance.gameObject);
+            }
+
+            if (MultiplayerManager.Instance != null)
+            {
+                if (MultiplayerManager.Instance.NetworkObject.IsSpawned)
+                {
+                    MultiplayerManager.Instance.NetworkObject.Despawn();
+                }
+
+                UnityEngine.Object.Destroy(MultiplayerManager.Instance.gameObject);
+            }
+
+            if (NetworkManager.Singleton!= null)
+            {
+                NetworkManager.Singleton.Shutdown();
+                UnityEngine.Object.Destroy(NetworkManager.Singleton.gameObject);
+            }
         }
     }
 }

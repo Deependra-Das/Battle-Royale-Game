@@ -178,18 +178,31 @@ namespace BattleRoyale.Network
         {
             if (NetworkManager.Singleton.IsServer)
             {
-                PlayerSessionData playerSessionData = PlayerSessionManager.Instance.GetPlayerSessionData(clientId);
-
-                if (playerSessionData != null)
+                if (NetworkManager.Singleton.ConnectedClients.Count <= 1)
                 {
-                    PlayerSessionManager.Instance.SetPlayerConnectionStatusServerRpc(clientId, PlayerConnectionState.Disconnected);
-                    HandlePlayerGameOver(clientId);
+                    HandleHostDisconnection();
                 }
                 else
                 {
-                    Debug.Log("Player does not have Session Data.");
+                    PlayerSessionData playerSessionData = PlayerSessionManager.Instance.GetPlayerSessionData(clientId);
+
+                    if (playerSessionData != null)
+                    {
+                        PlayerSessionManager.Instance.SetPlayerConnectionStatusServerRpc(clientId, PlayerConnectionState.Disconnected);
+                        HandlePlayerGameOver(clientId);
+                    }
+                    else
+                    {
+                        Debug.Log("Player does not have Session Data.");
+                    }
                 }
             }
+        }
+
+        private void HandleHostDisconnection()
+        {
+            _gameEnded = true;
+            _state.Value = GameplayState.GameOver;
         }
 
         public void HandlePlayerGameOver(ulong clientId)

@@ -1,7 +1,9 @@
 using BattleRoyale.Event;
 using BattleRoyale.Main;
+using BattleRoyale.Scene;
 using System.Collections;
 using TMPro;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,15 +12,22 @@ namespace BattleRoyale.UI
 {
     public class GameplayUIView : MonoBehaviour
     {
+        [Header("Gameplay UI PopUp")]
         [SerializeField] private GameObject _eliminationsPanel;
         [SerializeField] private TMP_Text _eliminatedCounterText;
         [SerializeField] private TMP_Text _countdownText;
         [SerializeField] private float _animationSpeed = 3f;
         [SerializeField] private GameObject _rankPanel;
         [SerializeField] private TMP_Text _rankText;
+
+        [Header("Eliminated PopUp")]
         [SerializeField] private GameObject _eliminationPopup;
         [SerializeField] private float _popupDuration = 2f;
         [SerializeField] private AnimationCurve _popupScaleCurve;
+
+        [Header("Disconnected PopUp")]
+        [SerializeField] private GameObject _disconnectedPopUp;
+        [SerializeField] private Button _disconnectedBackButtonPrefab;
 
         private Vector3 _originalScale;
         private int _currentCountdownValue = -1;
@@ -37,11 +46,15 @@ namespace BattleRoyale.UI
         private void SubscribeToEvents()
         {
             EventBusManager.Instance.Subscribe(EventName.GameplayCountdownTick, HandleCountdownTick);
+            NetworkManager.Singleton.OnClientDisconnectCallback += ShowDisconnectionCharSelectionUI;
+            _disconnectedBackButtonPrefab.onClick.AddListener(OnDisconnectedBackButtonClicked);
         }
 
         private void UnsubscribeToEvents()
         {
             EventBusManager.Instance.Unsubscribe(EventName.GameplayCountdownTick, HandleCountdownTick);
+            NetworkManager.Singleton.OnClientDisconnectCallback -= ShowDisconnectionCharSelectionUI;
+            _disconnectedBackButtonPrefab.onClick.AddListener(OnDisconnectedBackButtonClicked);
         }
 
         private void Start()
@@ -50,6 +63,7 @@ namespace BattleRoyale.UI
             _popupOriginalScale = _eliminationPopup.transform.localScale;
             _eliminationPopup.SetActive(false);
             _rankPanel.SetActive(false);
+            _disconnectedPopUp.SetActive(false);
         }
 
         private void Update()
@@ -115,7 +129,6 @@ namespace BattleRoyale.UI
             UpdateEliminatedCounter();
         }
 
-
         private void UpdateEliminatedCounter()
         {
             _eliminatedCounterText.text = $"Eliminated: {_currentEliminatedCount} / {_totalPlayers}";
@@ -156,6 +169,17 @@ namespace BattleRoyale.UI
         {
             _rankText.text = $"Rank: {rank}";
             _rankPanel.SetActive(true);
+        }
+
+        private void ShowDisconnectionCharSelectionUI(ulong clientID)
+        {
+            _disconnectedPopUp.SetActive(true);
+        }
+
+        private void OnDisconnectedBackButtonClicked()
+        {
+            _disconnectedPopUp.SetActive(false);
+            SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
     }
 }

@@ -90,6 +90,8 @@ namespace BattleRoyale.Player
             {
                 NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
             }
+
+            Debug.Log("Dispose Player");
         }
     }
 }

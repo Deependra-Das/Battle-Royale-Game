@@ -273,7 +273,7 @@ namespace BattleRoyale.Level
 
         public void Dispose()
         {
-            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            if (NetworkManager.Singleton.IsServer)
             {
                 DestroyAllHexTiles();
                 DestroyAllFloors();
@@ -281,6 +281,8 @@ namespace BattleRoyale.Level
                 DestroyGameOverTrigger();
                 DestroyBasePlane();
                 DestroyLevelContainer();
+
+                Debug.Log("Dispose Level");
             }
         }
     }
