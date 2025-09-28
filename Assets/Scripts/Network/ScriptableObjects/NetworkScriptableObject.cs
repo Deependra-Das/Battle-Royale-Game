@@ -8,7 +8,8 @@ namespace BattleRoyale.Network
     {
         public PlayerSessionManager playerSessionManagerPrefab;
         public CharacterManager characterManagerPrefab;
-        public GameplayManager gameplayManagerPrefab;       
+        public GameplayManager gameplayManagerPrefab;
+        public GameOverManager gameOverManagerPrefab;
         public TileRegistry tileRegistryPrefab; 
     }
 }

@@ -10,18 +10,29 @@ namespace BattleRoyale.Main
     public class GameOverState : IGameState
     {
         private GameOverUIService _gameOverUIObj;
+        private NetworkObject _gameOverManagerNetworkObj;
 
         public void Enter()
         {
             RegisterGameOverServices();
             _gameOverUIObj = GameManager.Instance.Get<GameOverUIService>();
-
             _gameOverUIObj.ShowUI();
 
             if (NetworkManager.Singleton.IsServer)
             {
-                MultiplayerManager.Instance.StartCountdown(GameManager.Instance.ui_SO.gameOverCountdownDuration);
+                SpawnGameOverManager();
+                GameOverManager.Instance.StartCountdown(GameManager.Instance.ui_SO.gameOverCountdownDuration);
             }
+        }
+
+        private void SpawnGameOverManager()
+        {
+            if (GameplayManager.Instance != null) return;
+
+            GameObject _gameOverMngrObj = UnityEngine.Object.Instantiate(GameManager.Instance.network_SO.gameOverManagerPrefab.gameObject);
+            _gameOverMngrObj.name = "GameOverManager";
+            _gameOverManagerNetworkObj = _gameOverMngrObj.GetComponent<NetworkObject>();
+            _gameOverManagerNetworkObj.Spawn(true);
         }
 
         public void Exit()
@@ -34,6 +45,12 @@ namespace BattleRoyale.Main
         public void Cleanup()
         {
             _gameOverUIObj.Dispose();
+
+            if (_gameOverManagerNetworkObj!=null && _gameOverManagerNetworkObj.IsSpawned)
+            {
+                _gameOverManagerNetworkObj.Despawn();
+                UnityEngine.Object.Destroy(_gameOverManagerNetworkObj.gameObject);
+            }
         }
 
         private void RegisterGameOverServices()

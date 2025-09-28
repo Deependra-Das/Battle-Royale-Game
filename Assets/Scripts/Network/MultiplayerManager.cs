@@ -77,43 +77,6 @@ namespace BattleRoyale.Network
             yield return new WaitForSeconds(duration);
             SceneLoader.Instance.LoadScene(SceneName.LobbyScene, true);
         }
-
-        public void StartCountdown(float duration)
-        {
-            if (IsServer)
-            {
-                StartCoroutine(GameOverCountdownCoroutine(duration));
-            }
-        }
-
-        private IEnumerator GameOverCountdownCoroutine(float duration)
-        {
-            float timeRemaining = duration;
-
-            while (timeRemaining > 0)
-            {
-                int displayValue = Mathf.CeilToInt(timeRemaining);
-                UpdateGameOverCountdownClientRpc(displayValue);
-                yield return new WaitForSeconds(1f);
-                timeRemaining -= 1f;
-            }
-
-            ResetPlayerSessionData();
-            LoadCharacterSelectionScene();
-        }
-
-        private void ResetPlayerSessionData()
-        {
-            if (IsServer)
-            {
-                PlayerSessionManager.Instance.ResetAllSessions();
-            }
-        }
-
-        private void LoadCharacterSelectionScene()
-        {
-            SceneLoader.Instance.LoadScene(SceneName.CharacterSelectionScene, true);
-        }
     
         [ServerRpc(RequireOwnership = false)]
         public void RequestPlayerRegistrationServerRpc(ulong clientId, string username)
@@ -137,12 +100,6 @@ namespace BattleRoyale.Network
         public void RequestPlayerDeregistrationServerRpc(ulong clientId)
         {
             PlayerSessionManager.Instance.DeregisterPlayer(clientId);
-        }
-
-        [ClientRpc]
-        private void UpdateGameOverCountdownClientRpc(int secondsRemaining)
-        {
-            EventBusManager.Instance.Raise(EventName.GameOverCountdownTick, secondsRemaining);
         }
     }
 }

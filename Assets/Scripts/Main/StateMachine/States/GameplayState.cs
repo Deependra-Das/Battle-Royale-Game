@@ -54,7 +54,7 @@ namespace BattleRoyale.Main
             _levelObj.Dispose();
             _gameplayUIObj.Dispose();
 
-            if(_gameplayManagerNetworkObj.IsSpawned)
+            if(_gameplayManagerNetworkObj!=null && _gameplayManagerNetworkObj.IsSpawned)
             {
                 _gameplayManagerNetworkObj.Despawn();
                 UnityEngine.Object.Destroy(_gameplayManagerNetworkObj.gameObject);
