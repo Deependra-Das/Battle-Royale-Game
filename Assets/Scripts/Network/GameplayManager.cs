@@ -57,6 +57,11 @@ namespace BattleRoyale.Network
             }
         }
 
+        public override void OnNetworkDespawn()
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
+        }
+
         private void SpawnTileRegistry()
         {
             if (TileRegistry.Instance != null) return;
@@ -178,12 +183,6 @@ namespace BattleRoyale.Network
         {
             if (NetworkManager.Singleton.IsServer)
             {
-                if (NetworkManager.Singleton.ConnectedClients.Count <= 1)
-                {
-                    HandleHostDisconnection();
-                }
-                else
-                {
                     PlayerSessionData playerSessionData = PlayerSessionManager.Instance.GetPlayerSessionData(clientId);
 
                     if (playerSessionData != null)
@@ -195,14 +194,7 @@ namespace BattleRoyale.Network
                     {
                         Debug.Log("Player does not have Session Data.");
                     }
-                }
             }
-        }
-
-        private void HandleHostDisconnection()
-        {
-            _gameEnded = true;
-            _state.Value = GameplayState.GameOver;
         }
 
         public void HandlePlayerGameOver(ulong clientId)
@@ -276,7 +268,6 @@ namespace BattleRoyale.Network
             yield return new WaitForSeconds(3f);
             SceneLoader.Instance.LoadScene(SceneName.GameOverScene, true);
         }
-
 
         [ClientRpc]
         private void NotifyClientEliminatedClientRpc(ulong clientId)

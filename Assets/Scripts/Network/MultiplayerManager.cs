@@ -30,7 +30,7 @@ namespace BattleRoyale.Network
             NetworkManager.Singleton.StartHost();
             PlayerSessionManager.Instance.RegisterPlayer(NetworkManager.Singleton.LocalClientId, PlayerUsername);
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-            //NetworkManager.Singleton.OnClientDisconnectCallback += OnClientHostDisconnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientHostDisconnected;
         }
 
         private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
@@ -42,7 +42,7 @@ namespace BattleRoyale.Network
         {
             NetworkManager.Singleton.StartClient();
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-            //NetworkManager.Singleton.OnClientDisconnectCallback += OnClientHostDisconnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientHostDisconnected;
         }
 
         private void OnClientConnected(ulong clientId)
@@ -53,24 +53,17 @@ namespace BattleRoyale.Network
             }
         }
 
-        //private void OnClientHostDisconnected(ulong clientId)
-        //{
-        //    string activeSceneName = SceneManager.GetActiveScene().name.ToString();
-        //    Enum.TryParse<SceneName>(activeSceneName, out var sceneEnumValue);
+        private void OnClientHostDisconnected(ulong clientId)
+        {
+            string activeSceneName = SceneManager.GetActiveScene().name.ToString();
+            Enum.TryParse<SceneName>(activeSceneName, out var sceneEnumValue);
 
-        //    if (!NetworkManager.Singleton.IsServer && NetworkManager.Singleton.LocalClientId == clientId)
-        //    {
-        //        Debug.Log("On Client : Host Disconnected");
-        //        EventBusManager.Instance.RaiseNoParams(EventName.HostDisconnected);
-        //        NetworkManager.Singleton.Shutdown();
-        //        StartCoroutine(DelayedReturnToStartScreen(5f));
-        //    }
-        //    else if(NetworkManager.Singleton.IsServer && sceneEnumValue != SceneName.GameScene)
-        //    {
-        //        CharacterManager.Instance.DespawnCharacterForDisconnectedClient(clientId);
-        //        RequestPlayerDeregistrationServerRpc(clientId);
-        //    }
-        //}
+            if (NetworkManager.Singleton.IsServer && sceneEnumValue == SceneName.CharacterSelectionScene)
+            {
+                CharacterManager.Instance.DespawnCharacterForDisconnectedClient(clientId);
+                RequestPlayerDeregistrationServerRpc(clientId);
+            }
+        }
 
         private IEnumerator DelayedReturnToStartScreen(float duration)
         {

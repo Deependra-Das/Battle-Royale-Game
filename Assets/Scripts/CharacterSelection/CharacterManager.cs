@@ -31,8 +31,14 @@ namespace BattleRoyale.CharacterSelection
         {
             if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
             {
-                SpawnCharacterForConnectedClient(NetworkManager.Singleton.LocalClientId);
-            }
+                foreach (var clientId in PlayerSessionManager.Instance.GetAllPlayerSessionData().Keys)
+                {
+                    if (NetworkManager.Singleton.ConnectedClients.ContainsKey(clientId))
+                    {
+                        SpawnCharacterForConnectedClient(clientId);
+                    }
+                }
+            }         
         }
 
         public void SpawnCharacterForConnectedClient(ulong clientID)

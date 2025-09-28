@@ -10,7 +10,6 @@ namespace BattleRoyale.Network
         private PlayerConnectionState _connectionStatus = PlayerConnectionState.Connected;
         private int _rank = -1;
         private string _username = "Player";
-        private bool _isCharacterVisibleInLobby = false;
         private int _skinColorIndex = 0;
 
         public ulong ClientId => _clientId;
@@ -18,7 +17,6 @@ namespace BattleRoyale.Network
         public PlayerConnectionState ConnectionStatus => _connectionStatus;
         public int Rank => _rank;
         public string Username => _username;
-        public bool IsCharacterVisibleInLobby => _isCharacterVisibleInLobby;
         public int SkinColorIndex => _skinColorIndex;
 
         public PlayerSessionData(ulong clientId, string username)
@@ -47,11 +45,6 @@ namespace BattleRoyale.Network
             _connectionStatus = status;
         }
 
-        public void SetCharacterVisibilityInLobby(bool isVisible)
-        {
-            _isCharacterVisibleInLobby = isVisible;
-        }
-
         public void SetSkinColorIndex(int index)
         {
             _skinColorIndex = index;
@@ -71,7 +64,6 @@ namespace BattleRoyale.Network
             serializer.SerializeValue(ref _connectionStatus);
             serializer.SerializeValue(ref _rank);
             serializer.SerializeValue(ref _username);
-            serializer.SerializeValue(ref _isCharacterVisibleInLobby);
             serializer.SerializeValue(ref _skinColorIndex);
         }
     }

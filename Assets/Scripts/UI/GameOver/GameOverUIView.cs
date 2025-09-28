@@ -89,7 +89,10 @@ namespace BattleRoyale.UI
 
         private void ShowDisconnectionGameOverUI(ulong clientID)
         {
-            _disconnectedPopUp.SetActive(true);
+            if ((NetworkManager.Singleton.IsServer && clientID == NetworkManager.Singleton.LocalClientId && NetworkManager.Singleton.ConnectedClients.Count <= 1) || !NetworkManager.Singleton.IsServer)
+            {
+                _disconnectedPopUp.SetActive(true);
+            }
         }
 
         private void OnDisconnectedBackButtonClicked()

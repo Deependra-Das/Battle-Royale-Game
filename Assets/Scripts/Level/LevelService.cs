@@ -281,8 +281,6 @@ namespace BattleRoyale.Level
                 DestroyGameOverTrigger();
                 DestroyBasePlane();
                 DestroyLevelContainer();
-
-                Debug.Log("Dispose Level");
             }
         }
     }
