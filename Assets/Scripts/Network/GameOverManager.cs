@@ -1,65 +1,103 @@
 using BattleRoyale.Event;
+using BattleRoyale.Main;
 using BattleRoyale.Network;
 using BattleRoyale.Scene;
+using System.Collections;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using System.Collections.Generic;
-using System.Collections;
 
-public class GameOverManager : NetworkBehaviour
+namespace BattleRoyale.Network
 {
-    public static GameOverManager Instance { get; private set; }
-
-    private void Awake()
+    public class GameOverManager : NetworkBehaviour
     {
-        if (Instance != null && Instance != this)
+        public static GameOverManager Instance { get; private set; }
+
+        private float _waitDurationBeforeScoreBoard = 3f;
+
+        private void Awake()
         {
-            Destroy(gameObject);
-            return;
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
         }
 
-        Instance = this;
-    }
-
-    public void StartCountdown(float duration)
-    {
-        if (IsServer)
+        public override void OnNetworkSpawn()
         {
-            StartCoroutine(GameOverCountdownCoroutine(duration));
-        }
-    }
-
-    private IEnumerator GameOverCountdownCoroutine(float duration)
-    {
-        float timeRemaining = duration;
-
-        while (timeRemaining > 0)
-        {
-            int displayValue = Mathf.CeilToInt(timeRemaining);
-            UpdateGameOverCountdownClientRpc(displayValue);
-            yield return new WaitForSeconds(1f);
-            timeRemaining -= 1f;
+            if (IsServer)
+            {
+                StartCoroutine(GameOverWaitBeforeScoreCardCoroutine(_waitDurationBeforeScoreBoard));
+            }
         }
 
-        ResetPlayerSessionData();
-        LoadCharacterSelectionScene();
-    }
-    private void ResetPlayerSessionData()
-    {
-        if (IsServer)
+        private IEnumerator GameOverWaitBeforeScoreCardCoroutine(float duration)
         {
-            PlayerSessionManager.Instance.ResetAllSessions();
+            if (IsServer)
+            {
+                yield return new WaitForSeconds(duration);
+
+                RaiseGameOverScoreCardLocally();
+                RaiseGameOverScoreCardClientRpc();
+                StartCountdown(GameManager.Instance.ui_SO.gameOverCountdownDuration);
+            }
         }
-    }
 
-    private void LoadCharacterSelectionScene()
-    {
-        SceneLoader.Instance.LoadScene(SceneName.CharacterSelectionScene, true);
-    }
+        public void StartCountdown(float duration)
+        {
+            if (IsServer)
+            {
+                StartCoroutine(GameOverCountdownCoroutine(duration));
+            }
+        }
 
-    [ClientRpc]
-    private void UpdateGameOverCountdownClientRpc(int secondsRemaining)
-    {
-        EventBusManager.Instance.Raise(EventName.GameOverCountdownTick, secondsRemaining);
+        private IEnumerator GameOverCountdownCoroutine(float duration)
+        {
+            float timeRemaining = duration;
+
+            while (timeRemaining > 0)
+            {
+                int displayValue = Mathf.CeilToInt(timeRemaining);
+                UpdateGameOverCountdownClientRpc(displayValue);
+                yield return new WaitForSeconds(1f);
+                timeRemaining -= 1f;
+            }
+
+            ResetPlayerSessionData();
+            LoadCharacterSelectionScene();
+        }
+
+        private void ResetPlayerSessionData()
+        {
+            if (IsServer)
+            {
+                PlayerSessionManager.Instance.ResetAllSessions();
+            }
+        }
+
+        private void LoadCharacterSelectionScene()
+        {
+            SceneLoader.Instance.LoadScene(SceneName.CharacterSelectionScene, true);
+        }
+
+        [ClientRpc]
+        private void UpdateGameOverCountdownClientRpc(int secondsRemaining)
+        {
+            EventBusManager.Instance.Raise(EventName.GameOverCountdownTick, secondsRemaining);
+        }
+
+        private void RaiseGameOverScoreCardLocally()
+        {
+            EventBusManager.Instance.RaiseNoParams(EventName.GameOverScoreCard);
+        }
+
+        [ClientRpc]
+        private void RaiseGameOverScoreCardClientRpc()
+        {
+            EventBusManager.Instance.RaiseNoParams(EventName.GameOverScoreCard);
+        }
     }
 }

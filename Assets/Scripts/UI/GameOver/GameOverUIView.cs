@@ -31,6 +31,7 @@ namespace BattleRoyale.UI
         private void SubscribeToEvents()
         {
             EventBusManager.Instance.Subscribe(EventName.GameOverCountdownTick, HandleCountdownTick);
+            EventBusManager.Instance.Subscribe(EventName.GameOverScoreCard, HandleGameOverScoreCard);
             NetworkManager.Singleton.OnClientDisconnectCallback += ShowDisconnectionGameOverUI;
             _disconnectedBackButtonPrefab.onClick.AddListener(OnDisconnectedBackButtonClicked);
         }
@@ -38,6 +39,7 @@ namespace BattleRoyale.UI
         private void UnsubscribeToEvents()
         {
             EventBusManager.Instance.Unsubscribe(EventName.GameOverCountdownTick, HandleCountdownTick);
+            EventBusManager.Instance.Unsubscribe(EventName.GameOverScoreCard, HandleGameOverScoreCard);
             NetworkManager.Singleton.OnClientDisconnectCallback -= ShowDisconnectionGameOverUI;
             _disconnectedBackButtonPrefab.onClick.AddListener(OnDisconnectedBackButtonClicked);
         }
@@ -45,6 +47,8 @@ namespace BattleRoyale.UI
         private void Start()
         {
             _disconnectedPopUp.SetActive(false);
+            HideScoreboard();
+            ShowGameOverPopUp();
         }
 
         public void EnableView()
@@ -93,5 +97,22 @@ namespace BattleRoyale.UI
             _disconnectedPopUp.SetActive(false);
             SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
+
+        private void HandleGameOverScoreCard(object[] parameters)
+        {
+            HideGameOverPopUp();
+            ShowScoreboard();
+        }
+
+        public void ShowGameOverPopUp()
+        {
+            _gameOverPopUp.SetActive(true);
+        }
+
+        public void HideGameOverPopUp()
+        {
+            _gameOverPopUp.SetActive(false);
+        }
+
     }
 }

@@ -21,7 +21,6 @@ namespace BattleRoyale.Main
             if (NetworkManager.Singleton.IsServer)
             {
                 SpawnGameOverManager();
-                GameOverManager.Instance.StartCountdown(GameManager.Instance.ui_SO.gameOverCountdownDuration);
             }
         }
 

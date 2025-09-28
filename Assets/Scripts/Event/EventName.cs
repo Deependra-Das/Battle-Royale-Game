@@ -14,5 +14,6 @@ namespace BattleRoyale.Event
         PlayerAssignedRank,
         UpdateEliminationCount,
         ConnectedClientNetworkListChanged,
+        GameOverScoreCard,
     }
 }
