@@ -17,6 +17,7 @@ namespace BattleRoyale.Main
         private LevelService _levelObj;
         private PlayerService _playerObj;
         private GameplayUIService _gameplayUIObj;
+        private NetworkObject _gameplayManagerNetworkObj;
 
         public void Enter()
         {
@@ -35,9 +36,10 @@ namespace BattleRoyale.Main
         {
             if (GameplayManager.Instance != null) return;
 
-            GameObject managerObj = UnityEngine.Object.Instantiate(GameManager.Instance.network_SO.gameplayManagerPrefab.gameObject);
-            managerObj.name = "GameplayManager";
-            managerObj.GetComponent<NetworkObject>().Spawn(true);
+            GameObject _gameplayMngrObj = UnityEngine.Object.Instantiate(GameManager.Instance.network_SO.gameplayManagerPrefab.gameObject);
+            _gameplayMngrObj.name = "GameplayManager";
+            _gameplayManagerNetworkObj = _gameplayMngrObj.GetComponent<NetworkObject>();
+            _gameplayManagerNetworkObj.Spawn(true);
         }
 
         public void Exit()
@@ -51,6 +53,12 @@ namespace BattleRoyale.Main
             _playerObj.Dispose();
             _levelObj.Dispose();
             _gameplayUIObj.Dispose();
+
+            if(_gameplayManagerNetworkObj.IsSpawned)
+            {
+                _gameplayManagerNetworkObj.Despawn();
+                UnityEngine.Object.Destroy(_gameplayManagerNetworkObj.gameObject);
+            }     
 
             string activeSceneName = SceneManager.GetActiveScene().name.ToString();
             Enum.TryParse<SceneName>(activeSceneName, out var sceneEnumValue);

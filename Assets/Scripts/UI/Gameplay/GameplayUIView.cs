@@ -46,14 +46,14 @@ namespace BattleRoyale.UI
         private void SubscribeToEvents()
         {
             EventBusManager.Instance.Subscribe(EventName.GameplayCountdownTick, HandleCountdownTick);
-            NetworkManager.Singleton.OnClientDisconnectCallback += ShowDisconnectionCharSelectionUI;
+            NetworkManager.Singleton.OnClientDisconnectCallback += ShowDisconnectionGameplayUI;
             _disconnectedBackButtonPrefab.onClick.AddListener(OnDisconnectedBackButtonClicked);
         }
 
         private void UnsubscribeToEvents()
         {
             EventBusManager.Instance.Unsubscribe(EventName.GameplayCountdownTick, HandleCountdownTick);
-            NetworkManager.Singleton.OnClientDisconnectCallback -= ShowDisconnectionCharSelectionUI;
+            NetworkManager.Singleton.OnClientDisconnectCallback -= ShowDisconnectionGameplayUI;
             _disconnectedBackButtonPrefab.onClick.AddListener(OnDisconnectedBackButtonClicked);
         }
 
@@ -171,7 +171,7 @@ namespace BattleRoyale.UI
             _rankPanel.SetActive(true);
         }
 
-        private void ShowDisconnectionCharSelectionUI(ulong clientID)
+        private void ShowDisconnectionGameplayUI(ulong clientID)
         {
             _disconnectedPopUp.SetActive(true);
         }
