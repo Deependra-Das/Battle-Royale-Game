@@ -28,11 +28,15 @@ namespace BattleRoyale.Player
                 PlayerView playerView = Object.Instantiate(_player_SO.playerPrefab, spawnPosition, Quaternion.identity);
                 Vector3 directionToCenter = Vector3.zero - spawnPosition;
                 directionToCenter.y = 0f;
+
                 if (directionToCenter != Vector3.zero)
                 {
                     playerView.transform.rotation = Quaternion.LookRotation(directionToCenter);
                 }
+
                 playerView.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+                playerView.SetUsernameText(PlayerSessionManager.Instance.GetPlayerSessionData(clientId).Username);
+
                 int charSkinColorIndex = PlayerSessionManager.Instance.GetPlayerSessionData(clientId).SkinColorIndex;
                 playerView.SetCharacterSkinMaterial(charSkinColorIndex);
 

@@ -1,9 +1,11 @@
 using BattleRoyale.Event;
 using BattleRoyale.Level;
 using BattleRoyale.Main;
+using BattleRoyale.Network;
 using BattleRoyale.Tile;
 using TMPro;
 using Unity.Cinemachine;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -75,17 +77,20 @@ namespace BattleRoyale.Player
         [SerializeField] private SkinnedMeshRenderer[] _skinnedMeshRenderersForBodyParts;
 
         private NetworkVariable<int> _selectedMaterialIndex = new NetworkVariable<int>(0);
+        private NetworkVariable<FixedString128Bytes> _usernameNetworkText = new NetworkVariable<FixedString128Bytes>("Player");
 
         private void SubscribeToEvents()
         {
             EventBusManager.Instance.Subscribe(EventName.ActivatePlayerForGameplay, HandlePlayerActivationForGameplay);
             _selectedMaterialIndex.OnValueChanged += ApplySelectedMaterial;
+            _usernameNetworkText.OnValueChanged += UpdateCharacterUsername;
         }
 
         private void UnsubscribeToEvents()
         {
             EventBusManager.Instance.Unsubscribe(EventName.ActivatePlayerForGameplay, HandlePlayerActivationForGameplay);
             _selectedMaterialIndex.OnValueChanged -= ApplySelectedMaterial;
+            _usernameNetworkText.OnValueChanged -= UpdateCharacterUsername;
         }
 
         public void Awake()
@@ -110,7 +115,7 @@ namespace BattleRoyale.Player
             
             if (IsOwner)
             {
-                _usernameText.text = PlayerPrefs.GetString(GameManager.UsernameKey).ToString();
+                _usernameText.text = _usernameNetworkText.Value.ToString();
                 _playerInput.enabled = true;
                 _playerInput.SwitchCurrentControlScheme(Keyboard.current, Mouse.current);
                 GameManager.Instance.Get<PlayerService>().SetupPlayerCam(PlayerCameraRoot.transform);
@@ -385,6 +390,22 @@ namespace BattleRoyale.Player
                     renderer.materials = materialsToRemap;
                 }
             }
+        }
+
+        public void SetUsernameText(string usernameText)
+        {
+            SetUsernameServerRpc(usernameText);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SetUsernameServerRpc(string newUsername)
+        {
+            _usernameNetworkText.Value = newUsername;
+        }
+
+        private void UpdateCharacterUsername(FixedString128Bytes oldValue, FixedString128Bytes newValue)
+        {
+            _usernameText.text = _usernameNetworkText.Value.ToString();
         }
 
         void UsernameTextFaceToCam()
