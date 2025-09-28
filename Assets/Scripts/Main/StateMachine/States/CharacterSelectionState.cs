@@ -34,12 +34,6 @@ namespace BattleRoyale.Main
             GameObject managerObj = UnityEngine.Object.Instantiate(GameManager.Instance.network_SO.characterManagerPrefab.gameObject);
             managerObj.name = "CharacterManager";
             managerObj.GetComponent<NetworkObject>().Spawn(true);
-
-            var totalPlayers = PlayerSessionManager.Instance.GetAllPlayerSessionData();
-            foreach (var entry in totalPlayers)
-            {
-                Debug.Log($"Client ID: {entry.Key}, Username: {entry.Value.ConnectionStatus}");
-            }
         }
 
         public void Exit()
@@ -57,7 +51,6 @@ namespace BattleRoyale.Main
             string activeSceneName = SceneManager.GetActiveScene().name.ToString();
             Enum.TryParse<SceneName>(activeSceneName, out var sceneEnumValue);
 
-            Debug.Log(activeSceneName);
             if (sceneEnumValue == SceneName.StartScene)
             {
                 CleanupNetworkResources();
