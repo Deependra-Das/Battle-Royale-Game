@@ -1,0 +1,244 @@
+using BattleRoyale.CharacterSelection;
+using System.Collections.Generic;
+using System.Linq;
+using Unity.Netcode;
+using UnityEngine;
+
+namespace BattleRoyale.Network
+{
+    public class PlayerSessionManager : NetworkBehaviour
+    {
+        public static PlayerSessionManager Instance { get; private set; }
+
+        private readonly Dictionary<ulong, PlayerSessionData> _sessionData = new();
+
+        private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
+        public void RegisterPlayer(ulong clientId, string username)
+        {
+            if (IsServer)
+            {
+                RegisterPlayerServerRpc(clientId, username);
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void RegisterPlayerServerRpc(ulong clientId, string username, ServerRpcParams rpcParams = default)
+        {
+            if (!_sessionData.ContainsKey(clientId))
+            {
+                _sessionData[clientId] = new PlayerSessionData(clientId, username);
+            }
+
+            SyncSessionDataToClient(clientId);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SetPlayerStatusServerRpc(ulong clientId, PlayerState gameplayState)
+        {
+            if (_sessionData.TryGetValue(clientId, out var data))
+            {
+                data.SetGameplayStatus(gameplayState);
+                SyncPlayerStatusClientRpc(clientId, gameplayState);
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SetPlayerConnectionStatusServerRpc(ulong clientId, PlayerConnectionState connectionState)
+        {
+            if (_sessionData.TryGetValue(clientId, out var data))
+            {
+                data.SetConnectionStatus(connectionState);
+                SyncPlayerConnectionStatusClientRpc(clientId, connectionState);
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SetPlayerRankServerRpc(ulong clientId, int rank)
+        {
+            if (_sessionData.TryGetValue(clientId, out var data))
+            {
+                data.SetRank(rank);
+                SyncPlayerRankClientRpc(clientId, rank);
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SetPlayerUsernameServerRpc(ulong clientId, string username)
+        {
+            if (_sessionData.TryGetValue(clientId, out var data))
+            {
+                data.SetUsername(username);
+                SyncPlayerUsernameClientRpc(clientId, username);
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SetPlayerCharacterSkinColorServerRpc(ulong clientId, int index)
+        {
+            if (_sessionData.TryGetValue(clientId, out var data))
+            {
+                data.SetSkinColorIndex(index);
+                SyncPlayerCharacterSkinColorClientRpc(clientId, index);
+            }
+        }
+
+        [ClientRpc]
+        private void SyncPlayerStatusClientRpc(ulong clientId, PlayerState gameplayState)
+        {
+            if (_sessionData.TryGetValue(clientId, out var data))
+            {
+                data.SetGameplayStatus(gameplayState);
+            }
+        }
+
+        [ClientRpc]
+        private void SyncPlayerConnectionStatusClientRpc(ulong clientId, PlayerConnectionState connectionState)
+        {
+            if (_sessionData.TryGetValue(clientId, out var data))
+            {
+                data.SetConnectionStatus(connectionState);
+            }
+        }
+
+        [ClientRpc]
+        private void SyncPlayerRankClientRpc(ulong clientId, int rank)
+        {
+            if (_sessionData.TryGetValue(clientId, out var data))
+            {
+                data.SetRank(rank);
+            }
+        }
+
+        [ClientRpc]
+        private void SyncPlayerUsernameClientRpc(ulong clientId, string username)
+        {
+            if (_sessionData.TryGetValue(clientId, out var data))
+            {
+                data.SetUsername(username);
+            }
+        }
+
+        [ClientRpc]
+        private void SyncPlayerCharacterSkinColorClientRpc(ulong clientId, int index)
+        {
+            if (_sessionData.TryGetValue(clientId, out var data))
+            {
+                data.SetSkinColorIndex(index);
+            }
+        }
+
+        [ClientRpc]
+        private void SyncAllSessionDataClientRpc(PlayerSessionDataDTO[] dataArray, ClientRpcParams clientRpcParams = default)
+        {
+            foreach (var dto in dataArray)
+            {
+                if (!_sessionData.ContainsKey(dto.ClientId))
+                {
+                    _sessionData[dto.ClientId] = new PlayerSessionData(dto.ClientId, dto.Username);
+                }
+
+                _sessionData[dto.ClientId].SetGameplayStatus(dto.Status);
+                _sessionData[dto.ClientId].SetConnectionStatus(dto.ConnectionStatus);
+                _sessionData[dto.ClientId].SetRank(dto.Rank);
+                _sessionData[dto.ClientId].SetSkinColorIndex(dto.SkinColorIndex);
+            }
+        }
+
+        public void SyncSessionDataToClient(ulong targetClientId)
+        {
+            if (!IsServer) return;
+
+            var dataArray = _sessionData.Values
+                .Select(data => new PlayerSessionDataDTO(data))
+                .ToArray();
+
+            var rpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new[] { targetClientId }
+                }
+            };
+
+            SyncAllSessionDataClientRpc(dataArray, rpcParams);
+        }
+
+
+        public PlayerSessionData GetPlayerSessionData(ulong clientId)
+        {
+            return _sessionData.TryGetValue(clientId, out var data) ? data : null;
+        }
+
+        public Dictionary<ulong, PlayerSessionData> GetAllPlayerSessionData()
+        {
+            return new Dictionary<ulong, PlayerSessionData>(_sessionData);
+        }
+
+        public void ResetAllSessions()
+        {
+            if (IsServer)
+            {
+                RemoveDisconnectedClientsServerRpc();
+
+                foreach (var data in _sessionData.Values)
+                {
+                    data.Reset();
+                    SyncPlayerStatusClientRpc(data.ClientId, PlayerState.Waiting);
+                    SyncPlayerRankClientRpc(data.ClientId, -1);
+                }
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void RemoveDisconnectedClientsServerRpc()
+        {
+            var disconnectedPlayers = _sessionData
+           .Where(entry => entry.Value.ConnectionStatus == PlayerConnectionState.Disconnected)
+           .Select(entry => entry.Key)
+           .ToList();
+
+            foreach (var clientId in disconnectedPlayers)
+            {
+                _sessionData.Remove(clientId);
+                RemovePlayerSessionClientRpc(clientId);
+            }
+        }
+
+        public void ClearAllSessions()
+        {
+            if (IsServer)
+            {
+                _sessionData.Clear();
+            }
+        }
+
+        public void DeregisterPlayer(ulong clientId)
+        {
+            if (IsServer && _sessionData.ContainsKey(clientId))
+            {
+                _sessionData.Remove(clientId);
+                RemovePlayerSessionClientRpc(clientId);
+            }
+        }
+
+        [ClientRpc]
+        private void RemovePlayerSessionClientRpc(ulong clientId)
+        {
+            if (_sessionData.TryGetValue(clientId, out var data))
+            {
+                _sessionData.Remove(clientId);
+            }
+        }
+    }
+}

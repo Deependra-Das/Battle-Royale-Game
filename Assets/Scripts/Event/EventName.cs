@@ -5,12 +5,15 @@ namespace BattleRoyale.Event
     public enum EventName
     {
         ChangeGameState,
-        StartSceneLoadedEvent,
-        GameplaySceneLoadedEvent,
-        GameOverSceneLoadedEvent,
         PlayerSpawnCompleted,
-        StartGameplayCountdown,
+        GameplayCountdownTick,
+        GameOverCountdownTick,
         ActivateTilesForGameplay,
-        ActivatePlayerForGameplay
+        ActivatePlayerForGameplay,
+        PlayerEliminated,
+        PlayerAssignedRank,
+        UpdateEliminationCount,
+        ConnectedClientNetworkListChanged,
+        GameOverScoreCard,
     }
 }

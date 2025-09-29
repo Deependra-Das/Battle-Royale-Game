@@ -13,5 +13,10 @@ MonoBehaviour:
   m_Name: UI_SO
   m_EditorClassIdentifier: 
   startMenuUIPrefab: {fileID: 7929930397085061309, guid: 52ed101945e0cdb4a8ff05cbb638edd5, type: 3}
+  lobbyUIPrefab: {fileID: 3863059124115589070, guid: 524dfafc065b6af42b12ed6b6846b240, type: 3}
+  characterSelectionUIPrefab: {fileID: 19005019765271455, guid: 03044d2fd5f7104468841000475211cd, type: 3}
   gameplayUIPrefab: {fileID: 3082746108889097132, guid: b01f7dcab1897e94c9140fa64551da1b, type: 3}
   gameOverUIPrefab: {fileID: 5326468102242051605, guid: 4438e482f6efbf345996237b2d3cd007, type: 3}
+  scoreboardEntryUIPrefab: {fileID: 3022402256903129148, guid: f546b42099dd83e40bf2a770d5e682f6, type: 3}
+  gameplayCountdownDuration: 3
+  gameOverCountdownDuration: 15

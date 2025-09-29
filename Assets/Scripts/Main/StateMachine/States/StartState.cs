@@ -14,12 +14,6 @@ namespace BattleRoyale.Main
 
         public void Enter()
         {
-            SceneLoader.Instance.LoadSceneAsync(SceneName.StartScene);
-            EventBusManager.Instance.Subscribe(EventName.StartSceneLoadedEvent, HandleStartState);
-        }
-
-        private void HandleStartState(object[] parameters)
-        {
             RegisterGameplayServices();
             _startMenuUIObj = GameManager.Instance.Get<StartMenuUIService>();
 
@@ -28,7 +22,6 @@ namespace BattleRoyale.Main
 
         public void Exit()
         {
-            EventBusManager.Instance.Unsubscribe(EventName.StartSceneLoadedEvent, HandleStartState);
             Cleanup();
             UnegisterGameplayServices();
         }

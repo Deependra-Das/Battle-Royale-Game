@@ -1,7 +1,10 @@
 using BattleRoyale.Event;
+using BattleRoyale.Main;
 using BattleRoyale.Utilities;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,38 +12,36 @@ namespace BattleRoyale.Scene
 {
     public class SceneLoader : GenericMonoSingleton<SceneLoader>
     {
-        public void LoadSceneAsync(SceneName sceneName)
+        protected override void Awake()
         {
-            StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
+            base.Awake();
         }
 
-        private IEnumerator LoadSceneAsyncCoroutine(SceneName sceneName)
+        public void LoadScene(SceneName sceneName, bool isNetworked, LoadSceneMode mode = LoadSceneMode.Single)
         {
-            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName.ToString());
+            if (isNetworked)
+            {
+                if (NetworkManager.Singleton == null) return;
+
+                if (!NetworkManager.Singleton.IsServer) return;
+
+                NetworkManager.Singleton.SceneManager.LoadScene(sceneName.ToString(), mode);
+            }
+            else
+            {
+                StartCoroutine(LoadSceneAsyncCoroutine(sceneName, mode));
+            }
+        }
+
+        private IEnumerator LoadSceneAsyncCoroutine(SceneName sceneName, LoadSceneMode mode)
+        {
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName.ToString(), mode);
 
             while (!asyncLoad.isDone)
             {
-                Debug.Log("Loading scene: " + asyncLoad.progress * 100 + "%");
                 yield return null;
             }
-
-            OnSceneLoaded(sceneName);
         }
-
-        private void OnSceneLoaded(SceneName sceneName)
-        {
-            switch(sceneName)
-            {
-                case SceneName.StartScene:
-                    EventBusManager.Instance.RaiseNoParams(EventName.StartSceneLoadedEvent);
-                    break;
-                case SceneName.GameScene:
-                    EventBusManager.Instance.RaiseNoParams(EventName.GameplaySceneLoadedEvent);
-                    break;
-                case SceneName.GameOverScene:
-                    EventBusManager.Instance.RaiseNoParams(EventName.GameOverSceneLoadedEvent);
-                    break;
-            }
-        }
+          
     }
 }

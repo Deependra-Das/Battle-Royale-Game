@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcd0ea6dd98cd9f46be6ce0878135f60, type: 3}
+  m_Name: Character_SO
+  m_EditorClassIdentifier: 
+  PlayerCharacterPrefab: {fileID: 3216621522419193324, guid: b7bda2bbb17e0c24db798fc207f4edec, type: 3}
+  characterTransformList:
+  - characterPosition: {x: -0.75, y: 0, z: 1.25}
+    characterRotation: {x: 0, y: 180, z: 0}
+    characterScale: {x: 1, y: 1, z: 1}
+  - characterPosition: {x: 0.75, y: 0, z: 1.25}
+    characterRotation: {x: 0, y: 180, z: 0}
+    characterScale: {x: 1, y: 1, z: 1}
+  - characterPosition: {x: -2, y: 0, z: 0.75}
+    characterRotation: {x: 0, y: -200, z: 0}
+    characterScale: {x: 1, y: 1, z: 1}
+  - characterPosition: {x: 2, y: 0, z: 0.75}
+    characterRotation: {x: 0, y: 200, z: 0}
+    characterScale: {x: 1, y: 1, z: 1}
+  - characterPosition: {x: -3, y: 0, z: -0.25}
+    characterRotation: {x: 0, y: -215, z: 0}
+    characterScale: {x: 1, y: 1, z: 1}
+  - characterPosition: {x: 3, y: 0, z: -0.25}
+    characterRotation: {x: 0, y: 215, z: 0}
+    characterScale: {x: 1, y: 1, z: 1}
+  - characterPosition: {x: -3.75, y: 0, z: -1.35}
+    characterRotation: {x: 0, y: -240, z: 0}
+    characterScale: {x: 1, y: 1, z: 1}
+  - characterPosition: {x: 3.75, y: 0, z: -1.35}
+    characterRotation: {x: 0, y: 240, z: 0}
+    characterScale: {x: 1, y: 1, z: 1}

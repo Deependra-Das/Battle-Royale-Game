@@ -1,11 +1,15 @@
+using BattleRoyale.CharacterSelection;
+using BattleRoyale.Event;
+using BattleRoyale.Level;
+using BattleRoyale.Network;
+using BattleRoyale.Player;
+using BattleRoyale.Scene;
+using BattleRoyale.UI;
+using BattleRoyale.Utilities;
+using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
-using BattleRoyale.Utilities;
-using BattleRoyale.Level;
-using BattleRoyale.Player;
-using BattleRoyale.Event;
-using BattleRoyale.UI;
 
 namespace BattleRoyale.Main
 {
@@ -14,8 +18,12 @@ namespace BattleRoyale.Main
         [SerializeField] public LevelScriptableObject level_SO;
         [SerializeField] public PlayerScriptableObject player_SO;
         [SerializeField] public UIScriptableObject ui_SO;
+        [SerializeField] public NetworkScriptableObject network_SO;
+        [SerializeField] public CharacterScriptableObject character_SO;
 
         private GameStateMachine _stateMachine;
+
+        public const string UsernameKey = "Username";
 
         protected override void Awake()
         {
@@ -25,7 +33,7 @@ namespace BattleRoyale.Main
         private void Start()
         {
             _stateMachine = new GameStateMachine();
-            ChangeGameState(GameState.Start);
+            SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
 
         public void ChangeGameState(GameState newState)
@@ -34,6 +42,14 @@ namespace BattleRoyale.Main
             {
                 case GameState.Start:
                     _stateMachine.ChangeGameState(new StartState());
+                    break;
+
+                case GameState.Lobby:
+                    _stateMachine.ChangeGameState(new LobbyState());
+                    break;
+
+                case GameState.CharacterSelection:
+                    _stateMachine.ChangeGameState(new CharacterSelectionState());
                     break;
 
                 case GameState.Gameplay:
@@ -52,5 +68,7 @@ namespace BattleRoyale.Main
         {
             return ServiceLocator.Get<T>();
         }
+
+        public GameState CurrentGameState => _stateMachine.GetCurrentState();
     }
 }

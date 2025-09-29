@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acb8346bb8e4f944fa8d69a690ed43ef, type: 3}
+  m_Name: Network_SO
+  m_EditorClassIdentifier: 
+  playerSessionManagerPrefab: {fileID: 6575469151674356686, guid: d212405bd665e814c9b0e5a398ea2405, type: 3}
+  characterManagerPrefab: {fileID: 7357487013224194659, guid: d389b7af1f37be3458174801fe91b38d, type: 3}
+  gameplayManagerPrefab: {fileID: 6099912589889155464, guid: 059c7126abcfb6d4b9659ada231608af, type: 3}
+  gameOverManagerPrefab: {fileID: 3307458951046391714, guid: 4dff15346ab331f42beddc47e15602c5, type: 3}
+  tileRegistryPrefab: {fileID: 5892027916792131841, guid: dd69ae77bb5e8ff4b83dfcb673947594, type: 3}

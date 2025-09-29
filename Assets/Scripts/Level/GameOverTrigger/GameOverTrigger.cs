@@ -1,7 +1,9 @@
-using UnityEngine;
-using System.Collections;
 using BattleRoyale.Main;
 using BattleRoyale.Player;
+using BattleRoyale.Network;
+using System.Collections;
+using Unity.Netcode;
+using UnityEngine;
 
 namespace BattleRoyale.Level
 {
@@ -12,14 +14,11 @@ namespace BattleRoyale.Level
             PlayerView _playerView = other.gameObject.GetComponent<PlayerView>();
             if (_playerView!=null)
             {
-                TriggerGameOver();
+                if (_playerView != null && NetworkManager.Singleton.IsServer)
+                {
+                    GameplayManager.Instance.HandlePlayerGameOver(_playerView.OwnerClientId);
+                }
             }
-        }
-
-        void TriggerGameOver()
-        {
-            Debug.Log("Game Over!");
-            GameManager.Instance.ChangeGameState(GameState.GameOver);
         }
     }
 }

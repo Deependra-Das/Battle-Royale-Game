@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
 namespace BattleRoyale.Main
 {
@@ -19,6 +18,8 @@ namespace BattleRoyale.Main
         private void CreateStates()
         {
             _states.Add(GameState.Start, new StartState());
+            _states.Add(GameState.Lobby, new LobbyState());
+            _states.Add(GameState.CharacterSelection, new CharacterSelectionState());
             _states.Add(GameState.Gameplay, new GameplayState());
             _states.Add(GameState.GameOver, new GameOverState());
         }
