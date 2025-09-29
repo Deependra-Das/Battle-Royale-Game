@@ -525,11 +525,7 @@ MonoBehaviour:
   _usernameText: {fileID: 4222013234456696619}
   _readyStatusLabel: {fileID: 1447977377440716535}
   _notReadyStatusLabel: {fileID: 6526974543313536513}
-  _skinMaterials:
-  - {fileID: 2100000, guid: 60c2f0e0aaa8f8d4e9d23d7e3768653b, type: 2}
-  - {fileID: 2100000, guid: c8ab85f9bde932b489481bf88d51787b, type: 2}
-  - {fileID: 2100000, guid: e0502f6d1f3b6a6418d67cd9a8ac4750, type: 2}
-  - {fileID: 2100000, guid: 5dea53e8f2296cc4eb4a62dc5e91d3e5, type: 2}
+  _charSkinMatInfo_SO: {fileID: 11400000, guid: 3b6a971c7a6c83f4789dbc2a7bf587ff, type: 2}
   _skinnedMeshRenderersForBodyParts:
   - {fileID: 8249082601384632650}
   - {fileID: 4789876605973160650}

@@ -71,9 +71,9 @@ namespace BattleRoyale.Player
         private bool IsCurrentDeviceMouse { get { return _playerInput.currentControlScheme == "KeyboardMouse"; } }
         private bool _canMove = false;
 
-        [Header("Player Skin")]
+        [Header("Player Character Skin")]
 
-        [SerializeField] private Material[] _skinMaterials;
+        [SerializeField] private PlayerCharMatSkinColorScriptableObject _charSkinMatInfo_SO;
         [SerializeField] private SkinnedMeshRenderer[] _skinnedMeshRenderersForBodyParts;
 
         private NetworkVariable<int> _selectedMaterialIndex = new NetworkVariable<int>(0);
@@ -373,7 +373,7 @@ namespace BattleRoyale.Player
         [ServerRpc(RequireOwnership = false)]
         public void SetMaterialIndexServerRpc(int materialIndex)
         {
-            if (materialIndex >= 0 && materialIndex < _skinMaterials.Length)
+            if (materialIndex >= 0 && materialIndex < _charSkinMatInfo_SO.charSkinInfoList.Length)
             {
                 _selectedMaterialIndex.Value = materialIndex;
             }
@@ -381,12 +381,12 @@ namespace BattleRoyale.Player
 
         private void ApplySelectedMaterial(int oldMaterialIndex, int newMaterialIndex)
         {
-            if (_skinnedMeshRenderersForBodyParts != null && newMaterialIndex >= 0 && newMaterialIndex < _skinMaterials.Length)
+            if (_skinnedMeshRenderersForBodyParts != null && newMaterialIndex >= 0 && newMaterialIndex < _charSkinMatInfo_SO.charSkinInfoList.Length)
             {
                 foreach (SkinnedMeshRenderer renderer in _skinnedMeshRenderersForBodyParts)
                 {
                     Material[] materialsToRemap = renderer.materials;
-                    materialsToRemap[0] = _skinMaterials[newMaterialIndex];
+                    materialsToRemap[0] = _charSkinMatInfo_SO.charSkinInfoList[newMaterialIndex].skinColorMaterial;
                     renderer.materials = materialsToRemap;
                 }
             }

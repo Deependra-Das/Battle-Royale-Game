@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 1063341598028967511}
   - component: {fileID: 8608270715702665693}
   - component: {fileID: -3374205618571349519}
-  - component: {fileID: 606758117999298598}
   - component: {fileID: 7595405929447427900}
   - component: {fileID: -1442552624499810344}
+  - component: {fileID: 606758117999298598}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -211,77 +211,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &606758117999298598
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 960737045345932907}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2884f83687345846a0ec9e95aa3d6ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
-  _cinemachineCameraTarget: {fileID: 5112655210393307609}
-  _charController: {fileID: 1063341598028967511}
-  _animator: {fileID: 7103471529918078927}
-  _usernameText: {fileID: 1622693442689404228}
-  _moveSpeed: 10
-  _speedChangeRate: 10
-  _rotationSmoothTime: 0.12
-  _jumpHeight: 1.2
-  _gravity: -15
-  _terminalVelocity: 53
-  _jumpTimeout: 0.5
-  _fallTimeout: 0.15
-  _groundedOffset: -0.14
-  _groundedRadius: 0.28
-  _groundLayers:
-    serializedVersion: 2
-    m_Bits: 64
-  strength: 1.1
-  TopClamp: 70
-  BottomClamp: -30
-  CameraAngleOverride: 0
-  LockCameraPosition: 0
-  move: {x: 0, y: 0}
-  look: {x: 0, y: 0}
-  jump: 0
-  analogMovement: 0
-  cursorLocked: 1
-  cursorInputForLook: 1
-  _skinMaterials:
-  - {fileID: 2100000, guid: 60c2f0e0aaa8f8d4e9d23d7e3768653b, type: 2}
-  - {fileID: 2100000, guid: c8ab85f9bde932b489481bf88d51787b, type: 2}
-  - {fileID: 2100000, guid: e0502f6d1f3b6a6418d67cd9a8ac4750, type: 2}
-  - {fileID: 2100000, guid: 5dea53e8f2296cc4eb4a62dc5e91d3e5, type: 2}
-  _skinnedMeshRenderersForBodyParts:
-  - {fileID: 7060682506685344151}
-  - {fileID: 5908505945055586839}
-  - {fileID: 2554943820862042129}
-  - {fileID: 3660895976716782676}
-  - {fileID: 805945717085464656}
-  - {fileID: 3752449224440611829}
-  - {fileID: 288467595677177167}
-  - {fileID: 6129867241582175209}
-  - {fileID: 2138280868289256436}
-  - {fileID: 147610778383899164}
-  - {fileID: 6150498474223191048}
-  - {fileID: 3287350194703198666}
-  - {fileID: 7114833323574787889}
-  - {fileID: 7245525157166274210}
-  - {fileID: 8902889156834287174}
-  - {fileID: 1116222192717632225}
-  - {fileID: 6246676195008359980}
-  - {fileID: 6030803625401250930}
-  - {fileID: 7165295825103720348}
-  - {fileID: 533441146985428424}
-  - {fileID: 5170670565023644961}
-  - {fileID: 718750412350591987}
-  - {fileID: 3002089297896630616}
-  - {fileID: 8538237901436937105}
 --- !u!114 &7595405929447427900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -343,6 +272,73 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   TransitionStateInfoList: []
   m_Animator: {fileID: 7103471529918078927}
+--- !u!114 &606758117999298598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960737045345932907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2884f83687345846a0ec9e95aa3d6ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  _cinemachineCameraTarget: {fileID: 5112655210393307609}
+  _charController: {fileID: 1063341598028967511}
+  _animator: {fileID: 7103471529918078927}
+  _usernameText: {fileID: 1622693442689404228}
+  _moveSpeed: 10
+  _speedChangeRate: 10
+  _rotationSmoothTime: 0.12
+  _jumpHeight: 1.2
+  _gravity: -15
+  _terminalVelocity: 53
+  _jumpTimeout: 0.5
+  _fallTimeout: 0.15
+  _groundedOffset: -0.14
+  _groundedRadius: 0.28
+  _groundLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  strength: 1.1
+  TopClamp: 70
+  BottomClamp: -30
+  CameraAngleOverride: 0
+  LockCameraPosition: 0
+  move: {x: 0, y: 0}
+  look: {x: 0, y: 0}
+  jump: 0
+  analogMovement: 0
+  cursorLocked: 1
+  cursorInputForLook: 1
+  _charSkinMatInfo_SO: {fileID: 11400000, guid: 3b6a971c7a6c83f4789dbc2a7bf587ff, type: 2}
+  _skinnedMeshRenderersForBodyParts:
+  - {fileID: 7060682506685344151}
+  - {fileID: 5908505945055586839}
+  - {fileID: 2554943820862042129}
+  - {fileID: 3660895976716782676}
+  - {fileID: 805945717085464656}
+  - {fileID: 3752449224440611829}
+  - {fileID: 288467595677177167}
+  - {fileID: 6129867241582175209}
+  - {fileID: 2138280868289256436}
+  - {fileID: 147610778383899164}
+  - {fileID: 6150498474223191048}
+  - {fileID: 3287350194703198666}
+  - {fileID: 7114833323574787889}
+  - {fileID: 7245525157166274210}
+  - {fileID: 8902889156834287174}
+  - {fileID: 1116222192717632225}
+  - {fileID: 6246676195008359980}
+  - {fileID: 6030803625401250930}
+  - {fileID: 7165295825103720348}
+  - {fileID: 533441146985428424}
+  - {fileID: 5170670565023644961}
+  - {fileID: 718750412350591987}
+  - {fileID: 3002089297896630616}
+  - {fileID: 8538237901436937105}
 --- !u!1 &2375997060646867033
 GameObject:
   m_ObjectHideFlags: 0

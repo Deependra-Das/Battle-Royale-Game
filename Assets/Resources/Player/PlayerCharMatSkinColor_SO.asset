@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c0edaebf24d2314b886782addec8d6a, type: 3}
+  m_Name: PlayerCharMatSkinColor_SO
+  m_EditorClassIdentifier: 
+  charSkinInfoList:
+  - skincolorIndex: 0
+    skinColorName: Red
+    skinColorMaterial: {fileID: 2100000, guid: 60c2f0e0aaa8f8d4e9d23d7e3768653b, type: 2}
+    skincolorHexValue: '#FF566B'
+  - skincolorIndex: 1
+    skinColorName: Black
+    skinColorMaterial: {fileID: 2100000, guid: c8ab85f9bde932b489481bf88d51787b, type: 2}
+    skincolorHexValue: '#6A6A6A'
+  - skincolorIndex: 2
+    skinColorName: Blue
+    skinColorMaterial: {fileID: 2100000, guid: e0502f6d1f3b6a6418d67cd9a8ac4750, type: 2}
+    skincolorHexValue: '#58A0AC'
+  - skincolorIndex: 3
+    skinColorName: Yellow
+    skinColorMaterial: {fileID: 2100000, guid: 5dea53e8f2296cc4eb4a62dc5e91d3e5, type: 2}
+    skincolorHexValue: '#AD8F5F'

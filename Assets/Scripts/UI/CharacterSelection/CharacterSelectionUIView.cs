@@ -1,6 +1,7 @@
 using BattleRoyale.Event;
 using BattleRoyale.Main;
 using BattleRoyale.Network;
+using BattleRoyale.Player;
 using BattleRoyale.Scene;
 using System.Collections.Generic;
 using TMPro;
@@ -29,7 +30,7 @@ namespace BattleRoyale.UI
         [Header("Character Skin Color")]
         [SerializeField] private Toggle _colorTogglePrefab;
         [SerializeField] private Transform _colorToggleGroupTransform;
-        [SerializeField] private CharacterSkinColorInfo[] colorInfos;
+        [SerializeField] private PlayerCharMatSkinColorScriptableObject _charSkinMatInfo_SO;
 
         private List<Toggle> toggles = new List<Toggle>();
 
@@ -76,9 +77,9 @@ namespace BattleRoyale.UI
 
         void CreateColorButtons()
         {
-            for (int i = 0; i < colorInfos.Length; i++)
+            for (int i = 0; i < _charSkinMatInfo_SO.charSkinInfoList.Length; i++)
             {
-                AddRadioButton(colorInfos[i].skincolorIndex, colorInfos[i].skincolorName, colorInfos[i].skincolorHexValue);
+                AddRadioButton(_charSkinMatInfo_SO.charSkinInfoList[i].skincolorIndex, _charSkinMatInfo_SO.charSkinInfoList[i].skinColorName, _charSkinMatInfo_SO.charSkinInfoList[i].skincolorHexValue);
             }
 
             toggles[0].isOn = true;

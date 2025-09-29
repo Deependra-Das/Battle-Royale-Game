@@ -1,5 +1,6 @@
 using BattleRoyale.Event;
 using BattleRoyale.Network;
+using BattleRoyale.Player;
 using System;
 using TMPro;
 using Unity.Collections;
@@ -13,7 +14,7 @@ namespace BattleRoyale.CharacterSelection
         [SerializeField] private TMP_Text _usernameText;
         [SerializeField] private GameObject _readyStatusLabel;
         [SerializeField] private GameObject _notReadyStatusLabel;
-        [SerializeField] private Material[] _skinMaterials;
+        [SerializeField] private PlayerCharMatSkinColorScriptableObject _charSkinMatInfo_SO;
         [SerializeField] private SkinnedMeshRenderer[] _skinnedMeshRenderersForBodyParts;
 
         private NetworkVariable<FixedString128Bytes> _usernameNetworkText = new NetworkVariable<FixedString128Bytes>("Player");
@@ -96,7 +97,7 @@ namespace BattleRoyale.CharacterSelection
         [ServerRpc(RequireOwnership = false)]
         public void SetMaterialIndexServerRpc(int materialIndex)
         {
-            if (materialIndex >= 0 && materialIndex < _skinMaterials.Length)
+            if (materialIndex >= 0 && materialIndex < _charSkinMatInfo_SO.charSkinInfoList.Length)
             {
                 _selectedMaterialIndex.Value = materialIndex;
             }
@@ -104,12 +105,12 @@ namespace BattleRoyale.CharacterSelection
 
         private void ApplySelectedMaterial(int oldMaterialIndex, int newMaterialIndex)
         {
-            if (_skinnedMeshRenderersForBodyParts != null && newMaterialIndex >= 0 && newMaterialIndex < _skinMaterials.Length)
+            if (_skinnedMeshRenderersForBodyParts != null && newMaterialIndex >= 0 && newMaterialIndex < _charSkinMatInfo_SO.charSkinInfoList.Length)
             {
                 foreach (SkinnedMeshRenderer renderer in _skinnedMeshRenderersForBodyParts)
                 {
                     Material[] materialsToRemap = renderer.materials;
-                    materialsToRemap[0] = _skinMaterials[newMaterialIndex];
+                    materialsToRemap[0] = _charSkinMatInfo_SO.charSkinInfoList[newMaterialIndex].skinColorMaterial;
                     renderer.materials = materialsToRemap;
                 }
             }

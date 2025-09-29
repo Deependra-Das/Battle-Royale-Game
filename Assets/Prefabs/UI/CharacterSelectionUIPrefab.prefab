@@ -960,19 +960,7 @@ MonoBehaviour:
   _noConfirmationButtonPrefab: {fileID: 9060446023871468432}
   _colorTogglePrefab: {fileID: 3078891319102880724, guid: 5fbf44b6fb777d448991d7a193fbe1a8, type: 3}
   _colorToggleGroupTransform: {fileID: 3604289040424620409}
-  colorInfos:
-  - skincolorIndex: 0
-    skincolorName: Red
-    skincolorHexValue: '#FF566B'
-  - skincolorIndex: 1
-    skincolorName: Black
-    skincolorHexValue: '#6A6A6A'
-  - skincolorIndex: 2
-    skincolorName: Blue
-    skincolorHexValue: '#58A0AC'
-  - skincolorIndex: 3
-    skincolorName: Yellow
-    skincolorHexValue: '#AD8F5F'
+  _charSkinMatInfo_SO: {fileID: 11400000, guid: 3b6a971c7a6c83f4789dbc2a7bf587ff, type: 2}
 --- !u!1 &5611702027495004976
 GameObject:
   m_ObjectHideFlags: 0
