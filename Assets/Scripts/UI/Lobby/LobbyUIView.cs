@@ -8,8 +8,8 @@ namespace BattleRoyale.UI
 {
     public class LobbyUIView : MonoBehaviour
     {
-        [SerializeField] private Button _createGameButtonPrefab;
-        [SerializeField] private Button _joinGameButtonPrefab;
+        [SerializeField] private Button _createLobbyButtonPrefab;
+        [SerializeField] private Button _quickJoinButtonPrefab;
         [SerializeField] private Button _backToStartMenuButtonPrefab;
 
         private void OnEnable() => SubscribeToEvents();
@@ -18,27 +18,26 @@ namespace BattleRoyale.UI
 
         private void SubscribeToEvents()
         {
-            _createGameButtonPrefab.onClick.AddListener(OnCreateGameButtonClicked);
-            _joinGameButtonPrefab.onClick.AddListener(OnJoinGameButtonClicked);
+            _createLobbyButtonPrefab.onClick.AddListener(OnCreateLobbyButtonClicked);
+            _quickJoinButtonPrefab.onClick.AddListener(OnQuickJoinButtonClicked);
             _backToStartMenuButtonPrefab.onClick.AddListener(OnBackToStartMenuButtonClicked);
         }
 
         private void UnsubscribeToEvents()
         {
-            _createGameButtonPrefab.onClick.RemoveListener(OnCreateGameButtonClicked);
-            _joinGameButtonPrefab.onClick.RemoveListener(OnJoinGameButtonClicked);
+            _createLobbyButtonPrefab.onClick.RemoveListener(OnCreateLobbyButtonClicked);
+            _quickJoinButtonPrefab.onClick.RemoveListener(OnQuickJoinButtonClicked);
             _backToStartMenuButtonPrefab.onClick.RemoveListener(OnBackToStartMenuButtonClicked);
         }
 
-        private void OnCreateGameButtonClicked()
+        private void OnCreateLobbyButtonClicked()
         {
-            MultiplayerManager.Instance.StartHost();
-            SceneLoader.Instance.LoadScene(SceneName.CharacterSelectionScene, true);
+            LobbyManager.Instance.CreateLobby("LobbyName", false);
         }
 
-        private void OnJoinGameButtonClicked()
+        private void OnQuickJoinButtonClicked()
         {
-            MultiplayerManager.Instance.StartClient();
+            LobbyManager.Instance.QuickJoin();
         }
 
         private void OnBackToStartMenuButtonClicked()

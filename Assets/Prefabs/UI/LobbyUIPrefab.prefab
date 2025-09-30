@@ -50,8 +50,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be576f823ca04cb48be5220449300de7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _createGameButtonPrefab: {fileID: 6742159218019783787}
-  _joinGameButtonPrefab: {fileID: 8660472285721624325}
+  _createLobbyButtonPrefab: {fileID: 6742159218019783787}
+  _quickJoinButtonPrefab: {fileID: 8660472285721624325}
   _backToStartMenuButtonPrefab: {fileID: 1988587214188409102}
 --- !u!1 &1660151342751670209
 GameObject:
@@ -356,11 +356,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1106520027051644963, guid: 13807ec415faed94c83a6989d5e4e917, type: 3}
       propertyPath: m_Name
-      value: CreateGameButton
+      value: CreateLobbyButton
       objectReference: {fileID: 0}
     - target: {fileID: 1691765899880599209, guid: 13807ec415faed94c83a6989d5e4e917, type: 3}
       propertyPath: m_text
-      value: Create Game
+      value: Create Lobby
       objectReference: {fileID: 0}
     - target: {fileID: 6177949531705704835, guid: 13807ec415faed94c83a6989d5e4e917, type: 3}
       propertyPath: m_Pivot.x
@@ -473,11 +473,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1106520027051644963, guid: 13807ec415faed94c83a6989d5e4e917, type: 3}
       propertyPath: m_Name
-      value: JoinGameButton
+      value: QuickJoinButton
       objectReference: {fileID: 0}
     - target: {fileID: 1691765899880599209, guid: 13807ec415faed94c83a6989d5e4e917, type: 3}
       propertyPath: m_text
-      value: Join Game
+      value: Quick Join
       objectReference: {fileID: 0}
     - target: {fileID: 6177949531705704835, guid: 13807ec415faed94c83a6989d5e4e917, type: 3}
       propertyPath: m_Pivot.x
