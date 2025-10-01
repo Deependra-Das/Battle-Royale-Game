@@ -16,6 +16,8 @@ namespace BattleRoyale.Network
         public static MultiplayerManager Instance { get; private set; }
         public string PlayerUsername { get; private set; }
 
+        public const int MAX_LOBBY_SIZE = 8;
+
         private void Awake()
         {
             Instance = this;
