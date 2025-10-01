@@ -20,6 +20,8 @@ namespace BattleRoyale.UI
 
         [Header("Create Lobby Content")]
         [SerializeField] private Toggle _capacityNumTogglePrefab;
+        [SerializeField] private Toggle _publicToggle;
+        [SerializeField] private Toggle _privateToggle;    
         [SerializeField] private Transform _capacityNumToggleGroupTransform;
         [SerializeField] private Button _createLobbyButtonPrefab;
         private List<Toggle> toggles = new List<Toggle>();
@@ -40,6 +42,9 @@ namespace BattleRoyale.UI
 
             _createLobbyToggle.onValueChanged.AddListener((isOn) => HandleMainTabSwitch(isOn, 1));
             _joinLobbyToggle.onValueChanged.AddListener((isOn) => HandleMainTabSwitch(isOn, 2));
+
+            _publicToggle.onValueChanged.AddListener((isOn) => HandlePrivacyToggleSwitch(isOn, 1));
+            _privateToggle.onValueChanged.AddListener((isOn) => HandlePrivacyToggleSwitch(isOn, 2));
         }
 
         private void UnsubscribeToEvents()
@@ -51,6 +56,9 @@ namespace BattleRoyale.UI
             _createLobbyToggle.onValueChanged.RemoveListener((isOn) => HandleMainTabSwitch(isOn, 1));
             _joinLobbyToggle.onValueChanged.RemoveListener((isOn) => HandleMainTabSwitch(isOn, 2));
 
+            _publicToggle.onValueChanged.RemoveListener((isOn) => HandlePrivacyToggleSwitch(isOn, 1));
+            _privateToggle.onValueChanged.RemoveListener((isOn) => HandlePrivacyToggleSwitch(isOn, 2));
+
             foreach (var toggle in toggles)
             {
                 toggle.onValueChanged.RemoveListener((isOn) => OnCapacityNumToggleChanged(toggle, isOn, toggle.group.transform.GetSiblingIndex()));
@@ -59,8 +67,9 @@ namespace BattleRoyale.UI
 
         private void Awake()
         {
-            CreateColorButtons();
+            CreateCapacityNumToggles();
             HandleMainTabSwitch(true, 1);
+            HandlePrivacyToggleSwitch(true, 1);
         }
 
         void HandleMainTabSwitch(bool isOn, int tabIndex)
@@ -70,33 +79,39 @@ namespace BattleRoyale.UI
                 if (tabIndex == 1)
                 {
                     _joinLobbyToggle.isOn = false;
+                    _joinLobbyToggle.image.color = Color.gray;
+                    _createLobbyToggle.image.color = Color.white;
                     _createLobbyTabContainer.SetActive(true);
                     _joinLobbyTabContainer.SetActive(false);
                 }
                 else if (tabIndex == 2)
                 {
                     _createLobbyToggle.isOn = false;
+                    _createLobbyToggle.image.color = Color.gray;
+                    _joinLobbyToggle.image.color = Color.white;
                     _createLobbyTabContainer.SetActive(false);
                     _joinLobbyTabContainer.SetActive(true);
                 }
             }
         }
-        void CreateColorButtons()
+
+        void CreateCapacityNumToggles()
         {
             int maxLobbySize = MultiplayerManager.MAX_LOBBY_SIZE;
 
             for (int i = 1; i <= maxLobbySize; i++)
             {
-                AddRadioButton(i);
+                AddCapacityRadioButton(i);
             }
 
             toggles[0].isOn = true;
         }
 
-        public void AddRadioButton(int index)
+        public void AddCapacityRadioButton(int index)
         {
             GameObject toggleObject = Instantiate(_capacityNumTogglePrefab.gameObject, _capacityNumToggleGroupTransform);
             Toggle newToggle = toggleObject.GetComponent<Toggle>();
+            newToggle.image.color = Color.gray;
             newToggle.GetComponentInChildren<TMP_Text>().text = index.ToString();
             toggles.Add(newToggle);
             newToggle.onValueChanged.AddListener((isOn) => OnCapacityNumToggleChanged(newToggle, isOn, index));
@@ -106,6 +121,7 @@ namespace BattleRoyale.UI
         {
             if (isOn)
             {
+                changedToggle.image.color = Color.white;
                 DeactivateOtherCapacityNumToggles(changedToggle);
             }
         }
@@ -116,7 +132,27 @@ namespace BattleRoyale.UI
             {
                 if (toggle != changedToggle)
                 {
+                    toggle.image.color = Color.gray;
                     toggle.isOn = false;
+                }
+            }
+        }
+
+        void HandlePrivacyToggleSwitch(bool isOn, int tabIndex)
+        {
+            if (isOn)
+            {
+                if (tabIndex == 1)
+                {
+                    _privateToggle.isOn = false;
+                    _privateToggle.image.color = Color.gray;
+                    _publicToggle.image.color = Color.white;
+                }
+                else if (tabIndex == 2)
+                {
+                    _publicToggle.isOn = false;
+                    _publicToggle.image.color = Color.gray;
+                    _privateToggle.image.color = Color.white;
                 }
             }
         }
