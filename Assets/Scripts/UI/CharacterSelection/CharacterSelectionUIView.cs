@@ -6,6 +6,7 @@ using BattleRoyale.Scene;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,11 @@ namespace BattleRoyale.UI
         [SerializeField] private Button _readyButtonPrefab;
         [SerializeField] private Button _notReadyButtonPrefab;
         [SerializeField] private Button _backToStartMenuButtonPrefab;
+
+        [SerializeField] private TMP_Text _lobbyNameText;
+        [SerializeField] private TMP_Text _lobbyCodeText;
+        [SerializeField] private TMP_Text _lobbyPrivacyText;
+        [SerializeField] private TMP_Text _lobbyCapacityText;
 
         [Header ("Disconnected PopUp")] 
         [SerializeField] private GameObject _disconnectedPopUp;
@@ -67,12 +73,23 @@ namespace BattleRoyale.UI
 
         private void Start()
         {
+            SetLobbyInformation();
             CreateColorButtons();
             _disconnectedPopUp.SetActive(false);
             _notReadyButtonPrefab.gameObject.SetActive(false);
             _readyButtonPrefab.gameObject.SetActive(true);
             SetHostLobbyNoticeText();
             HideBackToMainMenuConfirmationPopup();
+        }
+
+
+        private void SetLobbyInformation()
+        {
+            Lobby lobby = LobbyManager.Instance.GetLobby();
+            _lobbyNameText.text = lobby.Name;
+            _lobbyCodeText.text = lobby.LobbyCode;
+            _lobbyPrivacyText.text = lobby.IsPrivate ? "Private" : "Public";
+            _lobbyCapacityText.text = lobby.MaxPlayers.ToString();
         }
 
         void CreateColorButtons()

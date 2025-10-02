@@ -65,4 +65,9 @@ public class LobbyManager : MonoBehaviour
             Debug.Log(e);
         }
     }
+
+    public Lobby GetLobby()
+    {
+        return _joinedLobby;
+    }
 }
