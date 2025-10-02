@@ -66,6 +66,20 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
+    public async void JoinWithCode(string lobbyCode)
+    {
+        try
+        {
+            _joinedLobby = await LobbyService.Instance.JoinLobbyByCodeAsync(lobbyCode);
+
+            MultiplayerManager.Instance.StartClient();
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.Log(e);
+        }
+    }
+
     public Lobby GetLobby()
     {
         return _joinedLobby;

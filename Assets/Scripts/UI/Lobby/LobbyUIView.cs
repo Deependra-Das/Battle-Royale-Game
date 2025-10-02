@@ -34,6 +34,7 @@ namespace BattleRoyale.UI
         private bool _privacySelected = false;
 
         [Header("Join Lobby Content")]
+        [SerializeField] private TMP_InputField _joinCodeInputField;
         [SerializeField] private Button _quickJoinButtonPrefab;
         [SerializeField] private Button _joinLobbyWithCodeButtonPrefab;
 
@@ -49,6 +50,8 @@ namespace BattleRoyale.UI
             _createLobbyButtonPrefab.onClick.AddListener(OnCreateLobbyButtonClicked);
             _resetButtonPrefab.onClick.AddListener(OnResetButtonClicked);
             _quickJoinButtonPrefab.onClick.AddListener(OnQuickJoinButtonClicked);
+            _joinLobbyWithCodeButtonPrefab.onClick.AddListener(OnJoinWithCodeButtonClicked);
+            
             _backToStartMenuButtonPrefab.onClick.AddListener(OnBackToStartMenuButtonClicked);
 
             _createLobbyToggle.onValueChanged.AddListener((isOn) => HandleMainTabSwitch(isOn, 1));
@@ -63,6 +66,8 @@ namespace BattleRoyale.UI
             _createLobbyButtonPrefab.onClick.RemoveListener(OnCreateLobbyButtonClicked);
             _resetButtonPrefab.onClick.RemoveListener(OnResetButtonClicked);
             _quickJoinButtonPrefab.onClick.RemoveListener(OnQuickJoinButtonClicked);
+            _joinLobbyWithCodeButtonPrefab.onClick.RemoveListener(OnJoinWithCodeButtonClicked);
+
             _backToStartMenuButtonPrefab.onClick.RemoveListener(OnBackToStartMenuButtonClicked);
 
             _createLobbyToggle.onValueChanged.RemoveListener((isOn) => HandleMainTabSwitch(isOn, 1));
@@ -208,6 +213,7 @@ namespace BattleRoyale.UI
                 _errorMessageText.text = string.Empty;
             }
         }
+
         private void OnResetButtonClicked()
         {
              _lobbyNameInputField.text = string.Empty;
@@ -219,6 +225,11 @@ namespace BattleRoyale.UI
         private void OnQuickJoinButtonClicked()
         {
             LobbyManager.Instance.QuickJoin();
+        }
+
+        private void OnJoinWithCodeButtonClicked()
+        {
+            LobbyManager.Instance.JoinWithCode(_joinCodeInputField.text);
         }
 
         private void OnBackToStartMenuButtonClicked()
