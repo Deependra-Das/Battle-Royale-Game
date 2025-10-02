@@ -12,6 +12,8 @@ public class LobbyManager : MonoBehaviour
   public static LobbyManager Instance { get; private set; }
 
     private Lobby _joinedLobby;
+    private float _heartbeatTimer;
+    private float _heartbeatTimerMax = 15f;
 
     private void Awake()
     {
@@ -31,6 +33,31 @@ public class LobbyManager : MonoBehaviour
             await UnityServices.InitializeAsync();
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
+    }
+
+    private void Update()
+    {
+        HandleHeartbeat();
+    }
+
+    private void HandleHeartbeat()
+    {
+       if(isLobbyHost())
+        {
+            _heartbeatTimer -= Time.deltaTime;
+
+            if(_heartbeatTimer <= 0)
+            {
+                _heartbeatTimer = _heartbeatTimerMax;
+
+                LobbyService.Instance.SendHeartbeatPingAsync(_joinedLobby.Id);
+            }
+        }
+    }
+
+    private bool isLobbyHost()
+    {
+        return _joinedLobby != null && _joinedLobby.HostId == AuthenticationService.Instance.PlayerId;
     }
 
     public async void CreateLobby(string lobbyName, int lobbySize, bool isPrivate)
