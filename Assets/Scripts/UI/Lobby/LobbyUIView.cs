@@ -1,7 +1,9 @@
 using BattleRoyale.Main;
 using BattleRoyale.Network;
 using BattleRoyale.Scene;
+using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,16 +21,24 @@ namespace BattleRoyale.UI
         [SerializeField] private GameObject _joinLobbyTabContainer;
 
         [Header("Create Lobby Content")]
+        [SerializeField] private TMP_InputField _lobbyNameInputField;
+        [SerializeField] private TMP_Text _errorMessageText;
         [SerializeField] private Toggle _capacityNumTogglePrefab;
         [SerializeField] private Toggle _publicToggle;
         [SerializeField] private Toggle _privateToggle;    
         [SerializeField] private Transform _capacityNumToggleGroupTransform;
         [SerializeField] private Button _createLobbyButtonPrefab;
+        [SerializeField] private Button _resetButtonPrefab;
         private List<Toggle> toggles = new List<Toggle>();
+        private int _capacitySelected = 0;
+        private bool _privacySelected = false;
 
         [Header("Join Lobby Content")]
         [SerializeField] private Button _quickJoinButtonPrefab;
         [SerializeField] private Button _joinLobbyWithCodeButtonPrefab;
+
+        private const int minLobbyNameLength = 3;
+        private const int maxLobbyNameLength = 15;
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -37,6 +47,7 @@ namespace BattleRoyale.UI
         private void SubscribeToEvents()
         {
             _createLobbyButtonPrefab.onClick.AddListener(OnCreateLobbyButtonClicked);
+            _resetButtonPrefab.onClick.AddListener(OnResetButtonClicked);
             _quickJoinButtonPrefab.onClick.AddListener(OnQuickJoinButtonClicked);
             _backToStartMenuButtonPrefab.onClick.AddListener(OnBackToStartMenuButtonClicked);
 
@@ -50,6 +61,7 @@ namespace BattleRoyale.UI
         private void UnsubscribeToEvents()
         {
             _createLobbyButtonPrefab.onClick.RemoveListener(OnCreateLobbyButtonClicked);
+            _resetButtonPrefab.onClick.RemoveListener(OnResetButtonClicked);
             _quickJoinButtonPrefab.onClick.RemoveListener(OnQuickJoinButtonClicked);
             _backToStartMenuButtonPrefab.onClick.RemoveListener(OnBackToStartMenuButtonClicked);
 
@@ -121,6 +133,7 @@ namespace BattleRoyale.UI
         {
             if (isOn)
             {
+                _capacitySelected = index;
                 changedToggle.image.color = Color.white;
                 DeactivateOtherCapacityNumToggles(changedToggle);
             }
@@ -147,19 +160,60 @@ namespace BattleRoyale.UI
                     _privateToggle.isOn = false;
                     _privateToggle.image.color = Color.gray;
                     _publicToggle.image.color = Color.white;
+                    _privacySelected = false;
                 }
                 else if (tabIndex == 2)
                 {
                     _publicToggle.isOn = false;
                     _publicToggle.image.color = Color.gray;
                     _privateToggle.image.color = Color.white;
+                    _privacySelected = true;
                 }
             }
         }
 
+        private bool IsLobbyNameValid(string name)
+        {
+            string pattern = "^[A-Za-z0-9]+$";
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                _errorMessageText.text = "Lobby name cannot be empty!";
+                return false;
+            }
+
+            if (name.Length < minLobbyNameLength || name.Length > maxLobbyNameLength)
+            {
+                _errorMessageText.text = "Lobby name must be 3-16 characters long!";
+                return false;
+            }
+
+            if (!Regex.IsMatch(name, pattern))
+            {
+                _errorMessageText.text = "Lobby name contains invalid characters!";
+                return false;
+            }
+
+            return true;
+        }
+
         private void OnCreateLobbyButtonClicked()
         {
-            LobbyManager.Instance.CreateLobby("LobbyName", false);
+            string lobbyName = _lobbyNameInputField.text;
+
+            if (IsLobbyNameValid(lobbyName))
+            {
+                LobbyManager.Instance.CreateLobby(lobbyName, _capacitySelected, _privacySelected);
+
+                _errorMessageText.text = string.Empty;
+            }
+        }
+        private void OnResetButtonClicked()
+        {
+             _lobbyNameInputField.text = string.Empty;
+             _errorMessageText.text = string.Empty;
+            toggles[0].isOn = true;
+            HandlePrivacyToggleSwitch(true, 1);
         }
 
         private void OnQuickJoinButtonClicked()

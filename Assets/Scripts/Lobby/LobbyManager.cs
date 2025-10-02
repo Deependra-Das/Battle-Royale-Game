@@ -11,8 +11,6 @@ public class LobbyManager : MonoBehaviour
 {
   public static LobbyManager Instance { get; private set; }
 
-    public int lobbySize = 4;
-
     private Lobby _joinedLobby;
 
     private void Awake()
@@ -35,7 +33,7 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    public async void CreateLobby(string lobbyName, bool isPrivate)
+    public async void CreateLobby(string lobbyName, int lobbySize, bool isPrivate)
     {
         try 
         { 
@@ -44,6 +42,7 @@ public class LobbyManager : MonoBehaviour
 
             Debug.Log($"Lobby created: {_joinedLobby.Name} (ID: {_joinedLobby.Id})");
 
+            MultiplayerManager.Instance.SetCurrentLobbySize(lobbySize);
             MultiplayerManager.Instance.StartHost();
             SceneLoader.Instance.LoadScene(SceneName.CharacterSelectionScene, true);
         }

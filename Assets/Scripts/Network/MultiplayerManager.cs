@@ -17,12 +17,14 @@ namespace BattleRoyale.Network
         public string PlayerUsername { get; private set; }
 
         public const int MAX_LOBBY_SIZE = 8;
+        public int CURRENT_LOBBY_SIZE { get; private set; }
 
         private void Awake()
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
+            CURRENT_LOBBY_SIZE = 1;
             PlayerUsername = PlayerPrefs.GetString(GameManager.UsernameKey).ToString();
         }
 
@@ -65,6 +67,11 @@ namespace BattleRoyale.Network
                 CharacterManager.Instance.DespawnCharacterForDisconnectedClient(clientId);
                 RequestPlayerDeregistrationServerRpc(clientId);
             }
+        }
+
+        public void SetCurrentLobbySize(int size)
+        {
+            CURRENT_LOBBY_SIZE = size;
         }
 
         private IEnumerator DelayedReturnToStartScreen(float duration)
