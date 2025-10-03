@@ -103,5 +103,10 @@ namespace BattleRoyale.Network
         {
             PlayerSessionManager.Instance.DeregisterPlayer(clientId);
         }
+
+        public void KickPlayer(ulong clientId)
+        {
+            NetworkManager.Singleton.DisconnectClient(clientId);
+        }
     }
 }

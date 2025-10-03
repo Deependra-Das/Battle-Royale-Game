@@ -56,7 +56,9 @@ namespace BattleRoyale.CharacterSelection
                 characterClone.name = $"PlayerCharacter_{clientID}";
                 NetworkObject networkObject = characterClone.GetComponent<NetworkObject>();
                 networkObject.Spawn();
-                characterClone.GetComponent<CharacterSelectPlayer>().Initialize(_clientCharacterMapList.Count, PlayerSessionManager.Instance.GetPlayerSessionData(clientID).Username);
+
+                PlayerSessionData playerData = PlayerSessionManager.Instance.GetPlayerSessionData(clientID);
+                characterClone.GetComponent<CharacterSelectPlayer>().Initialize(_clientCharacterMapList.Count, playerData.ClientId, playerData.Username);
 
                 _clientCharacterMapList.Add(new ClientCharacterMapping(clientID, characterClone));
             }
