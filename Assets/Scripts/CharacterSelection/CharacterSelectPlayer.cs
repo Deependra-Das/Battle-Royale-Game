@@ -17,7 +17,6 @@ namespace BattleRoyale.CharacterSelection
         [SerializeField] private GameObject _notReadyStatusLabel;
         [SerializeField] private PlayerCharMatSkinColorScriptableObject _charSkinMatInfo_SO;
         [SerializeField] private SkinnedMeshRenderer[] _skinnedMeshRenderersForBodyParts;
-        [SerializeField] private Button _kickButton;
 
         private NetworkVariable<FixedString128Bytes> _usernameNetworkText = new NetworkVariable<FixedString128Bytes>("Player");
         private NetworkVariable<bool> _readyStatusNetworkBool = new NetworkVariable<bool>(false);
@@ -34,8 +33,6 @@ namespace BattleRoyale.CharacterSelection
             _usernameNetworkText.OnValueChanged += UpdateCharacterUsername;
             _readyStatusNetworkBool.OnValueChanged += UpdateCharacterLobbyStatus;
             _selectedMaterialIndex.OnValueChanged += ApplySelectedMaterial;
-
-            _kickButton.onClick.AddListener(KickPlayer);
         }
 
         private void UnsubscribeToEvents()
@@ -43,8 +40,6 @@ namespace BattleRoyale.CharacterSelection
             _usernameNetworkText.OnValueChanged -= UpdateCharacterUsername;
             _readyStatusNetworkBool.OnValueChanged -= UpdateCharacterLobbyStatus;
             _selectedMaterialIndex.OnValueChanged -= ApplySelectedMaterial;
-
-            _kickButton.onClick.RemoveListener(KickPlayer);
         }
 
         public override void OnNetworkSpawn()
@@ -52,8 +47,6 @@ namespace BattleRoyale.CharacterSelection
             _usernameText.text = _usernameNetworkText.Value.ToString();
             _readyStatusLabel.SetActive(_readyStatusNetworkBool.Value);
             _notReadyStatusLabel.SetActive(!_readyStatusNetworkBool.Value);
-
-            _kickButton.gameObject.SetActive(NetworkManager.Singleton.IsServer);
         }
 
         public void Initialize(int assignedClientIndex, ulong clientID, string usernameText)
@@ -128,15 +121,6 @@ namespace BattleRoyale.CharacterSelection
                     materialsToRemap[0] = _charSkinMatInfo_SO.charSkinInfoList[newMaterialIndex].skinColorMaterial;
                     renderer.materials = materialsToRemap;
                 }
-            }
-        }
-
-        public void KickPlayer()
-        {
-            if (NetworkManager.Singleton.IsServer)
-            {
-                Debug.Log("Kick" + _clientId);
-                MultiplayerManager.Instance.KickPlayer(_clientId);
             }
         }
 
