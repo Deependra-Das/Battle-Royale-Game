@@ -31,22 +31,38 @@ namespace BattleRoyale.Network
         public void StartHost()
         {
             NetworkManager.Singleton.ConnectionApprovalCallback += NetworkManager_ConnectionApprovalCallback;
-            NetworkManager.Singleton.StartHost();
-            PlayerSessionManager.Instance.RegisterPlayer(NetworkManager.Singleton.LocalClientId, PlayerUsername);
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientHostDisconnected;
+            NetworkManager.Singleton.StartHost();
+            PlayerSessionManager.Instance.RegisterPlayer(NetworkManager.Singleton.LocalClientId, PlayerUsername);
         }
 
         private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
         {
+            string activeSceneName = SceneManager.GetActiveScene().name.ToString();
+            Enum.TryParse<SceneName>(activeSceneName, out var sceneEnumValue);
+
+            if (NetworkManager.Singleton.IsServer && sceneEnumValue != SceneName.CharacterSelectionScene)
+            {
+                connectionApprovalResponse.Approved = false;
+                connectionApprovalResponse.Reason = "Game has already Started.";
+                return;
+            }
+            if (NetworkManager.Singleton.ConnectedClients.Count >= CURRENT_LOBBY_SIZE)
+            {
+                connectionApprovalResponse.Approved = false;
+                connectionApprovalResponse.Reason = "Lobby Capacity Full. No Available Slots.";
+                return;
+            }
             connectionApprovalResponse.Approved = true;
         }
 
         public void StartClient()
         {
-            NetworkManager.Singleton.StartClient();
+            EventBusManager.Instance.RaiseNoParams(EventName.TryingToJoinGame);
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientHostDisconnected;
+            NetworkManager.Singleton.StartClient();
         }
 
         private void OnClientConnected(ulong clientId)

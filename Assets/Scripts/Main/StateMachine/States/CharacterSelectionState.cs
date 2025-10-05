@@ -45,7 +45,11 @@ namespace BattleRoyale.Main
 
         public void Cleanup()
         {
-            CharacterManager.Instance.DespawnAllSpawnedCharacters();
+            if (NetworkManager.Singleton.IsServer)
+            {
+                CharacterManager.Instance.DespawnAllSpawnedCharacters();
+            }
+
             _characterSelectionUIObj.Dispose();
 
             string activeSceneName = SceneManager.GetActiveScene().name.ToString();
@@ -72,22 +76,20 @@ namespace BattleRoyale.Main
         {
             if (PlayerSessionManager.Instance != null)
             {
-                if (PlayerSessionManager.Instance.NetworkObject.IsSpawned)
+                if (PlayerSessionManager.Instance.NetworkObject.IsSpawned && NetworkManager.Singleton.IsServer)
                 {
                     PlayerSessionManager.Instance.NetworkObject.Despawn();
+                    UnityEngine.Object.Destroy(PlayerSessionManager.Instance.gameObject);
                 }
-
-                UnityEngine.Object.Destroy(PlayerSessionManager.Instance.gameObject);
             }
 
             if (MultiplayerManager.Instance != null)
             {
-                if (MultiplayerManager.Instance.NetworkObject.IsSpawned)
+                if (MultiplayerManager.Instance.NetworkObject.IsSpawned && NetworkManager.Singleton.IsServer)
                 {
                     MultiplayerManager.Instance.NetworkObject.Despawn();
+                    UnityEngine.Object.Destroy(MultiplayerManager.Instance.gameObject);
                 }
-
-                UnityEngine.Object.Destroy(MultiplayerManager.Instance.gameObject);
             }
 
             if (NetworkManager.Singleton != null)

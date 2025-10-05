@@ -15,5 +15,7 @@ namespace BattleRoyale.Event
         UpdateEliminationCount,
         ConnectedClientNetworkListChanged,
         GameOverScoreCard,
+        TryingToJoinGame,
+        FailedToJoinGame,
     }
 }

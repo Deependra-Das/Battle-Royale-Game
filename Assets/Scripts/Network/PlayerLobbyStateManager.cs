@@ -74,21 +74,25 @@ namespace BattleRoyale.Network
             }
 
             CharacterManager.Instance.SetCharacterStatus(clientId, true);
-    
-            bool allClientsReady = true;
 
-            foreach (ulong clientID in NetworkManager.Singleton.ConnectedClientsIds)
+            if (NetworkManager.Singleton.ConnectedClients.Count == MultiplayerManager.Instance.CURRENT_LOBBY_SIZE)
             {
-                if (!_playerStateDictionary.ContainsKey(clientID) || !_playerStateDictionary[clientID].isReady)
+                bool allClientsReady = true;
+
+                foreach (ulong clientID in NetworkManager.Singleton.ConnectedClientsIds)
                 {
-                    allClientsReady = false;
-                    break;
+                    if (!_playerStateDictionary.ContainsKey(clientID) || !_playerStateDictionary[clientID].isReady)
+                    {
+                        allClientsReady = false;
+                        break;
+                    }
                 }
-            }
 
-            if (allClientsReady)
-            {
-                SceneLoader.Instance.LoadScene(SceneName.GameScene, true);
+                if (allClientsReady)
+                {
+                    LobbyManager.Instance.DeleteLobby();
+                    SceneLoader.Instance.LoadScene(SceneName.GameScene, true);
+                }
             }
         }
 

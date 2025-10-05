@@ -143,6 +143,11 @@ public class LobbyManager : MonoBehaviour
 
     public Lobby GetLobby()
     {
-        return _joinedLobby;
+        if(_joinedLobby!=null)
+        {
+            return _joinedLobby;
+        }
+
+        return null; 
     }
 }

@@ -1,3 +1,4 @@
+using BattleRoyale.Event;
 using BattleRoyale.Main;
 using BattleRoyale.Network;
 using BattleRoyale.Scene;
@@ -5,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,14 +34,21 @@ namespace BattleRoyale.UI
         private List<Toggle> toggles = new List<Toggle>();
         private int _capacitySelected = 0;
         private bool _privacySelected = false;
+        private const int minLobbyNameLength = 3;
+        private const int maxLobbyNameLength = 15;
 
         [Header("Join Lobby Content")]
         [SerializeField] private TMP_InputField _joinCodeInputField;
         [SerializeField] private Button _quickJoinButtonPrefab;
         [SerializeField] private Button _joinLobbyWithCodeButtonPrefab;
 
-        private const int minLobbyNameLength = 3;
-        private const int maxLobbyNameLength = 15;
+        [Header("Connecting PopUp Content")]
+        [SerializeField] private GameObject _connectingPopUp;
+
+        [Header("Connection Reesponse Message PopUp Content")]
+        [SerializeField] private GameObject _connectionResponseMessagePopUp;
+        [SerializeField] private TMP_Text _connectionMessageText;
+        [SerializeField] private Button _okButtonPrefab;
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -59,6 +68,10 @@ namespace BattleRoyale.UI
 
             _publicToggle.onValueChanged.AddListener((isOn) => HandlePrivacyToggleSwitch(isOn, 1));
             _privateToggle.onValueChanged.AddListener((isOn) => HandlePrivacyToggleSwitch(isOn, 2));
+
+            EventBusManager.Instance.Subscribe(EventName.TryingToJoinGame, OnTryingToJoinLobbyUI);
+            EventBusManager.Instance.Subscribe(EventName.FailedToJoinGame, OnFailedToJoinLobbyUI);
+            _okButtonPrefab.onClick.AddListener(HideConnectionResponseMessagePopUp);
         }
 
         private void UnsubscribeToEvents()
@@ -76,6 +89,10 @@ namespace BattleRoyale.UI
             _publicToggle.onValueChanged.RemoveListener((isOn) => HandlePrivacyToggleSwitch(isOn, 1));
             _privateToggle.onValueChanged.RemoveListener((isOn) => HandlePrivacyToggleSwitch(isOn, 2));
 
+            EventBusManager.Instance.Unsubscribe(EventName.TryingToJoinGame, OnTryingToJoinLobbyUI);
+            EventBusManager.Instance.Unsubscribe(EventName.FailedToJoinGame, OnFailedToJoinLobbyUI);
+            _okButtonPrefab.onClick.RemoveListener(HideConnectionResponseMessagePopUp);
+
             foreach (var toggle in toggles)
             {
                 toggle.onValueChanged.RemoveListener((isOn) => OnCapacityNumToggleChanged(toggle, isOn, toggle.group.transform.GetSiblingIndex()));
@@ -87,6 +104,8 @@ namespace BattleRoyale.UI
             CreateCapacityNumToggles();
             HandleMainTabSwitch(true, 1);
             HandlePrivacyToggleSwitch(true, 1);
+            HideConnectionResponseMessagePopUp();
+            HideConnectingPopUp();
         }
 
         void HandleMainTabSwitch(bool isOn, int tabIndex)
@@ -245,6 +264,44 @@ namespace BattleRoyale.UI
         public void DisableView()
         {
             gameObject.SetActive(false);
+        }
+
+        private void OnTryingToJoinLobbyUI(object[] parameters)
+        {
+            ShowConnectingPopUp();
+        }
+
+        private void ShowConnectingPopUp()
+        {
+            _connectingPopUp.SetActive(true);
+        }
+
+        private void HideConnectingPopUp()
+        {
+            _connectingPopUp.SetActive(false);
+        }
+
+        private void OnFailedToJoinLobbyUI(object[] parameters)
+        {
+            HideConnectingPopUp();
+            _connectionMessageText.text = NetworkManager.Singleton.DisconnectReason;
+
+            if(_connectionMessageText.text == string.Empty)
+            {
+                _connectionMessageText.text = "Failed To Connect.";
+            }
+
+            ShowConnectionResponseMessagePopUp();
+        }
+
+        private void ShowConnectionResponseMessagePopUp()
+        {
+            _connectionResponseMessagePopUp.SetActive(true);
+        }
+
+        private void HideConnectionResponseMessagePopUp()
+        {
+            _connectionResponseMessagePopUp.SetActive(false);
         }
     }
 }
