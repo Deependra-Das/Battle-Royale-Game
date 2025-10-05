@@ -6,6 +6,7 @@ namespace BattleRoyale.Network
     public class PlayerSessionData : INetworkSerializable
     {
         private ulong _clientId;
+        private string _playerId;
         private PlayerState _playerStatus = PlayerState.Waiting;
         private PlayerConnectionState _connectionStatus = PlayerConnectionState.Connected;
         private int _rank = -1;
@@ -13,15 +14,17 @@ namespace BattleRoyale.Network
         private int _skinColorIndex = 0;
 
         public ulong ClientId => _clientId;
+        public string PlayerId => _playerId;
         public PlayerState PlayerStatus => _playerStatus;
         public PlayerConnectionState ConnectionStatus => _connectionStatus;
         public int Rank => _rank;
         public string Username => _username;
         public int SkinColorIndex => _skinColorIndex;
 
-        public PlayerSessionData(ulong clientId, string username)
+        public PlayerSessionData(ulong clientId, string playerId, string username)
         {
             _clientId = clientId;
+            _playerId = playerId;
             SetUsername(username);
         }
 
@@ -60,6 +63,7 @@ namespace BattleRoyale.Network
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref _clientId);
+            serializer.SerializeValue(ref _playerId);
             serializer.SerializeValue(ref _playerStatus);
             serializer.SerializeValue(ref _connectionStatus);
             serializer.SerializeValue(ref _rank);

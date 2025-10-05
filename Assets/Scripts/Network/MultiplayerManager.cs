@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -34,7 +35,7 @@ namespace BattleRoyale.Network
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientHostDisconnected;
             NetworkManager.Singleton.StartHost();
-            PlayerSessionManager.Instance.RegisterPlayer(NetworkManager.Singleton.LocalClientId, PlayerUsername);
+            PlayerSessionManager.Instance.RegisterPlayer(NetworkManager.Singleton.LocalClientId, AuthenticationService.Instance.PlayerId, PlayerUsername);
         }
 
         private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
@@ -69,7 +70,7 @@ namespace BattleRoyale.Network
         {
             if (NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsHost)
             {
-                RequestPlayerRegistrationServerRpc(clientId, PlayerUsername);
+                RequestPlayerRegistrationServerRpc(clientId, AuthenticationService.Instance.PlayerId, PlayerUsername);
             }
         }
 
@@ -102,11 +103,9 @@ namespace BattleRoyale.Network
         }
     
         [ServerRpc(RequireOwnership = false)]
-        public void RequestPlayerRegistrationServerRpc(ulong clientId, string username)
+        public void RequestPlayerRegistrationServerRpc(ulong clientId, string playerId, string username)
         {
-            PlayerSessionManager.Instance.RegisterPlayer(clientId, username);
-
-            PlayerSessionManager.Instance.GetAllPlayerSessionData();
+            PlayerSessionManager.Instance.RegisterPlayer(clientId, playerId, username);
             ConfirmPlayerRegistrationClientRpc(clientId);
         }
 
