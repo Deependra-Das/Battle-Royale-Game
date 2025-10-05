@@ -80,7 +80,10 @@ namespace BattleRoyale.CharacterSelection
                 var character = entry.character;
                 int clientIndex = _clientCharacterMapList.IndexOf(entry);
                 NetworkObject networkObject = character.GetComponent<NetworkObject>();
-                networkObject.Despawn();
+                if (networkObject != null && networkObject.IsSpawned)
+                { 
+                    networkObject.Despawn();
+                }
                 Destroy(character);
 
                 _clientCharacterMapList.Remove(entry);

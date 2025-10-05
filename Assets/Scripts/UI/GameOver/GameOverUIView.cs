@@ -77,7 +77,7 @@ namespace BattleRoyale.UI
 
             if (secondsRemaining > 0)
             {
-                _countdownText.text = "Returning To Lobby In... " +secondsRemaining.ToString() +"s";
+                _countdownText.text = "Returning To Main Menu In... " +secondsRemaining.ToString() +"s";
                 _currentCountdownValue = secondsRemaining;
             }
         }

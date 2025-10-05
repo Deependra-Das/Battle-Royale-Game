@@ -67,7 +67,7 @@ namespace BattleRoyale.Network
             }
 
             ResetPlayerSessionData();
-            LoadCharacterSelectionScene();
+            LoadStartScene();
         }
 
         private void ResetPlayerSessionData()
@@ -78,9 +78,9 @@ namespace BattleRoyale.Network
             }
         }
 
-        private void LoadCharacterSelectionScene()
+        private void LoadStartScene()
         {
-            SceneLoader.Instance.LoadScene(SceneName.CharacterSelectionScene, true);
+            SceneLoader.Instance.LoadScene(SceneName.StartScene, true);
         }
 
         [ClientRpc]

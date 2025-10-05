@@ -83,6 +83,11 @@ namespace BattleRoyale.Network
                 CharacterManager.Instance.DespawnCharacterForDisconnectedClient(clientId);
                 RequestPlayerDeregistrationServerRpc(clientId);
             }
+
+            if (!NetworkManager.Singleton.IsServer && sceneEnumValue == SceneName.GameScene)
+            {
+                NetworkManager.Singleton.Shutdown();
+            }
         }
 
         public void SetCurrentLobbySize(int size)

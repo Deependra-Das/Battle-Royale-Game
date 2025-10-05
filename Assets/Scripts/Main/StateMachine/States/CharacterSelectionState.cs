@@ -51,14 +51,6 @@ namespace BattleRoyale.Main
             }
 
             _characterSelectionUIObj.Dispose();
-
-            string activeSceneName = SceneManager.GetActiveScene().name.ToString();
-            Enum.TryParse<SceneName>(activeSceneName, out var sceneEnumValue);
-
-            if (sceneEnumValue == SceneName.StartScene)
-            {
-                CleanupNetworkResources();
-            }
         }
 
         private void RegisterCharacterSelectionServices()
@@ -70,33 +62,6 @@ namespace BattleRoyale.Main
         private void UnegisterCharacterSelectionServices()
         {
             ServiceLocator.Unregister<CharacterSelectionUIService>();
-        }
-
-        private void CleanupNetworkResources()
-        {
-            if (PlayerSessionManager.Instance != null)
-            {
-                if (PlayerSessionManager.Instance.NetworkObject.IsSpawned && NetworkManager.Singleton.IsServer)
-                {
-                    PlayerSessionManager.Instance.NetworkObject.Despawn();
-                    UnityEngine.Object.Destroy(PlayerSessionManager.Instance.gameObject);
-                }
-            }
-
-            if (MultiplayerManager.Instance != null)
-            {
-                if (MultiplayerManager.Instance.NetworkObject.IsSpawned && NetworkManager.Singleton.IsServer)
-                {
-                    MultiplayerManager.Instance.NetworkObject.Despawn();
-                    UnityEngine.Object.Destroy(MultiplayerManager.Instance.gameObject);
-                }
-            }
-
-            if (NetworkManager.Singleton != null)
-            {
-                NetworkManager.Singleton.Shutdown();
-                UnityEngine.Object.Destroy(NetworkManager.Singleton.gameObject);
-            }
         }
     }
 }

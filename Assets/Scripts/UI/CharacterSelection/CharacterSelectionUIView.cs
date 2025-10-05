@@ -61,10 +61,10 @@ namespace BattleRoyale.UI
             _readyButtonPrefab.onClick.RemoveListener(OnReadyButtonClicked);
             _notReadyButtonPrefab.onClick.RemoveListener(OnNotReadyButtonClicked);
             _backToStartMenuButtonPrefab.onClick.RemoveListener(OnBackToStartMenuButtonClicked);
-            _yesConfirmationButtonPrefab.onClick.AddListener(OnYesButtonClicked);
-            _noConfirmationButtonPrefab.onClick.AddListener(OnNoButtonClicked);
+            _yesConfirmationButtonPrefab.onClick.RemoveListener(OnYesButtonClicked);
+            _noConfirmationButtonPrefab.onClick.RemoveListener(OnNoButtonClicked);
             NetworkManager.Singleton.OnClientDisconnectCallback -= ShowDisconnectionCharSelectionUI;
-            _disconnectedBackButtonPrefab.onClick.AddListener(OnDisconnectedBackButtonClicked);
+            _disconnectedBackButtonPrefab.onClick.RemoveListener(OnDisconnectedBackButtonClicked);
 
             foreach (var toggle in toggles)
             {
@@ -187,9 +187,15 @@ namespace BattleRoyale.UI
         private void OnYesButtonClicked()
         {
             HideBackToMainMenuConfirmationPopup();
+         
 
-            if (NetworkManager.Singleton.IsClient)
-            { 
+            if (NetworkManager.Singleton.IsServer)
+            {
+                LobbyManager.Instance.DeleteLobby();
+            }
+            else
+            {
+                LobbyManager.Instance.LeaveLobby();
                 NetworkManager.Singleton.Shutdown();
             }
 

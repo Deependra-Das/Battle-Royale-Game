@@ -253,7 +253,8 @@ namespace BattleRoyale.UI
 
         private void OnBackToStartMenuButtonClicked()
         {
-            GameManager.Instance.ChangeGameState(GameState.Start);
+            LobbyManager.Instance.LeaveLobby();
+            SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
 
         public void EnableView()
