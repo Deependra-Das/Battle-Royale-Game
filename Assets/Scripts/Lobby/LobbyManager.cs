@@ -1,3 +1,4 @@
+using BattleRoyale.Event;
 using BattleRoyale.Network;
 using BattleRoyale.Scene;
 using Unity.Services.Authentication;
@@ -62,6 +63,7 @@ public class LobbyManager : MonoBehaviour
 
     public async void CreateLobby(string lobbyName, int lobbySize, bool isPrivate)
     {
+        EventBusManager.Instance.RaiseNoParams(EventName.CreateLobbyStarted);
         try 
         { 
             _joinedLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, lobbySize,
@@ -76,11 +78,13 @@ public class LobbyManager : MonoBehaviour
         catch(LobbyServiceException e)
         {
             Debug.Log(e);
+            EventBusManager.Instance.RaiseNoParams(EventName.CreateLobbyFailed);
         }
     }
 
     public async void QuickJoin()
     {
+        EventBusManager.Instance.RaiseNoParams(EventName.JoinStarted);
         try
         {
             _joinedLobby = await LobbyService.Instance.QuickJoinLobbyAsync();
@@ -90,11 +94,13 @@ public class LobbyManager : MonoBehaviour
         catch (LobbyServiceException e)
         {
             Debug.Log(e);
+            EventBusManager.Instance.RaiseNoParams(EventName.QuickJoinFailed);
         }
     }
 
     public async void JoinWithCode(string lobbyCode)
     {
+        EventBusManager.Instance.RaiseNoParams(EventName.JoinStarted);
         try
         {
             _joinedLobby = await LobbyService.Instance.JoinLobbyByCodeAsync(lobbyCode);
@@ -104,6 +110,7 @@ public class LobbyManager : MonoBehaviour
         catch (LobbyServiceException e)
         {
             Debug.Log(e);
+            EventBusManager.Instance.RaiseNoParams(EventName.JoinFailed);
         }
     }
 

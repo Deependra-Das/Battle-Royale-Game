@@ -17,5 +17,10 @@ namespace BattleRoyale.Event
         GameOverScoreCard,
         TryingToJoinGame,
         FailedToJoinGame,
+        CreateLobbyStarted,
+        CreateLobbyFailed,
+        JoinStarted,
+        QuickJoinFailed,
+        JoinFailed,
     }
 }

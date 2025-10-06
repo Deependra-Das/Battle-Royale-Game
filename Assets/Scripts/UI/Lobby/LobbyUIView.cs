@@ -42,12 +42,13 @@ namespace BattleRoyale.UI
         [SerializeField] private Button _quickJoinButtonPrefab;
         [SerializeField] private Button _joinLobbyWithCodeButtonPrefab;
 
-        [Header("Connecting PopUp Content")]
-        [SerializeField] private GameObject _connectingPopUp;
+        [Header("Interstitial PopUp Content")]
+        [SerializeField] private GameObject _interstitialPopUp;
+        [SerializeField] private TMP_Text _interstitialMessageText;
 
-        [Header("Connection Reesponse Message PopUp Content")]
-        [SerializeField] private GameObject _connectionResponseMessagePopUp;
-        [SerializeField] private TMP_Text _connectionMessageText;
+        [Header("Lobby Message PopUp Content")]
+        [SerializeField] private GameObject _lobbyMessagePopUp;
+        [SerializeField] private TMP_Text _lobbyMessageText;
         [SerializeField] private Button _okButtonPrefab;
 
         private void OnEnable() => SubscribeToEvents();
@@ -59,9 +60,9 @@ namespace BattleRoyale.UI
             _createLobbyButtonPrefab.onClick.AddListener(OnCreateLobbyButtonClicked);
             _resetButtonPrefab.onClick.AddListener(OnResetButtonClicked);
             _quickJoinButtonPrefab.onClick.AddListener(OnQuickJoinButtonClicked);
-            _joinLobbyWithCodeButtonPrefab.onClick.AddListener(OnJoinWithCodeButtonClicked);
-            
+            _joinLobbyWithCodeButtonPrefab.onClick.AddListener(OnJoinWithCodeButtonClicked);            
             _backToStartMenuButtonPrefab.onClick.AddListener(OnBackToStartMenuButtonClicked);
+            _okButtonPrefab.onClick.AddListener(HideLobbyMessagePopUp);
 
             _createLobbyToggle.onValueChanged.AddListener((isOn) => HandleMainTabSwitch(isOn, 1));
             _joinLobbyToggle.onValueChanged.AddListener((isOn) => HandleMainTabSwitch(isOn, 2));
@@ -71,7 +72,11 @@ namespace BattleRoyale.UI
 
             EventBusManager.Instance.Subscribe(EventName.TryingToJoinGame, OnTryingToJoinLobbyUI);
             EventBusManager.Instance.Subscribe(EventName.FailedToJoinGame, OnFailedToJoinLobbyUI);
-            _okButtonPrefab.onClick.AddListener(HideConnectionResponseMessagePopUp);
+            EventBusManager.Instance.Subscribe(EventName.CreateLobbyStarted, OnCreateLobbyStartedUI);
+            EventBusManager.Instance.Subscribe(EventName.CreateLobbyFailed, OnCreateLobbyFailedUI);
+            EventBusManager.Instance.Subscribe(EventName.JoinStarted, OnJoinStartedUI);
+            EventBusManager.Instance.Subscribe(EventName.JoinFailed, OnJoinFailedUI);
+            EventBusManager.Instance.Subscribe(EventName.QuickJoinFailed, OnQuickJoinFailedUI);
         }
 
         private void UnsubscribeToEvents()
@@ -80,8 +85,8 @@ namespace BattleRoyale.UI
             _resetButtonPrefab.onClick.RemoveListener(OnResetButtonClicked);
             _quickJoinButtonPrefab.onClick.RemoveListener(OnQuickJoinButtonClicked);
             _joinLobbyWithCodeButtonPrefab.onClick.RemoveListener(OnJoinWithCodeButtonClicked);
-
             _backToStartMenuButtonPrefab.onClick.RemoveListener(OnBackToStartMenuButtonClicked);
+            _okButtonPrefab.onClick.RemoveListener(HideLobbyMessagePopUp);
 
             _createLobbyToggle.onValueChanged.RemoveListener((isOn) => HandleMainTabSwitch(isOn, 1));
             _joinLobbyToggle.onValueChanged.RemoveListener((isOn) => HandleMainTabSwitch(isOn, 2));
@@ -91,7 +96,12 @@ namespace BattleRoyale.UI
 
             EventBusManager.Instance.Unsubscribe(EventName.TryingToJoinGame, OnTryingToJoinLobbyUI);
             EventBusManager.Instance.Unsubscribe(EventName.FailedToJoinGame, OnFailedToJoinLobbyUI);
-            _okButtonPrefab.onClick.RemoveListener(HideConnectionResponseMessagePopUp);
+            EventBusManager.Instance.Unsubscribe(EventName.CreateLobbyStarted, OnCreateLobbyStartedUI);
+            EventBusManager.Instance.Unsubscribe(EventName.CreateLobbyFailed, OnCreateLobbyFailedUI);
+            EventBusManager.Instance.Unsubscribe(EventName.JoinStarted, OnJoinStartedUI);
+            EventBusManager.Instance.Unsubscribe(EventName.JoinFailed, OnJoinFailedUI);
+            EventBusManager.Instance.Unsubscribe(EventName.QuickJoinFailed, OnQuickJoinFailedUI);
+
 
             foreach (var toggle in toggles)
             {
@@ -104,8 +114,8 @@ namespace BattleRoyale.UI
             CreateCapacityNumToggles();
             HandleMainTabSwitch(true, 1);
             HandlePrivacyToggleSwitch(true, 1);
-            HideConnectionResponseMessagePopUp();
-            HideConnectingPopUp();
+            HideLobbyMessagePopUp();
+            HideInterstitialPopUp();
         }
 
         void HandleMainTabSwitch(bool isOn, int tabIndex)
@@ -269,40 +279,74 @@ namespace BattleRoyale.UI
 
         private void OnTryingToJoinLobbyUI(object[] parameters)
         {
-            ShowConnectingPopUp();
-        }
-
-        private void ShowConnectingPopUp()
-        {
-            _connectingPopUp.SetActive(true);
-        }
-
-        private void HideConnectingPopUp()
-        {
-            _connectingPopUp.SetActive(false);
+            _interstitialMessageText.text = "Connecting...";
+            ShowInterstitialPopUp();
         }
 
         private void OnFailedToJoinLobbyUI(object[] parameters)
         {
-            HideConnectingPopUp();
-            _connectionMessageText.text = NetworkManager.Singleton.DisconnectReason;
+            HideInterstitialPopUp();
+            _lobbyMessageText.text = NetworkManager.Singleton.DisconnectReason;
 
-            if(_connectionMessageText.text == string.Empty)
+            if (_lobbyMessageText.text == string.Empty)
             {
-                _connectionMessageText.text = "Failed To Connect.";
+                _lobbyMessageText.text = "Failed To Connect.";
             }
 
-            ShowConnectionResponseMessagePopUp();
+            ShowLobbyMessagePopUp();
         }
 
-        private void ShowConnectionResponseMessagePopUp()
+        private void OnCreateLobbyStartedUI(object[] parameters)
         {
-            _connectionResponseMessagePopUp.SetActive(true);
+            _interstitialMessageText.text = "Creating Lobby...";
+            ShowInterstitialPopUp();
         }
 
-        private void HideConnectionResponseMessagePopUp()
+        private void OnCreateLobbyFailedUI(object[] parameters)
         {
-            _connectionResponseMessagePopUp.SetActive(false);
+            HideInterstitialPopUp();
+            _lobbyMessageText.text = "Failed To Create Lobby.";
+            ShowLobbyMessagePopUp();
+        }
+
+        private void OnJoinStartedUI(object[] parameters)
+        {
+            _interstitialMessageText.text = "Joining Lobby...";
+            ShowInterstitialPopUp();
+        }
+
+        private void OnQuickJoinFailedUI(object[] parameters)
+        {
+            HideInterstitialPopUp();
+            _lobbyMessageText.text = "Unable to Find a Lobby to Quick Join.";
+            ShowLobbyMessagePopUp();
+        }
+
+        private void OnJoinFailedUI(object[] parameters)
+        {
+            HideInterstitialPopUp();
+            _lobbyMessageText.text = "Failed To Join Lobby.";
+            ShowLobbyMessagePopUp();
+        }
+
+        private void ShowInterstitialPopUp()
+        {
+            _interstitialPopUp.SetActive(true);
+        }
+
+        private void HideInterstitialPopUp()
+        {
+            _interstitialPopUp.SetActive(false);
+        }
+
+        private void ShowLobbyMessagePopUp()
+        {
+            _lobbyMessagePopUp.SetActive(true);
+        }
+
+        private void HideLobbyMessagePopUp()
+        {
+            _lobbyMessagePopUp.SetActive(false);
         }
     }
 }
