@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using TMPro;
 using Unity.Netcode;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -43,6 +44,8 @@ namespace BattleRoyale.UI
         [SerializeField] private TMP_Text _lobbyCodeErrorMessageText;
         [SerializeField] private Button _quickJoinButtonPrefab;
         [SerializeField] private Button _joinLobbyWithCodeButtonPrefab;
+        [SerializeField] private Transform _lobbyListScrollViewContent;
+        [SerializeField] private Button _lobbyEntryPrefab;
         private const int lobbyCodeLength = 6;
 
         [Header("Interstitial PopUp Content")]
@@ -80,6 +83,7 @@ namespace BattleRoyale.UI
             EventBusManager.Instance.Subscribe(EventName.JoinStarted, OnJoinStartedUI);
             EventBusManager.Instance.Subscribe(EventName.JoinFailed, OnJoinFailedUI);
             EventBusManager.Instance.Subscribe(EventName.QuickJoinFailed, OnQuickJoinFailedUI);
+            EventBusManager.Instance.Subscribe(EventName.PublicLobbyListChanged, OnLobbyListChangedUI);
         }
 
         private void UnsubscribeToEvents()
@@ -104,7 +108,7 @@ namespace BattleRoyale.UI
             EventBusManager.Instance.Unsubscribe(EventName.JoinStarted, OnJoinStartedUI);
             EventBusManager.Instance.Unsubscribe(EventName.JoinFailed, OnJoinFailedUI);
             EventBusManager.Instance.Unsubscribe(EventName.QuickJoinFailed, OnQuickJoinFailedUI);
-
+            EventBusManager.Instance.Unsubscribe(EventName.PublicLobbyListChanged, OnLobbyListChangedUI);
 
             foreach (var toggle in toggles)
             {
@@ -119,6 +123,7 @@ namespace BattleRoyale.UI
             HandlePrivacyToggleSwitch(true, 1);
             HideLobbyMessagePopUp();
             HideInterstitialPopUp();
+            UpdateLobbyList(new List<Lobby>());
         }
 
         void HandleMainTabSwitch(bool isOn, int tabIndex)
@@ -381,5 +386,34 @@ namespace BattleRoyale.UI
         {
             _lobbyMessagePopUp.SetActive(false);
         }
+
+        private void OnLobbyListChangedUI(object[] parameters)
+        {
+            List<Lobby> lobbyList = (List<Lobby>)parameters[0];
+            UpdateLobbyList(lobbyList);
+        }
+
+        private void UpdateLobbyList(List<Lobby> lobbyList)
+        {
+            CleanUpLobbyEntryButtons();
+            CreateLobbyEntryButtons(lobbyList);
+        }
+        private void CleanUpLobbyEntryButtons()
+        {
+            foreach (Transform child in _lobbyListScrollViewContent)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
+        private void CreateLobbyEntryButtons(List<Lobby> newLobbies)
+        {
+            foreach (var lobby in newLobbies)
+            {
+                GameObject newButtonObj = Instantiate(_lobbyEntryPrefab.gameObject, _lobbyListScrollViewContent);
+                newButtonObj.GetComponent<LobbyEntryUIView>().Initialize(lobby);
+            }
+        }
+
     }
 }

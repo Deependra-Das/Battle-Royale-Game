@@ -22,5 +22,6 @@ namespace BattleRoyale.Event
         JoinStarted,
         QuickJoinFailed,
         JoinFailed,
+        PublicLobbyListChanged,
     }
 }

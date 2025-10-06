@@ -1,11 +1,11 @@
 using BattleRoyale.Event;
 using BattleRoyale.Network;
 using BattleRoyale.Scene;
+using System.Collections.Generic;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
-using Unity.Services.Multiplayer;
 using UnityEngine;
 
 public class LobbyManager : MonoBehaviour
@@ -13,8 +13,10 @@ public class LobbyManager : MonoBehaviour
   public static LobbyManager Instance { get; private set; }
 
     private Lobby _joinedLobby;
-    private float _heartbeatTimer;
+    private float _heartbeatTimer = 0;
     private float _heartbeatTimerMax = 15f;
+    private float _listLobbiesTimer = 0;
+    private float _listLobbiesTimerMax = 3f;
 
     private void Awake()
     {
@@ -39,6 +41,7 @@ public class LobbyManager : MonoBehaviour
     private void Update()
     {
         HandleHeartbeat();
+        HandlePeriodicListLobbies();
     }
 
     private void HandleHeartbeat()
@@ -47,11 +50,23 @@ public class LobbyManager : MonoBehaviour
         {
             _heartbeatTimer -= Time.deltaTime;
 
-            if(_heartbeatTimer <= 0)
+            if(_heartbeatTimer <= 0f)
             {
                 _heartbeatTimer = _heartbeatTimerMax;
-
                 LobbyService.Instance.SendHeartbeatPingAsync(_joinedLobby.Id);
+            }
+        }
+    }
+
+    private void HandlePeriodicListLobbies()
+    {
+        if (_joinedLobby == null && AuthenticationService.Instance.IsSignedIn)
+        {
+            _listLobbiesTimer -= Time.deltaTime;
+            if (_listLobbiesTimer <= 0f)
+            {
+                _listLobbiesTimer = _listLobbiesTimerMax;
+                ListLobbies();
             }
         }
     }
@@ -95,6 +110,21 @@ public class LobbyManager : MonoBehaviour
         {
             Debug.Log(e);
             EventBusManager.Instance.RaiseNoParams(EventName.QuickJoinFailed);
+        }
+    }
+    public async void JoinWithId(string lobbyId)
+    {
+        EventBusManager.Instance.RaiseNoParams(EventName.JoinStarted);
+        try
+        {
+            _joinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+
+            MultiplayerManager.Instance.StartClient();
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.Log(e);
+            EventBusManager.Instance.RaiseNoParams(EventName.JoinFailed);
         }
     }
 
@@ -155,6 +185,28 @@ public class LobbyManager : MonoBehaviour
             return _joinedLobby;
         }
 
-        return null; 
+        return null;
+    }
+
+    private async void ListLobbies()
+    {
+        try
+        {
+            QueryLobbiesOptions queryLobbiesOptions = new QueryLobbiesOptions
+            {
+                Filters = new List<QueryFilter>
+            {
+                new QueryFilter( QueryFilter.FieldOptions.AvailableSlots, "0", QueryFilter.OpOptions.GT)
+            }
+            };
+
+            QueryResponse queryResponse = await LobbyService.Instance.QueryLobbiesAsync(queryLobbiesOptions);
+
+            EventBusManager.Instance.Raise(EventName.PublicLobbyListChanged, queryResponse.Results);
+        }
+        catch(LobbyServiceException e)
+        {
+            Debug.Log(e);
+        }
     }
 }

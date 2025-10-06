@@ -586,6 +586,8 @@ MonoBehaviour:
   _lobbyCodeErrorMessageText: {fileID: 3579169321204536533}
   _quickJoinButtonPrefab: {fileID: 5290722773496697680}
   _joinLobbyWithCodeButtonPrefab: {fileID: 5034169342837963625}
+  _lobbyListScrollViewContent: {fileID: 7520155684157912591}
+  _lobbyEntryPrefab: {fileID: 724337322433781481, guid: 22f1a90667ef7c341827f736eb209f6e, type: 3}
   _interstitialPopUp: {fileID: 9079099649970714110}
   _interstitialMessageText: {fileID: 8657750893806435448}
   _lobbyMessagePopUp: {fileID: 5346711653645075408}
@@ -3353,6 +3355,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7520155684157912591}
+  - component: {fileID: 7109796593476482963}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -3374,11 +3377,37 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2448932568318299872}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0009890636}
-  m_SizeDelta: {x: 0, y: 300}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0.0009918213}
+  m_SizeDelta: {x: 760, y: 472}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &7109796593476482963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6071469311186304553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.VerticalLayoutGroup
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_Spacing: 20
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &6095922229944945557
 GameObject:
   m_ObjectHideFlags: 0
@@ -3714,8 +3743,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 32
+  m_fontSizeBase: 32
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -4930,7 +4959,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 6093419987789366384}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.999998
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
