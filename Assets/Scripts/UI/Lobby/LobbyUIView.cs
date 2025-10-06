@@ -5,6 +5,7 @@ using BattleRoyale.Scene;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -24,7 +25,7 @@ namespace BattleRoyale.UI
 
         [Header("Create Lobby Content")]
         [SerializeField] private TMP_InputField _lobbyNameInputField;
-        [SerializeField] private TMP_Text _errorMessageText;
+        [SerializeField] private TMP_Text _lobbyNameErrorMessageText;
         [SerializeField] private Toggle _capacityNumTogglePrefab;
         [SerializeField] private Toggle _publicToggle;
         [SerializeField] private Toggle _privateToggle;    
@@ -39,8 +40,10 @@ namespace BattleRoyale.UI
 
         [Header("Join Lobby Content")]
         [SerializeField] private TMP_InputField _joinCodeInputField;
+        [SerializeField] private TMP_Text _lobbyCodeErrorMessageText;
         [SerializeField] private Button _quickJoinButtonPrefab;
         [SerializeField] private Button _joinLobbyWithCodeButtonPrefab;
+        private const int lobbyCodeLength = 6;
 
         [Header("Interstitial PopUp Content")]
         [SerializeField] private GameObject _interstitialPopUp;
@@ -212,19 +215,44 @@ namespace BattleRoyale.UI
 
             if (string.IsNullOrWhiteSpace(name))
             {
-                _errorMessageText.text = "Lobby name cannot be empty!";
+                _lobbyNameErrorMessageText.text = "Lobby name cannot be empty";
                 return false;
             }
 
             if (name.Length < minLobbyNameLength || name.Length > maxLobbyNameLength)
             {
-                _errorMessageText.text = "Lobby name must be 3-16 characters long!";
+                _lobbyNameErrorMessageText.text = "Lobby name must be 3-16 characters long";
                 return false;
             }
 
             if (!Regex.IsMatch(name, pattern))
             {
-                _errorMessageText.text = "Lobby name contains invalid characters!";
+                _lobbyNameErrorMessageText.text = "Lobby name contains invalid characters";
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool IsLobbyCodeValid(string lobbyCode)
+        {
+            string pattern = @"^[A-Z0-9]{6}$";
+
+            if (string.IsNullOrWhiteSpace(lobbyCode))
+            {
+                _lobbyCodeErrorMessageText.text = "Lobby Code cannot be empty";
+                return false;
+            }
+
+            if (lobbyCode.Length != lobbyCodeLength)
+            {
+                _lobbyCodeErrorMessageText.text = "Lobby Code must must be exactly 6 characters long";
+                return false;
+            }
+
+            if (!Regex.IsMatch(lobbyCode, pattern))
+            {
+                _lobbyCodeErrorMessageText.text = "Lobby code does not match the required pattern";
                 return false;
             }
 
@@ -237,16 +265,15 @@ namespace BattleRoyale.UI
 
             if (IsLobbyNameValid(lobbyName))
             {
+                _lobbyNameErrorMessageText.text = string.Empty;
                 LobbyManager.Instance.CreateLobby(lobbyName, _capacitySelected, _privacySelected);
-
-                _errorMessageText.text = string.Empty;
             }
         }
 
         private void OnResetButtonClicked()
         {
              _lobbyNameInputField.text = string.Empty;
-             _errorMessageText.text = string.Empty;
+             _lobbyNameErrorMessageText.text = string.Empty;
             toggles[0].isOn = true;
             HandlePrivacyToggleSwitch(true, 1);
         }
@@ -258,7 +285,13 @@ namespace BattleRoyale.UI
 
         private void OnJoinWithCodeButtonClicked()
         {
-            LobbyManager.Instance.JoinWithCode(_joinCodeInputField.text);
+            string lobbyCode = _joinCodeInputField.text;
+
+            if (IsLobbyCodeValid(lobbyCode))
+            {
+                _lobbyCodeErrorMessageText.text = string.Empty;
+                LobbyManager.Instance.JoinWithCode(_joinCodeInputField.text);
+            }
         }
 
         private void OnBackToStartMenuButtonClicked()
