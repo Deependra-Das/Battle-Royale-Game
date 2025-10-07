@@ -123,5 +123,12 @@ namespace BattleRoyale.NetworkModule
         {
             PlayerSessionManager.Instance.DeregisterPlayer(clientId);
         }
+
+        public void KickPlayer(int playerIndex)
+        {
+            ulong clientId = CharacterManager.Instance.GetCharacterClientIdByIndex(playerIndex);
+            Debug.Log(PlayerSessionManager.Instance.GetPlayerSessionData(clientId).Username);
+            //NetworkManager.Singleton.DisconnectClient(clientId);
+        }
     }
 }

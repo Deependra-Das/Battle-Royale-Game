@@ -141,5 +141,14 @@ namespace BattleRoyale.CharacterSelectionModule
                 entry.character.GetComponent<CharacterSelectPlayer>().SetCharacterSkinMaterial(skinColorIndex);
             }
         }
+
+        public ulong GetCharacterClientIdByIndex(int index)
+        {
+            if (index >= 0 && index < _clientCharacterMapList.Count)
+            {
+                return _clientCharacterMapList[index].clientID;
+            }
+            return ulong.MaxValue;
+        }
     }
 }

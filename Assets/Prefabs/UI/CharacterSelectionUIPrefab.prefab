@@ -538,6 +538,68 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &1554057937728435982
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5969443772321863022}
+  - component: {fileID: 6817975745991596427}
+  m_Layer: 5
+  m_Name: KickButtonContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &5969443772321863022
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1554057937728435982}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8195129506391122070}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: 196}
+  m_SizeDelta: {x: 0, y: 80}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &6817975745991596427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1554057937728435982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_Spacing: 20
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &1563046396515440200
 GameObject:
   m_ObjectHideFlags: 0
@@ -1700,6 +1762,9 @@ MonoBehaviour:
   _colorTogglePrefab: {fileID: 3078891319102880724, guid: 5fbf44b6fb777d448991d7a193fbe1a8, type: 3}
   _colorToggleGroupTransform: {fileID: 3604289040424620409}
   _charSkinMatInfo_SO: {fileID: 11400000, guid: 3b6a971c7a6c83f4789dbc2a7bf587ff, type: 2}
+  _kickButtonPrefab: {fileID: 668724757810274982, guid: afd957bb1c534f44986a5cec39140e87, type: 3}
+  _kickButtonContainer: {fileID: 5969443772321863022}
+  _kickButtonContainerLayoutGroup: {fileID: 6817975745991596427}
 --- !u!1 &5611702027495004976
 GameObject:
   m_ObjectHideFlags: 0
@@ -1711,7 +1776,7 @@ GameObject:
   - component: {fileID: 108579880170933495}
   - component: {fileID: 2906747020767292770}
   m_Layer: 5
-  m_Name: TopBar
+  m_Name: TopContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1985,6 +2050,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 108579880170933495}
+  - {fileID: 5969443772321863022}
   - {fileID: 8807989081581079526}
   m_Father: {fileID: 6025319813738337504}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
