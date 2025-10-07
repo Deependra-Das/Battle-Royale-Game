@@ -42,51 +42,7 @@ namespace BattleRoyale.NetworkModule
 
                 RaiseGameOverScoreCardLocally();
                 RaiseGameOverScoreCardClientRpc();
-                StartCountdown(GameManager.Instance.ui_SO.gameOverCountdownDuration);
             }
-        }
-
-        public void StartCountdown(float duration)
-        {
-            if (IsServer)
-            {
-                StartCoroutine(GameOverCountdownCoroutine(duration));
-            }
-        }
-
-        private IEnumerator GameOverCountdownCoroutine(float duration)
-        {
-            float timeRemaining = duration;
-
-            while (timeRemaining > 0)
-            {
-                int displayValue = Mathf.CeilToInt(timeRemaining);
-                UpdateGameOverCountdownClientRpc(displayValue);
-                yield return new WaitForSeconds(1f);
-                timeRemaining -= 1f;
-            }
-
-            ResetPlayerSessionData();
-            LoadStartScene();
-        }
-
-        private void ResetPlayerSessionData()
-        {
-            if (IsServer)
-            {
-                PlayerSessionManager.Instance.ResetAllSessions();
-            }
-        }
-
-        private void LoadStartScene()
-        {
-            SceneLoader.Instance.LoadScene(SceneName.StartScene, true);
-        }
-
-        [ClientRpc]
-        private void UpdateGameOverCountdownClientRpc(int secondsRemaining)
-        {
-            EventBusManager.Instance.Raise(EventName.GameOverCountdownTick, secondsRemaining);
         }
 
         private void RaiseGameOverScoreCardLocally()

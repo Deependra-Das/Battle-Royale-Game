@@ -11,7 +11,5 @@ namespace BattleRoyale.UIModule
         public GameplayUIView gameplayUIPrefab;
         public GameOverUIView gameOverUIPrefab;
         public ScoreboardEntryUIView scoreboardEntryUIPrefab;
-        public float gameplayCountdownDuration;
-        public float gameOverCountdownDuration;
     }
 }

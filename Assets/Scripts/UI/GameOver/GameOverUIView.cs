@@ -23,8 +23,8 @@ namespace BattleRoyale.UIModule
         [SerializeField] private GameObject _disconnectedGameOverUIPopUp;
         [SerializeField] private TMP_Text _disconnectedCountdownGameOverUIText;
 
-        private int _currentCountdownValue = -1;
-        public float _disconnectedCountdownTime = 5f;
+        [SerializeField] private float _gameOverCountdownValue = 5f;
+        [SerializeField] private float _disconnectedCountdownTime = 5f;
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -32,14 +32,12 @@ namespace BattleRoyale.UIModule
 
         private void SubscribeToEvents()
         {
-            EventBusManager.Instance.Subscribe(EventName.GameOverCountdownTick, HandleCountdownTick);
             EventBusManager.Instance.Subscribe(EventName.GameOverScoreCard, HandleGameOverScoreCard);
             NetworkManager.Singleton.OnClientDisconnectCallback += ShowDisconnectionGameOverUI;
         }
 
         private void UnsubscribeToEvents()
         {
-            EventBusManager.Instance.Unsubscribe(EventName.GameOverCountdownTick, HandleCountdownTick);
             EventBusManager.Instance.Unsubscribe(EventName.GameOverScoreCard, HandleGameOverScoreCard);
             NetworkManager.Singleton.OnClientDisconnectCallback -= ShowDisconnectionGameOverUI;
         }
@@ -69,17 +67,6 @@ namespace BattleRoyale.UIModule
         public void HideScoreboard()
         {
             _scoreboardUI.SetActive(false);
-        }
-
-        private void HandleCountdownTick(object[] parameters)
-        {
-            int secondsRemaining = (int)parameters[0];
-
-            if (secondsRemaining > 0)
-            {
-                _gameOverCountdownText.text = "Returning To Main Menu In... " +secondsRemaining.ToString() +"s";
-                _currentCountdownValue = secondsRemaining;
-            }
         }
 
         public Transform GetScoreboardContentTransform()
@@ -114,6 +101,21 @@ namespace BattleRoyale.UIModule
         {
             HideGameOverPopUp();
             ShowScoreboard();
+            StartCoroutine(GameOverCountdownSequence());
+        }
+
+        private IEnumerator GameOverCountdownSequence()
+        {
+            float currentTime = _gameOverCountdownValue;
+
+            while (currentTime > 0)
+            {
+                _gameOverCountdownText.text = "Returning To Main Menu In... " + Mathf.Ceil(currentTime).ToString() + "s";
+                currentTime -= 1f;
+                yield return new WaitForSeconds(1f);
+            }
+
+            SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
 
         public void ShowGameOverPopUp()

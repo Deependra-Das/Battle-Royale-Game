@@ -47,13 +47,13 @@ namespace BattleRoyale.UIModule
 
         private void SubscribeToEvents()
         {
-            EventBusManager.Instance.Subscribe(EventName.GameplayCountdownTick, HandleCountdownTick);
+            EventBusManager.Instance.Subscribe(EventName.GameplayStartCountdownTick, HandleCountdownTick);
             NetworkManager.Singleton.OnClientDisconnectCallback += ShowDisconnectionGameplayUI;
         }
 
         private void UnsubscribeToEvents()
         {
-            EventBusManager.Instance.Unsubscribe(EventName.GameplayCountdownTick, HandleCountdownTick);
+            EventBusManager.Instance.Unsubscribe(EventName.GameplayStartCountdownTick, HandleCountdownTick);
             NetworkManager.Singleton.OnClientDisconnectCallback -= ShowDisconnectionGameplayUI;
         }
 

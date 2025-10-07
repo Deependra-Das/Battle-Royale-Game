@@ -13,6 +13,7 @@ namespace BattleRoyale.NetworkModule
 {
     public class GameplayManager : NetworkBehaviour
     {
+        [SerializeField] private float _gameplayStartCountdownDuration;
         public static GameplayManager Instance { get; private set; }
 
         private NetworkVariable<GameplayState> _state = new NetworkVariable<GameplayState>(GameplayState.WaitingToStart);
@@ -99,7 +100,7 @@ namespace BattleRoyale.NetworkModule
                     HandlePlayerSpawn();
 
                     NotifyClientsToShowGameplayUIClientRpc();
-                    StartCountdown(GameManager.Instance.ui_SO.gameplayCountdownDuration);
+                    StartCountdown(_gameplayStartCountdownDuration);
                 }
             }
         }
@@ -170,7 +171,7 @@ namespace BattleRoyale.NetworkModule
         [ClientRpc]
         private void UpdateGameplayCountdownClientRpc(int secondsRemaining)
         {
-            EventBusManager.Instance.Raise(EventName.GameplayCountdownTick, secondsRemaining);
+            EventBusManager.Instance.Raise(EventName.GameplayStartCountdownTick, secondsRemaining);
         }
 
         [ClientRpc]

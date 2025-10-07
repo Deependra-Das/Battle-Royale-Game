@@ -6,8 +6,7 @@ namespace BattleRoyale.EventModule
     {
         ChangeGameState,
         PlayerSpawnCompleted,
-        GameplayCountdownTick,
-        GameOverCountdownTick,
+        GameplayStartCountdownTick,
         ActivateTilesForGameplay,
         ActivatePlayerForGameplay,
         PlayerEliminated,
