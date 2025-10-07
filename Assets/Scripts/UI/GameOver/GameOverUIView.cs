@@ -1,6 +1,7 @@
 using BattleRoyale.EventModule;
 using BattleRoyale.MainModule;
 using BattleRoyale.SceneModule;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
@@ -13,16 +14,17 @@ namespace BattleRoyale.UIModule
     {
         [SerializeField] private GameObject _scoreboardUI;
         [SerializeField] private Transform _scoreboardContentTransform;
-        [SerializeField] private TMP_Text _countdownText;
+        [SerializeField] private TMP_Text _gameOverCountdownText;
 
         [Header("GameOver PopUp")]
         [SerializeField] private GameObject _gameOverPopUp;
 
         [Header("Disconnected PopUp")]
-        [SerializeField] private GameObject _disconnectedPopUp;
-        [SerializeField] private Button _disconnectedBackButtonPrefab;
+        [SerializeField] private GameObject _disconnectedGameOverUIPopUp;
+        [SerializeField] private TMP_Text _disconnectedCountdownGameOverUIText;
 
         private int _currentCountdownValue = -1;
+        public float _disconnectedCountdownTime = 5f;
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -33,7 +35,6 @@ namespace BattleRoyale.UIModule
             EventBusManager.Instance.Subscribe(EventName.GameOverCountdownTick, HandleCountdownTick);
             EventBusManager.Instance.Subscribe(EventName.GameOverScoreCard, HandleGameOverScoreCard);
             NetworkManager.Singleton.OnClientDisconnectCallback += ShowDisconnectionGameOverUI;
-            _disconnectedBackButtonPrefab.onClick.AddListener(OnDisconnectedBackButtonClicked);
         }
 
         private void UnsubscribeToEvents()
@@ -41,12 +42,11 @@ namespace BattleRoyale.UIModule
             EventBusManager.Instance.Unsubscribe(EventName.GameOverCountdownTick, HandleCountdownTick);
             EventBusManager.Instance.Unsubscribe(EventName.GameOverScoreCard, HandleGameOverScoreCard);
             NetworkManager.Singleton.OnClientDisconnectCallback -= ShowDisconnectionGameOverUI;
-            _disconnectedBackButtonPrefab.onClick.AddListener(OnDisconnectedBackButtonClicked);
         }
 
         private void Start()
         {
-            _disconnectedPopUp.SetActive(false);
+            _disconnectedGameOverUIPopUp.SetActive(false);
             HideScoreboard();
             ShowGameOverPopUp();
         }
@@ -77,7 +77,7 @@ namespace BattleRoyale.UIModule
 
             if (secondsRemaining > 0)
             {
-                _countdownText.text = "Returning To Main Menu In... " +secondsRemaining.ToString() +"s";
+                _gameOverCountdownText.text = "Returning To Main Menu In... " +secondsRemaining.ToString() +"s";
                 _currentCountdownValue = secondsRemaining;
             }
         }
@@ -91,13 +91,22 @@ namespace BattleRoyale.UIModule
         {
             if ((NetworkManager.Singleton.IsServer && clientID == NetworkManager.Singleton.LocalClientId && NetworkManager.Singleton.ConnectedClients.Count <= 1) || !NetworkManager.Singleton.IsServer)
             {
-                _disconnectedPopUp.SetActive(true);
+                _disconnectedGameOverUIPopUp.SetActive(true);
+                StartCoroutine(DisconnectedCountdownSequence());
             }
         }
 
-        private void OnDisconnectedBackButtonClicked()
+        private IEnumerator DisconnectedCountdownSequence()
         {
-            _disconnectedPopUp.SetActive(false);
+            float currentTime = _disconnectedCountdownTime;
+
+            while (currentTime > 0)
+            {
+                _disconnectedCountdownGameOverUIText.text = "Returning To Main Menu In... " + Mathf.Ceil(currentTime).ToString() + "s";
+                currentTime -= 1f;
+                yield return new WaitForSeconds(1f);
+            }
+
             SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
 
