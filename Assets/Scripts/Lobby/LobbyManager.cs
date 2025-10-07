@@ -1,12 +1,14 @@
 using BattleRoyale.Event;
 using BattleRoyale.Network;
 using BattleRoyale.Scene;
+using System;
 using System.Collections.Generic;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LobbyManager : MonoBehaviour
 {
@@ -31,7 +33,7 @@ public class LobbyManager : MonoBehaviour
         if (UnityServices.State != ServicesInitializationState.Initialized)
         {
             InitializationOptions options = new InitializationOptions();
-            options.SetProfile(Random.Range(0, 10000).ToString());
+            options.SetProfile(UnityEngine.Random.Range(0, 10000).ToString());
 
             await UnityServices.InitializeAsync();
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
@@ -41,7 +43,7 @@ public class LobbyManager : MonoBehaviour
     private void Update()
     {
         HandleHeartbeat();
-        HandlePeriodicListLobbies();
+        HandlePeriodicFetchLobbyList();
     }
 
     private void HandleHeartbeat()
@@ -58,15 +60,18 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    private void HandlePeriodicListLobbies()
+    private void HandlePeriodicFetchLobbyList()
     {
-        if (_joinedLobby == null && AuthenticationService.Instance.IsSignedIn)
+        string activeSceneName = SceneManager.GetActiveScene().name.ToString();
+        Enum.TryParse<SceneName>(activeSceneName, out var sceneEnumValue);
+
+        if (_joinedLobby == null && AuthenticationService.Instance.IsSignedIn && sceneEnumValue != SceneName.CharacterSelectionScene)
         {
             _listLobbiesTimer -= Time.deltaTime;
             if (_listLobbiesTimer <= 0f)
             {
                 _listLobbiesTimer = _listLobbiesTimerMax;
-                ListLobbies();
+                FetchLobbyList();
             }
         }
     }
@@ -188,7 +193,7 @@ public class LobbyManager : MonoBehaviour
         return null;
     }
 
-    private async void ListLobbies()
+    private async void FetchLobbyList()
     {
         try
         {

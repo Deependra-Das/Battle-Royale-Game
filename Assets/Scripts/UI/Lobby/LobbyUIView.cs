@@ -123,7 +123,7 @@ namespace BattleRoyale.UI
             HandlePrivacyToggleSwitch(true, 1);
             HideLobbyMessagePopUp();
             HideInterstitialPopUp();
-            UpdateLobbyList(new List<Lobby>());
+            UpdateLobbyListUI(new List<Lobby>());
         }
 
         void HandleMainTabSwitch(bool isOn, int tabIndex)
@@ -390,10 +390,10 @@ namespace BattleRoyale.UI
         private void OnLobbyListChangedUI(object[] parameters)
         {
             List<Lobby> lobbyList = (List<Lobby>)parameters[0];
-            UpdateLobbyList(lobbyList);
+            UpdateLobbyListUI(lobbyList);
         }
 
-        private void UpdateLobbyList(List<Lobby> lobbyList)
+        private void UpdateLobbyListUI(List<Lobby> lobbyList)
         {
             CleanUpLobbyEntryButtons();
             CreateLobbyEntryButtons(lobbyList);
