@@ -1,4 +1,4 @@
-namespace BattleRoyale.Scene
+namespace BattleRoyale.SceneModule
 {
     public enum SceneName
     {

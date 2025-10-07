@@ -1,13 +1,13 @@
-using BattleRoyale.Event;
-using BattleRoyale.Main;
-using BattleRoyale.Scene;
+using BattleRoyale.EventModule;
+using BattleRoyale.MainModule;
+using BattleRoyale.SceneModule;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BattleRoyale.UI
+namespace BattleRoyale.UIModule
 {
     public class GameOverUIView : MonoBehaviour
     {

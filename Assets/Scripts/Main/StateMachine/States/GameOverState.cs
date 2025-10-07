@@ -1,11 +1,11 @@
-using BattleRoyale.Event;
-using BattleRoyale.Scene;
-using BattleRoyale.Network;
-using BattleRoyale.UI;
+using BattleRoyale.EventModule;
+using BattleRoyale.SceneModule;
+using BattleRoyale.NetworkModule;
+using BattleRoyale.UIModule;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.Main
+namespace BattleRoyale.MainModule
 {
     public class GameOverState : IGameState
     {

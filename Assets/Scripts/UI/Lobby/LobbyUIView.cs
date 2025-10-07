@@ -1,18 +1,16 @@
-using BattleRoyale.Event;
-using BattleRoyale.Main;
-using BattleRoyale.Network;
-using BattleRoyale.Scene;
-using System;
+using BattleRoyale.EventModule;
+using BattleRoyale.LobbyModule;
+using BattleRoyale.NetworkModule;
+using BattleRoyale.SceneModule;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 using TMPro;
 using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BattleRoyale.UI
+namespace BattleRoyale.UIModule
 {
     public class LobbyUIView : MonoBehaviour
     {

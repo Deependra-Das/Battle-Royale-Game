@@ -1,13 +1,13 @@
-using BattleRoyale.Event;
-using BattleRoyale.Network;
-using BattleRoyale.Scene;
-using BattleRoyale.UI;
+using BattleRoyale.EventModule;
+using BattleRoyale.NetworkModule;
+using BattleRoyale.SceneModule;
+using BattleRoyale.UIModule;
 using System;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace BattleRoyale.Main
+namespace BattleRoyale.MainModule
 {
     public class LobbyState : IGameState
     {

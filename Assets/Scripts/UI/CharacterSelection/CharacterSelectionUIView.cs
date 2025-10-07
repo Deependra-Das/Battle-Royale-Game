@@ -1,8 +1,9 @@
-using BattleRoyale.Event;
-using BattleRoyale.Main;
-using BattleRoyale.Network;
-using BattleRoyale.Player;
-using BattleRoyale.Scene;
+using BattleRoyale.EventModule;
+using BattleRoyale.LobbyModule;
+using BattleRoyale.MainModule;
+using BattleRoyale.NetworkModule;
+using BattleRoyale.PlayerModule;
+using BattleRoyale.SceneModule;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
@@ -10,7 +11,7 @@ using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BattleRoyale.UI
+namespace BattleRoyale.UIModule
 {
     public class CharacterSelectionUIView : MonoBehaviour
     {

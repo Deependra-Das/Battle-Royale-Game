@@ -1,15 +1,15 @@
-using BattleRoyale.CharacterSelection;
-using BattleRoyale.Event;
-using BattleRoyale.Network;
-using BattleRoyale.Scene;
-using BattleRoyale.UI;
+using BattleRoyale.CharacterSelectionModule;
+using BattleRoyale.EventModule;
+using BattleRoyale.NetworkModule;
+using BattleRoyale.SceneModule;
+using BattleRoyale.UIModule;
 using System;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace BattleRoyale.Main
+namespace BattleRoyale.MainModule
 {
     public class CharacterSelectionState : IGameState
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BattleRoyale.CharacterSelection
+namespace BattleRoyale.CharacterSelectionModule
 {
     [System.Serializable]
     public class CharacterSelectTransform

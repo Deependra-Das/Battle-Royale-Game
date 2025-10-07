@@ -1,8 +1,8 @@
-using BattleRoyale.Event;
-using BattleRoyale.Level;
-using BattleRoyale.Main;
-using BattleRoyale.Network;
-using BattleRoyale.Tile;
+using BattleRoyale.EventModule;
+using BattleRoyale.LevelModule;
+using BattleRoyale.MainModule;
+using BattleRoyale.NetworkModule;
+using BattleRoyale.TileModule;
 using TMPro;
 using Unity.Cinemachine;
 using Unity.Collections;
@@ -10,7 +10,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace BattleRoyale.Player
+namespace BattleRoyale.PlayerModule
 {
     public class PlayerView : NetworkBehaviour
     {

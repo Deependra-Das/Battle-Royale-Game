@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BattleRoyale.UI
+namespace BattleRoyale.UIModule
 {
     [CreateAssetMenu(fileName = "UIScriptableObject", menuName = "ScriptableObjects/UIScriptableObject")]
     public class UIScriptableObject : ScriptableObject

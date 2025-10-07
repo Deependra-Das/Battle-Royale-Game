@@ -1,6 +1,6 @@
 using Unity.Netcode;
 
-namespace BattleRoyale.Network
+namespace BattleRoyale.NetworkModule
 {
     [System.Serializable]
     public struct PlayerSessionDataDTO : INetworkSerializable

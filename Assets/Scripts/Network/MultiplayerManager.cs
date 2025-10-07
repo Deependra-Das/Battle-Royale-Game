@@ -1,7 +1,7 @@
-using BattleRoyale.CharacterSelection;
-using BattleRoyale.Event;
-using BattleRoyale.Main;
-using BattleRoyale.Scene;
+using BattleRoyale.CharacterSelectionModule;
+using BattleRoyale.EventModule;
+using BattleRoyale.MainModule;
+using BattleRoyale.SceneModule;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace BattleRoyale.Network
+namespace BattleRoyale.NetworkModule
 {
     public class MultiplayerManager : NetworkBehaviour
     {

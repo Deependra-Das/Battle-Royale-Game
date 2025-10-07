@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BattleRoyale.Event
+namespace BattleRoyale.EventModule
 {
     public enum EventName
     {

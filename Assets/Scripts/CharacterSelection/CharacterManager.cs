@@ -1,11 +1,11 @@
-using BattleRoyale.Main;
-using BattleRoyale.Network;
+using BattleRoyale.MainModule;
+using BattleRoyale.NetworkModule;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.CharacterSelection
+namespace BattleRoyale.CharacterSelectionModule
 {
     public class CharacterManager : NetworkBehaviour
     {

@@ -1,11 +1,11 @@
-using BattleRoyale.Main;
-using BattleRoyale.Scene;
+using BattleRoyale.MainModule;
+using BattleRoyale.SceneModule;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BattleRoyale.UI
+namespace BattleRoyale.UIModule
 {
     public class StartMenuUIView : MonoBehaviour
     {

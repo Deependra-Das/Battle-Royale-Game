@@ -1,15 +1,15 @@
-using BattleRoyale.Event;
-using BattleRoyale.Level;
-using BattleRoyale.Main;
-using BattleRoyale.Player;
-using BattleRoyale.Scene;
+using BattleRoyale.EventModule;
+using BattleRoyale.LevelModule;
+using BattleRoyale.MainModule;
+using BattleRoyale.PlayerModule;
+using BattleRoyale.SceneModule;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.Network
+namespace BattleRoyale.NetworkModule
 {
     public class GameplayManager : NetworkBehaviour
     {

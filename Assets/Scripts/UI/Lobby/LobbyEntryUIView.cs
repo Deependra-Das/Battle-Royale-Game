@@ -1,49 +1,53 @@
+using BattleRoyale.LobbyModule;
 using TMPro;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LobbyEntryUIView : MonoBehaviour
+namespace BattleRoyale.UIModule
 {
-    [SerializeField] private Button _lobbyEntryButton;
-    [SerializeField] private TMP_Text _lobbyName;
-    [SerializeField] private TMP_Text _lobbyCapacity;
-
-    private Lobby _lobby;
-
-    private void OnEnable() => SubscribeToEvents();
-
-    private void OnDisable() => UnsubscribeToEvents();
-
-    private void SubscribeToEvents()
+    public class LobbyEntryUIView : MonoBehaviour
     {
-        _lobbyEntryButton.onClick.AddListener(OnLobbyEntryButtonClicked);
-    }
+        [SerializeField] private Button _lobbyEntryButton;
+        [SerializeField] private TMP_Text _lobbyName;
+        [SerializeField] private TMP_Text _lobbyCapacity;
 
-    private void UnsubscribeToEvents()
-    {
-        _lobbyEntryButton.onClick.RemoveListener(OnLobbyEntryButtonClicked);
-    }
+        private Lobby _lobby;
 
-    public void Initialize(Lobby lobby)
-    {
-        _lobby = lobby;
-        SetLobbyName(lobby.Name);
-        SetLobbyCapacity(lobby.MaxPlayers);
-    }
+        private void OnEnable() => SubscribeToEvents();
 
-    private void SetLobbyName(string lobbyName)
-    {
-        _lobbyName.text = lobbyName;
-    }
+        private void OnDisable() => UnsubscribeToEvents();
 
-    private void SetLobbyCapacity(int lobbyCapacity)
-    {
-        _lobbyCapacity.text = lobbyCapacity.ToString();
-    }
+        private void SubscribeToEvents()
+        {
+            _lobbyEntryButton.onClick.AddListener(OnLobbyEntryButtonClicked);
+        }
 
-    private void OnLobbyEntryButtonClicked()
-    {
-        LobbyManager.Instance.JoinWithId(_lobby.Id);
+        private void UnsubscribeToEvents()
+        {
+            _lobbyEntryButton.onClick.RemoveListener(OnLobbyEntryButtonClicked);
+        }
+
+        public void Initialize(Lobby lobby)
+        {
+            _lobby = lobby;
+            SetLobbyName(lobby.Name);
+            SetLobbyCapacity(lobby.MaxPlayers);
+        }
+
+        private void SetLobbyName(string lobbyName)
+        {
+            _lobbyName.text = lobbyName;
+        }
+
+        private void SetLobbyCapacity(int lobbyCapacity)
+        {
+            _lobbyCapacity.text = lobbyCapacity.ToString();
+        }
+
+        private void OnLobbyEntryButtonClicked()
+        {
+            LobbyManager.Instance.JoinWithId(_lobby.Id);
+        }
     }
 }

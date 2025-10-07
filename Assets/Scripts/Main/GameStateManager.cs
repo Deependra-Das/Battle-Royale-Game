@@ -1,5 +1,5 @@
-using BattleRoyale.Main;
-using BattleRoyale.Scene;
+using BattleRoyale.MainModule;
+using BattleRoyale.SceneModule;
 using System;
 using System.Collections;
 using UnityEngine;

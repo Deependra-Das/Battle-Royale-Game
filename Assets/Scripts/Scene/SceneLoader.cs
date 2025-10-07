@@ -1,6 +1,6 @@
-using BattleRoyale.Event;
-using BattleRoyale.Main;
-using BattleRoyale.Utilities;
+using BattleRoyale.EventModule;
+using BattleRoyale.MainModule;
+using BattleRoyale.UtilitiesModule;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace BattleRoyale.Scene
+namespace BattleRoyale.SceneModule
 {
     public class SceneLoader : GenericMonoSingleton<SceneLoader>
     {

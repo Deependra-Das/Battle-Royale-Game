@@ -1,11 +1,11 @@
-using BattleRoyale.Main;
-using BattleRoyale.Player;
-using BattleRoyale.Network;
+using BattleRoyale.MainModule;
+using BattleRoyale.PlayerModule;
+using BattleRoyale.NetworkModule;
 using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.Level
+namespace BattleRoyale.LevelModule
 {
     public class GameOverTrigger : MonoBehaviour
     {

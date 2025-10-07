@@ -1,14 +1,15 @@
-using BattleRoyale.CharacterSelection;
-using BattleRoyale.Level;
-using BattleRoyale.Main;
-using BattleRoyale.Player;
-using BattleRoyale.Scene;
-using BattleRoyale.UI;
+using BattleRoyale.CharacterSelectionModule;
+using BattleRoyale.LevelModule;
+using BattleRoyale.LobbyModule;
+using BattleRoyale.MainModule;
+using BattleRoyale.PlayerModule;
+using BattleRoyale.SceneModule;
+using BattleRoyale.UIModule;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.Network
+namespace BattleRoyale.NetworkModule
 {
     public class PlayerLobbyStateManager : NetworkBehaviour
     {

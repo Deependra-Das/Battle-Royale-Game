@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BattleRoyale.CharacterSelection
+namespace BattleRoyale.CharacterSelectionModule
 {
     public class ClientCharacterMapping
     {

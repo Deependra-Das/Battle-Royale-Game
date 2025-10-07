@@ -1,9 +1,9 @@
-using BattleRoyale.Network;
+using BattleRoyale.NetworkModule;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.UI
+namespace BattleRoyale.UIModule
 {
     public class GameOverUIService
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BattleRoyale.Main
+namespace BattleRoyale.MainModule
 {
     public class GameStateMachine
     {

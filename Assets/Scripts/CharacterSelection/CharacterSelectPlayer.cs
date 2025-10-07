@@ -1,6 +1,6 @@
-using BattleRoyale.Event;
-using BattleRoyale.Network;
-using BattleRoyale.Player;
+using BattleRoyale.EventModule;
+using BattleRoyale.NetworkModule;
+using BattleRoyale.PlayerModule;
 using System;
 using TMPro;
 using Unity.Collections;
@@ -8,7 +8,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BattleRoyale.CharacterSelection
+namespace BattleRoyale.CharacterSelectionModule
 {
     public class CharacterSelectPlayer : NetworkBehaviour
     { 

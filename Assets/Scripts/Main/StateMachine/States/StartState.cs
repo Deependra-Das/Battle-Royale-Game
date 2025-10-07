@@ -1,14 +1,15 @@
-using BattleRoyale.Event;
-using BattleRoyale.Level;
-using BattleRoyale.Network;
-using BattleRoyale.Player;
-using BattleRoyale.Scene;
-using BattleRoyale.UI;
+using BattleRoyale.EventModule;
+using BattleRoyale.LevelModule;
+using BattleRoyale.LobbyModule;
+using BattleRoyale.NetworkModule;
+using BattleRoyale.PlayerModule;
+using BattleRoyale.SceneModule;
+using BattleRoyale.UIModule;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.Main
+namespace BattleRoyale.MainModule
 {
     public class StartState : IGameState
     {

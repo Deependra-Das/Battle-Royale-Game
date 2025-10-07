@@ -1,13 +1,13 @@
-using BattleRoyale.Event;
-using BattleRoyale.Main;
-using BattleRoyale.Network;
-using BattleRoyale.Scene;
+using BattleRoyale.EventModule;
+using BattleRoyale.MainModule;
+using BattleRoyale.NetworkModule;
+using BattleRoyale.SceneModule;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.Network
+namespace BattleRoyale.NetworkModule
 {
     public class GameOverManager : NetworkBehaviour
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BattleRoyale.CharacterSelection
+namespace BattleRoyale.CharacterSelectionModule
 {
     [CreateAssetMenu(fileName = "CharacterScriptableObject", menuName = "ScriptableObjects/CharacterScriptableObject")]
     public class CharacterScriptableObject : ScriptableObject

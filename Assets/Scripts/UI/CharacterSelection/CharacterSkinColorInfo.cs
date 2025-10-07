@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BattleRoyale.UI
+namespace BattleRoyale.UIModule
 {
     [System.Serializable]
     public class CharacterSkinColorInfo

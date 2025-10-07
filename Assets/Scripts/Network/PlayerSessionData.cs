@@ -1,7 +1,7 @@
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.Network
+namespace BattleRoyale.NetworkModule
 {
     public class PlayerSessionData : INetworkSerializable
     {

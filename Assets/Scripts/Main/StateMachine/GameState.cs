@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BattleRoyale.Main
+namespace BattleRoyale.MainModule
 {
     public enum GameState
     {

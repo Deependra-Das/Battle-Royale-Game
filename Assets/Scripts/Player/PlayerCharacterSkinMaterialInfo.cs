@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace BattleRoyale.Player
+namespace BattleRoyale.PlayerModule
 {
     [System.Serializable]
     public class PlayerCharacterSkinMaterialInfo

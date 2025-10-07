@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BattleRoyale.Tile
+namespace BattleRoyale.TileModule
 {
     public enum HexTileStates
     {
