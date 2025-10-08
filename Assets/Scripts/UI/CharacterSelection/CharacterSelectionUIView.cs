@@ -293,7 +293,6 @@ namespace BattleRoyale.UIModule
 
         void OnButtonClicked(int buttonIndex)
         {
-            Debug.Log(buttonIndex);
             if (NetworkManager.Singleton.IsServer)
             {
                 MultiplayerManager.Instance.KickPlayer(buttonIndex);
