@@ -1,3 +1,4 @@
+using BattleRoyale.EventModule;
 using BattleRoyale.LobbyModule;
 using BattleRoyale.NetworkModule;
 using BattleRoyale.PlayerModule;
@@ -268,16 +269,23 @@ namespace BattleRoyale.UIModule
 
         private void CreateKickButtons()
         {
+            RectTransform rt = _kickButtonPrefab.GetComponent<RectTransform>();
+            float spacing = (rt.rect.size.x) + 20f;
+            float startX = -((buttonOrder.Length - 1) * spacing) / 2f;
+
             for (int i = 0; i < buttonOrder.Length; i++)
             {
-                GameObject button = Instantiate(_kickButtonPrefab, _kickButtonContainer);
-                int buttonIndex = buttonOrder[i];
-                button.GetComponent<Button>().onClick.AddListener(() => OnButtonClicked(buttonIndex));
-                buttonsList.Add(button);
-            }
-            _kickButtonContainerLayoutGroup.enabled = false;
+                GameObject newButton = Instantiate(_kickButtonPrefab, _kickButtonContainer);
 
-            foreach(var button in buttonsList)
+                float posX = startX + i * spacing;
+                newButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(posX, 0);
+
+                int buttonIndex = buttonOrder[i];
+                newButton.GetComponent<Button>().onClick.AddListener(() => OnButtonClicked(buttonIndex));
+                buttonsList.Add(newButton);
+            }
+
+            foreach (var button in buttonsList)
             {
                 button.SetActive(false);
             }
@@ -285,6 +293,7 @@ namespace BattleRoyale.UIModule
 
         void OnButtonClicked(int buttonIndex)
         {
+            Debug.Log(buttonIndex);
             if (NetworkManager.Singleton.IsServer)
             {
                 MultiplayerManager.Instance.KickPlayer(buttonIndex);
@@ -299,7 +308,7 @@ namespace BattleRoyale.UIModule
 
                 for (int i = 0; i < buttonOrder.Length; i++)
                 {
-                    if (i < clients.Count && i!=0)
+                    if (buttonOrder[i] < clients.Count && buttonOrder[i] > 0)
                     {
                         buttonsList[i].SetActive(true);
                     }
@@ -308,7 +317,7 @@ namespace BattleRoyale.UIModule
                         buttonsList[i].SetActive(false);
                     }
                 }
-            }            
+            }
         }
     }
 }

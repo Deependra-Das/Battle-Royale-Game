@@ -43,7 +43,7 @@ namespace BattleRoyale.LobbyModule
                 InitializationOptions options = new InitializationOptions();
                 options.SetProfile(UnityEngine.Random.Range(0, 10000).ToString());
 
-                await UnityServices.InitializeAsync();
+                await UnityServices.InitializeAsync(options);
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
             }
         }

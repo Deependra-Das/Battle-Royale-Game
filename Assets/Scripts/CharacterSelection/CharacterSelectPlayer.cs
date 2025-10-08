@@ -59,7 +59,7 @@ namespace BattleRoyale.CharacterSelectionModule
             }
         }
 
-        private void SetPlayerIndexForCharacter(int assignedPlayerIndex)
+        public void SetPlayerIndexForCharacter(int assignedPlayerIndex)
         {
             _playerIndex = assignedPlayerIndex;
         }

@@ -1,10 +1,10 @@
 using BattleRoyale.CharacterSelectionModule;
 using BattleRoyale.EventModule;
+using BattleRoyale.LobbyModule;
 using BattleRoyale.MainModule;
 using BattleRoyale.SceneModule;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
@@ -124,11 +124,14 @@ namespace BattleRoyale.NetworkModule
             PlayerSessionManager.Instance.DeregisterPlayer(clientId);
         }
 
-        public void KickPlayer(int playerIndex)
+        public void KickPlayer(int index)
         {
-            ulong clientId = CharacterManager.Instance.GetCharacterClientIdByIndex(playerIndex);
-            Debug.Log(PlayerSessionManager.Instance.GetPlayerSessionData(clientId).Username);
-            //NetworkManager.Singleton.DisconnectClient(clientId);
+            if (IsServer)
+            {
+                ulong clientId = CharacterManager.Instance.GetCharacterClientIdByIndex(index);
+                LobbyManager.Instance.KickPlayer(PlayerSessionManager.Instance.GetPlayerSessionData(clientId).PlayerId);
+                NetworkManager.Singleton.DisconnectClient(clientId);
+            }
         }
     }
 }

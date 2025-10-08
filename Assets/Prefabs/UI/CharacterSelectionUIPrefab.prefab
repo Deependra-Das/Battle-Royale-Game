@@ -547,7 +547,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5969443772321863022}
-  - component: {fileID: 6817975745991596427}
   m_Layer: 5
   m_Name: KickButtonContainer
   m_TagString: Untagged
@@ -574,32 +573,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 196}
   m_SizeDelta: {x: 0, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &6817975745991596427
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1554057937728435982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 4
-  m_Spacing: 20
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!1 &1563046396515440200
 GameObject:
   m_ObjectHideFlags: 0
@@ -1764,7 +1737,7 @@ MonoBehaviour:
   _charSkinMatInfo_SO: {fileID: 11400000, guid: 3b6a971c7a6c83f4789dbc2a7bf587ff, type: 2}
   _kickButtonPrefab: {fileID: 668724757810274982, guid: afd957bb1c534f44986a5cec39140e87, type: 3}
   _kickButtonContainer: {fileID: 5969443772321863022}
-  _kickButtonContainerLayoutGroup: {fileID: 6817975745991596427}
+  _kickButtonContainerLayoutGroup: {fileID: 0}
 --- !u!1 &5611702027495004976
 GameObject:
   m_ObjectHideFlags: 0

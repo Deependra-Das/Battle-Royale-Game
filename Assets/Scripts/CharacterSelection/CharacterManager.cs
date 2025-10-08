@@ -102,6 +102,8 @@ namespace BattleRoyale.CharacterSelectionModule
                           _characterSpawnData.characterTransformList[i].characterPosition;
                     _clientCharacterMapList[i].character.transform.rotation =
                      Quaternion.Euler(_characterSpawnData.characterTransformList[i].characterRotation);
+
+                    _clientCharacterMapList[i].character.GetComponent< CharacterSelectPlayer >().SetPlayerIndexForCharacter(i);
                 }
             }
         }
