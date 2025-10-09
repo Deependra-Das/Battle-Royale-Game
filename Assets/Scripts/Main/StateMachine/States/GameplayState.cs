@@ -1,14 +1,8 @@
-using BattleRoyale.EventModule;
 using BattleRoyale.LevelModule;
 using BattleRoyale.NetworkModule;
 using BattleRoyale.PlayerModule;
-using BattleRoyale.SceneModule;
 using BattleRoyale.UIModule;
-using System;
-using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace BattleRoyale.MainModule
 {
@@ -17,7 +11,6 @@ namespace BattleRoyale.MainModule
         private LevelService _levelObj;
         private PlayerService _playerObj;
         private GameplayUIService _gameplayUIObj;
-        private NetworkObject _gameplayManagerNetworkObj;
 
         public void Enter()
         {
@@ -26,20 +19,7 @@ namespace BattleRoyale.MainModule
             _levelObj = GameManager.Instance.Get<LevelService>();
             _playerObj = GameManager.Instance.Get<PlayerService>();
 
-            if (NetworkManager.Singleton.IsServer)
-            {
-                SpawnGameplayManager();
-            }
-        }
-
-        private void SpawnGameplayManager()
-        {
-            if (GameplayManager.Instance != null) return;
-
-            GameObject _gameplayMngrObj = UnityEngine.Object.Instantiate(GameManager.Instance.network_SO.gameplayManagerPrefab.gameObject);
-            _gameplayMngrObj.name = "GameplayManager";
-            _gameplayManagerNetworkObj = _gameplayMngrObj.GetComponent<NetworkObject>();
-            _gameplayManagerNetworkObj.Spawn(true);
+            GameplayManager.Instance.Initialize();
         }
 
         public void Exit()
@@ -54,11 +34,14 @@ namespace BattleRoyale.MainModule
             _levelObj.Dispose();
             _gameplayUIObj.Dispose();
 
-            if(NetworkManager.Singleton.IsServer && _gameplayManagerNetworkObj != null && _gameplayManagerNetworkObj.IsSpawned)
+            if (GameplayManager.Instance != null)
             {
-                _gameplayManagerNetworkObj.Despawn();
-                UnityEngine.Object.Destroy(_gameplayManagerNetworkObj.gameObject);
-            }     
+                if (GameplayManager.Instance.NetworkObject.IsSpawned && NetworkManager.Singleton.IsServer)
+                {
+                    GameplayManager.Instance.NetworkObject.Despawn();
+                }
+                UnityEngine.Object.Destroy(GameplayManager.Instance.gameObject);
+            }
         }
 
         private void RegisterGameplayServices()

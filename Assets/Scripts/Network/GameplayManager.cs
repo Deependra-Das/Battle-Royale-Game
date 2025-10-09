@@ -43,7 +43,7 @@ namespace BattleRoyale.NetworkModule
             Instance = this;
         }
 
-        public override void OnNetworkSpawn()
+        public void Initialize()
         {
             if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
             {
@@ -65,20 +65,26 @@ namespace BattleRoyale.NetworkModule
 
         private void SpawnTileRegistry()
         {
-            if (TileRegistry.Instance != null) return;
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                if (TileRegistry.Instance != null) return;
 
-            GameObject tileRegistryObj = Instantiate(GameManager.Instance.network_SO.tileRegistryPrefab.gameObject);
-            tileRegistryObj.name = "TileRegistry";
-            tileRegistryObj.GetComponent<NetworkObject>().Spawn(true);
+                GameObject tileRegistryObj = Instantiate(GameManager.Instance.network_SO.tileRegistryPrefab.gameObject);
+                tileRegistryObj.name = "TileRegistry";
+                tileRegistryObj.GetComponent<NetworkObject>().Spawn(true);
+            }
         }
 
         private IEnumerator InitializeLevelCoroutine()
         {
-            yield return GameManager.Instance.StartCoroutine(_levelObj.StartLevelCoroutine(NetworkManager.Singleton.ConnectedClientsIds.Count));
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                yield return GameManager.Instance.StartCoroutine(_levelObj.StartLevelCoroutine(NetworkManager.Singleton.ConnectedClientsIds.Count));
 
-            yield return new WaitUntil(() => _levelObj.IsLevelReady);
+                yield return new WaitUntil(() => _levelObj.IsLevelReady);
 
-            SendExpectedTileCountClientRpc(_levelObj.ServerSpawnedTileCount);
+                SendExpectedTileCountClientRpc(_levelObj.ServerSpawnedTileCount);
+            }
         }
 
         [ClientRpc]
@@ -162,10 +168,13 @@ namespace BattleRoyale.NetworkModule
 
         private void InitializeGameplay()
         {
-            UpdateGameplayCountdownClientRpc(0);
-            _state.Value = GameplayState.GamePlaying;
-            ActivatePlayerForGameplayClientRpc();
-            //EventBusManager.Instance.Raise(EventName.ActivateTilesForGameplay, true);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                UpdateGameplayCountdownClientRpc(0);
+                _state.Value = GameplayState.GamePlaying;
+                ActivatePlayerForGameplayClientRpc();
+                //EventBusManager.Instance.Raise(EventName.ActivateTilesForGameplay, true);
+            }
         }
 
         [ClientRpc]

@@ -33,10 +33,6 @@ namespace BattleRoyale.NetworkModule
             NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
         }
 
-        public override void OnNetworkSpawn()
-        {
-        }
-
         private void OnClientDisconnect(ulong clientId)
         {
             if (_playerStateDictionary.ContainsKey(clientId))
