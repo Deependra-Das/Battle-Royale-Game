@@ -1,13 +1,13 @@
-using BattleRoyale.Event;
-using BattleRoyale.Level;
-using BattleRoyale.Main;
-using BattleRoyale.Network;
+using BattleRoyale.EventModule;
+using BattleRoyale.LevelModule;
+using BattleRoyale.MainModule;
+using BattleRoyale.NetworkModule;
 using System.Collections.Generic;
 using Unity.Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.Player
+namespace BattleRoyale.PlayerModule
 {
     public class PlayerService
     {

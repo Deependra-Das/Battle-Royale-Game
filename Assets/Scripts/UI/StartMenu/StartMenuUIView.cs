@@ -1,11 +1,11 @@
-using BattleRoyale.Main;
-using BattleRoyale.Scene;
+using BattleRoyale.MainModule;
+using BattleRoyale.SceneModule;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BattleRoyale.UI
+namespace BattleRoyale.UIModule
 {
     public class StartMenuUIView : MonoBehaviour
     {
@@ -15,11 +15,14 @@ namespace BattleRoyale.UI
         [SerializeField] private Button _okButton;
         [SerializeField] private Button _changeUsernameButton;
         [SerializeField] private GameObject _usernameInputPopup;
-        [SerializeField] private GameObject successPopup;
+        [SerializeField] private GameObject _successPopup;
         [SerializeField] private TMP_InputField _usernameInputField;
-        [SerializeField] private TMP_Text errorMessageText;
+        [SerializeField] private TMP_Text _errorMessageText;
         [SerializeField] private GameObject _topBar;
-        [SerializeField] private TMP_Text usernameDisplayText;
+        [SerializeField] private TMP_Text _usernameDisplayText;
+
+        private const int minUserNameLength = 3;
+        private const int maxUserNameLength = 15;
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -66,13 +69,13 @@ namespace BattleRoyale.UI
 
         private void ShowUsernameInputPopup()
         {
-            errorMessageText.gameObject.SetActive(false);
+            _errorMessageText.gameObject.SetActive(false);
             HideSuccessPopup();
             _usernameInputPopup.SetActive(true);
         }
         private void HideUsernameInputPopup()
         {
-            errorMessageText.gameObject.SetActive(false);
+            _errorMessageText.gameObject.SetActive(false);
             _usernameInputPopup.SetActive(false);
         }
 
@@ -88,7 +91,7 @@ namespace BattleRoyale.UI
             }
             else
             {
-                usernameDisplayText.text = username;
+                _usernameDisplayText.text = username;
                 _topBar.SetActive(true);
             }
         }
@@ -99,29 +102,29 @@ namespace BattleRoyale.UI
 
             if (string.IsNullOrEmpty(username))
             {
-                errorMessageText.text = "Username cannot be empty!";
-                errorMessageText.gameObject.SetActive(true);
+                _errorMessageText.text = "Username cannot be empty!";
+                _errorMessageText.gameObject.SetActive(true);
                 return;
             }
-            if (username.Length < 3 || username.Length > 16)
+            if (username.Length < minUserNameLength || username.Length > maxUserNameLength)
             {
-                errorMessageText.text = "Username must be 3-16 characters long!";
-                errorMessageText.gameObject.SetActive(true);
+                _errorMessageText.text = "Username must be 3-16 characters long!";
+                _errorMessageText.gameObject.SetActive(true);
                 return;
             }
 
             if (!IsValidPlayerName(username))
             {
-                errorMessageText.text = "Username contains invalid characters!";
-                errorMessageText.gameObject.SetActive(true);
+                _errorMessageText.text = "Username contains invalid characters!";
+                _errorMessageText.gameObject.SetActive(true);
                 return;
             }
 
             PlayerPrefs.SetString(GameManager.UsernameKey, username);
             PlayerPrefs.Save();
 
-            errorMessageText.text = string.Empty;
-            errorMessageText.gameObject.SetActive(false);
+            _errorMessageText.text = string.Empty;
+            _errorMessageText.gameObject.SetActive(false);
 
             HideUsernameInputPopup();
             CheckPlayerNameExists();
@@ -136,12 +139,12 @@ namespace BattleRoyale.UI
 
         private void ShowSuccessPopup()
         {
-            successPopup.SetActive(true);
+            _successPopup.SetActive(true);
         }
 
         private void HideSuccessPopup()
         {
-            successPopup.SetActive(false);
+            _successPopup.SetActive(false);
         }
     }
 }

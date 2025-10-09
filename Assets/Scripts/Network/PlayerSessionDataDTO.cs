@@ -1,11 +1,12 @@
 using Unity.Netcode;
 
-namespace BattleRoyale.Network
+namespace BattleRoyale.NetworkModule
 {
     [System.Serializable]
     public struct PlayerSessionDataDTO : INetworkSerializable
     {
         public ulong ClientId;
+        public string PlayerId;
         public PlayerState Status;
         public PlayerConnectionState ConnectionStatus;
         public int Rank;
@@ -15,6 +16,7 @@ namespace BattleRoyale.Network
         public PlayerSessionDataDTO(PlayerSessionData data)
         {
             ClientId = data.ClientId;
+            PlayerId = data.PlayerId;
             Status = data.PlayerStatus;
             ConnectionStatus = data.ConnectionStatus;
             Rank = data.Rank;
@@ -25,6 +27,7 @@ namespace BattleRoyale.Network
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref ClientId);
+            serializer.SerializeValue(ref PlayerId);
             serializer.SerializeValue(ref Status);
             serializer.SerializeValue(ref ConnectionStatus);
             serializer.SerializeValue(ref Rank);

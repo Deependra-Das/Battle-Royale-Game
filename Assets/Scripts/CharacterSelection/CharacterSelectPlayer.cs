@@ -1,13 +1,14 @@
-using BattleRoyale.Event;
-using BattleRoyale.Network;
-using BattleRoyale.Player;
+using BattleRoyale.EventModule;
+using BattleRoyale.NetworkModule;
+using BattleRoyale.PlayerModule;
 using System;
 using TMPro;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
-namespace BattleRoyale.CharacterSelection
+namespace BattleRoyale.CharacterSelectionModule
 {
     public class CharacterSelectPlayer : NetworkBehaviour
     { 
@@ -22,6 +23,7 @@ namespace BattleRoyale.CharacterSelection
         private NetworkVariable<int> _selectedMaterialIndex = new NetworkVariable<int>(0);
 
         private int _playerIndex = -1;
+        private ulong _clientId = 0;
 
         private void OnEnable() => SubscribeToEvents();
         private void OnDisable() => UnsubscribeToEvents();
@@ -47,22 +49,28 @@ namespace BattleRoyale.CharacterSelection
             _notReadyStatusLabel.SetActive(!_readyStatusNetworkBool.Value);
         }
 
-        public void Initialize(int assignedClientIndex, string usernameText)
+        public void Initialize(int assignedClientIndex, ulong clientID, string usernameText)
         {
             if (IsServer)
             {
                 SetPlayerIndexForCharacter(assignedClientIndex);
-                SetUsernameServerRpc(usernameText);
+                SetClientIdForCharacter(clientID);
+                SetUsernameServerRpc(usernameText);          
             }
         }
 
-        public void SetPlayerIndexForCharacter(int assignedClientIndex)
+        public void SetPlayerIndexForCharacter(int assignedPlayerIndex)
         {
-            _playerIndex = assignedClientIndex;
+            _playerIndex = assignedPlayerIndex;
+        }
+
+        private void SetClientIdForCharacter(ulong assignedClientID)
+        {
+            _clientId = assignedClientID;
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void SetUsernameServerRpc(string newUsername)
+        private void SetUsernameServerRpc(string newUsername)
         {
             _usernameNetworkText.Value = newUsername;
         }

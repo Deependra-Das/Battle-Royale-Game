@@ -1,15 +1,15 @@
-using BattleRoyale.CharacterSelection;
-using BattleRoyale.Event;
-using BattleRoyale.Network;
-using BattleRoyale.Scene;
-using BattleRoyale.UI;
+using BattleRoyale.CharacterSelectionModule;
+using BattleRoyale.EventModule;
+using BattleRoyale.NetworkModule;
+using BattleRoyale.SceneModule;
+using BattleRoyale.UIModule;
 using System;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace BattleRoyale.Main
+namespace BattleRoyale.MainModule
 {
     public class CharacterSelectionState : IGameState
     {
@@ -45,16 +45,12 @@ namespace BattleRoyale.Main
 
         public void Cleanup()
         {
-            CharacterManager.Instance.DespawnAllSpawnedCharacters();
-            _characterSelectionUIObj.Dispose();
-
-            string activeSceneName = SceneManager.GetActiveScene().name.ToString();
-            Enum.TryParse<SceneName>(activeSceneName, out var sceneEnumValue);
-
-            if (sceneEnumValue == SceneName.StartScene)
+            if (NetworkManager.Singleton.IsServer)
             {
-                CleanupNetworkResources();
+                CharacterManager.Instance.DespawnAllSpawnedCharacters();
             }
+
+            _characterSelectionUIObj.Dispose();
         }
 
         private void RegisterCharacterSelectionServices()
@@ -66,35 +62,6 @@ namespace BattleRoyale.Main
         private void UnegisterCharacterSelectionServices()
         {
             ServiceLocator.Unregister<CharacterSelectionUIService>();
-        }
-
-        private void CleanupNetworkResources()
-        {
-            if (PlayerSessionManager.Instance != null)
-            {
-                if (PlayerSessionManager.Instance.NetworkObject.IsSpawned)
-                {
-                    PlayerSessionManager.Instance.NetworkObject.Despawn();
-                }
-
-                UnityEngine.Object.Destroy(PlayerSessionManager.Instance.gameObject);
-            }
-
-            if (MultiplayerManager.Instance != null)
-            {
-                if (MultiplayerManager.Instance.NetworkObject.IsSpawned)
-                {
-                    MultiplayerManager.Instance.NetworkObject.Despawn();
-                }
-
-                UnityEngine.Object.Destroy(MultiplayerManager.Instance.gameObject);
-            }
-
-            if (NetworkManager.Singleton != null)
-            {
-                NetworkManager.Singleton.Shutdown();
-                UnityEngine.Object.Destroy(NetworkManager.Singleton.gameObject);
-            }
         }
     }
 }

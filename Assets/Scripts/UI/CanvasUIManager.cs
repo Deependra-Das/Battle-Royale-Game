@@ -1,7 +1,7 @@
-using BattleRoyale.Utilities;
+using BattleRoyale.UtilitiesModule;
 using UnityEngine;
 
-namespace BattleRoyale.UI
+namespace BattleRoyale.UIModule
 {
     public class CanvasUIManager : GenericMonoSingleton<CanvasUIManager>
     {

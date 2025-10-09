@@ -1,7 +1,7 @@
-using BattleRoyale.CharacterSelection;
+using BattleRoyale.CharacterSelectionModule;
 using UnityEngine;
 
-namespace BattleRoyale.Network
+namespace BattleRoyale.NetworkModule
 {
     [CreateAssetMenu(fileName = "NetworkScriptableObject", menuName = "ScriptableObjects/NetworkScriptableObject")]
     public class NetworkScriptableObject : ScriptableObject

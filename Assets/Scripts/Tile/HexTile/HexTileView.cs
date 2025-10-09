@@ -1,13 +1,13 @@
-using BattleRoyale.Event;
-using BattleRoyale.Level;
-using BattleRoyale.Main;
-using BattleRoyale.Network;
+using BattleRoyale.EventModule;
+using BattleRoyale.LevelModule;
+using BattleRoyale.MainModule;
+using BattleRoyale.NetworkModule;
 using System.Collections;
 using System.Globalization;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.Tile
+namespace BattleRoyale.TileModule
 {
     public class HexTileView : NetworkBehaviour
     {

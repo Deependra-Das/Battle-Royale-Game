@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BattleRoyale.Player
+namespace BattleRoyale.PlayerModule
 {
     [CreateAssetMenu(fileName = "PlayerCharMatSkinColorScriptableObject", menuName = "ScriptableObjects/PlayerCharMatSkinColorScriptableObject")]
     public class PlayerCharMatSkinColorScriptableObject : ScriptableObject

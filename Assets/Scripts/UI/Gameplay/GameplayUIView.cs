@@ -1,21 +1,22 @@
-using BattleRoyale.Event;
-using BattleRoyale.Main;
-using BattleRoyale.Scene;
+using BattleRoyale.EventModule;
+using BattleRoyale.MainModule;
+using BattleRoyale.SceneModule;
 using System.Collections;
 using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace BattleRoyale.UI
+namespace BattleRoyale.UIModule
 {
     public class GameplayUIView : MonoBehaviour
     {
         [Header("Gameplay UI PopUp")]
         [SerializeField] private GameObject _eliminationsPanel;
         [SerializeField] private TMP_Text _eliminatedCounterText;
-        [SerializeField] private TMP_Text _countdownText;
+        [SerializeField] private TMP_Text _eliminationCountdownText;
         [SerializeField] private float _animationSpeed = 3f;
         [SerializeField] private GameObject _rankPanel;
         [SerializeField] private TMP_Text _rankText;
@@ -25,9 +26,9 @@ namespace BattleRoyale.UI
         [SerializeField] private float _popupDuration = 2f;
         [SerializeField] private AnimationCurve _popupScaleCurve;
 
-        [Header("Disconnected PopUp")]
-        [SerializeField] private GameObject _disconnectedPopUp;
-        [SerializeField] private Button _disconnectedBackButtonPrefab;
+        [Header("Gameplay Disconnected UI PopUp")]
+        [SerializeField] private GameObject _disconnectedMessageGameplayUIPopUp;
+        [SerializeField] private TMP_Text _disconnectedCountdownGameplayUIText;
 
         private Vector3 _originalScale;
         private int _currentCountdownValue = -1;
@@ -35,6 +36,7 @@ namespace BattleRoyale.UI
 
         private int _totalPlayers = 0;
         private int _currentEliminatedCount = 0;
+        public float _disconnectedCountdownTime = 5f;
 
         private Coroutine _popupCoroutine;
         private Vector3 _popupOriginalScale;
@@ -45,25 +47,23 @@ namespace BattleRoyale.UI
 
         private void SubscribeToEvents()
         {
-            EventBusManager.Instance.Subscribe(EventName.GameplayCountdownTick, HandleCountdownTick);
+            EventBusManager.Instance.Subscribe(EventName.GameplayStartCountdownTick, HandleCountdownTick);
             NetworkManager.Singleton.OnClientDisconnectCallback += ShowDisconnectionGameplayUI;
-            _disconnectedBackButtonPrefab.onClick.AddListener(OnDisconnectedBackButtonClicked);
         }
 
         private void UnsubscribeToEvents()
         {
-            EventBusManager.Instance.Unsubscribe(EventName.GameplayCountdownTick, HandleCountdownTick);
+            EventBusManager.Instance.Unsubscribe(EventName.GameplayStartCountdownTick, HandleCountdownTick);
             NetworkManager.Singleton.OnClientDisconnectCallback -= ShowDisconnectionGameplayUI;
-            _disconnectedBackButtonPrefab.onClick.AddListener(OnDisconnectedBackButtonClicked);
         }
 
         private void Start()
         {
-            _originalScale = _countdownText.transform.localScale;
+            _originalScale = _eliminationCountdownText.transform.localScale;
             _popupOriginalScale = _eliminationPopup.transform.localScale;
             _eliminationPopup.SetActive(false);
             _rankPanel.SetActive(false);
-            _disconnectedPopUp.SetActive(false);
+            _disconnectedMessageGameplayUIPopUp.SetActive(false);
         }
 
         private void Update()
@@ -80,30 +80,30 @@ namespace BattleRoyale.UI
 
             if (secondsRemaining > 0)
             {
-                _countdownText.text = secondsRemaining.ToString();
-                _countdownText.gameObject.SetActive(true);
+                _eliminationCountdownText.text = secondsRemaining.ToString();
+                _eliminationCountdownText.gameObject.SetActive(true);
                 _currentCountdownValue = secondsRemaining;
                 _isCountingDown = true;
             }
             else
             {
-                _countdownText.text = "GO!";
+                _eliminationCountdownText.text = "GO!";
                 _isCountingDown = false;
-                _countdownText.transform.localScale = _originalScale;
+                _eliminationCountdownText.transform.localScale = _originalScale;
                 Invoke(nameof(HideCountdown), 1f);
             }
         }
 
         private void HideCountdown()
         {
-            _countdownText.gameObject.SetActive(false);
-            _countdownText.transform.localScale = _originalScale;
+            _eliminationCountdownText.gameObject.SetActive(false);
+            _eliminationCountdownText.transform.localScale = _originalScale;
         }
 
         private void AnimateText()
         {
             float scaleFactor = Mathf.PingPong(Time.time * _animationSpeed, 0.5f) + 1f;
-            _countdownText.transform.localScale = _originalScale * scaleFactor;
+            _eliminationCountdownText.transform.localScale = _originalScale * scaleFactor;
         }
 
 
@@ -175,13 +175,22 @@ namespace BattleRoyale.UI
         {
             if ((NetworkManager.Singleton.IsServer && clientID == NetworkManager.Singleton.LocalClientId && NetworkManager.Singleton.ConnectedClients.Count <= 1) || !NetworkManager.Singleton.IsServer)
             {
-                _disconnectedPopUp.SetActive(true);
+                _disconnectedMessageGameplayUIPopUp.SetActive(true);
+                StartCoroutine(DisconnectedCountdownSequence());
             }
         }
 
-        private void OnDisconnectedBackButtonClicked()
+        private IEnumerator DisconnectedCountdownSequence()
         {
-            _disconnectedPopUp.SetActive(false);
+            float currentTime = _disconnectedCountdownTime;
+
+            while (currentTime > 0)
+            {
+                _disconnectedCountdownGameplayUIText.text = "Returning To Main Menu In... " + Mathf.Ceil(currentTime).ToString() + "s";
+                currentTime -= 1f;
+                yield return new WaitForSeconds(1f);
+            }
+
             SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
     }

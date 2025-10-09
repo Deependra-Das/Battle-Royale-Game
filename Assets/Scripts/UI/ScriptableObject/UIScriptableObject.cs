@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BattleRoyale.UI
+namespace BattleRoyale.UIModule
 {
     [CreateAssetMenu(fileName = "UIScriptableObject", menuName = "ScriptableObjects/UIScriptableObject")]
     public class UIScriptableObject : ScriptableObject
@@ -11,7 +11,5 @@ namespace BattleRoyale.UI
         public GameplayUIView gameplayUIPrefab;
         public GameOverUIView gameOverUIPrefab;
         public ScoreboardEntryUIView scoreboardEntryUIPrefab;
-        public float gameplayCountdownDuration;
-        public float gameOverCountdownDuration;
     }
 }

@@ -1,11 +1,11 @@
-using BattleRoyale.Main;
-using BattleRoyale.Network;
+using BattleRoyale.MainModule;
+using BattleRoyale.NetworkModule;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.CharacterSelection
+namespace BattleRoyale.CharacterSelectionModule
 {
     public class CharacterManager : NetworkBehaviour
     {
@@ -56,7 +56,9 @@ namespace BattleRoyale.CharacterSelection
                 characterClone.name = $"PlayerCharacter_{clientID}";
                 NetworkObject networkObject = characterClone.GetComponent<NetworkObject>();
                 networkObject.Spawn();
-                characterClone.GetComponent<CharacterSelectPlayer>().Initialize(_clientCharacterMapList.Count, PlayerSessionManager.Instance.GetPlayerSessionData(clientID).Username);
+
+                PlayerSessionData playerData = PlayerSessionManager.Instance.GetPlayerSessionData(clientID);
+                characterClone.GetComponent<CharacterSelectPlayer>().Initialize(_clientCharacterMapList.Count, playerData.ClientId, playerData.Username);
 
                 _clientCharacterMapList.Add(new ClientCharacterMapping(clientID, characterClone));
             }
@@ -78,7 +80,10 @@ namespace BattleRoyale.CharacterSelection
                 var character = entry.character;
                 int clientIndex = _clientCharacterMapList.IndexOf(entry);
                 NetworkObject networkObject = character.GetComponent<NetworkObject>();
-                networkObject.Despawn();
+                if (networkObject != null && networkObject.IsSpawned)
+                { 
+                    networkObject.Despawn();
+                }
                 Destroy(character);
 
                 _clientCharacterMapList.Remove(entry);
@@ -97,6 +102,8 @@ namespace BattleRoyale.CharacterSelection
                           _characterSpawnData.characterTransformList[i].characterPosition;
                     _clientCharacterMapList[i].character.transform.rotation =
                      Quaternion.Euler(_characterSpawnData.characterTransformList[i].characterRotation);
+
+                    _clientCharacterMapList[i].character.GetComponent< CharacterSelectPlayer >().SetPlayerIndexForCharacter(i);
                 }
             }
         }
@@ -135,6 +142,15 @@ namespace BattleRoyale.CharacterSelection
             {
                 entry.character.GetComponent<CharacterSelectPlayer>().SetCharacterSkinMaterial(skinColorIndex);
             }
+        }
+
+        public ulong GetCharacterClientIdByIndex(int index)
+        {
+            if (index >= 0 && index < _clientCharacterMapList.Count)
+            {
+                return _clientCharacterMapList[index].clientID;
+            }
+            return ulong.MaxValue;
         }
     }
 }

@@ -1,8 +1,8 @@
-using BattleRoyale.Event;
+using BattleRoyale.EventModule;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.UI
+namespace BattleRoyale.UIModule
 {
     public class GameplayUIService
     {

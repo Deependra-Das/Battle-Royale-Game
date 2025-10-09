@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using System;
 
-namespace BattleRoyale.Tile
+namespace BattleRoyale.TileModule
 {
     public class HexTileGeneratorService : MonoBehaviour
     {

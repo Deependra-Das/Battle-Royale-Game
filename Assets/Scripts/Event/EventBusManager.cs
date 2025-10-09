@@ -1,10 +1,10 @@
-using BattleRoyale.Utilities;
+using BattleRoyale.UtilitiesModule;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace BattleRoyale.Event
+namespace BattleRoyale.EventModule
 {
     public class EventBusManager : GenericMonoSingleton<EventBusManager>
     {

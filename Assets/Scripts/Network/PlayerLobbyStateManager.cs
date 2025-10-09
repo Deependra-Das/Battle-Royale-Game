@@ -1,14 +1,15 @@
-using BattleRoyale.CharacterSelection;
-using BattleRoyale.Level;
-using BattleRoyale.Main;
-using BattleRoyale.Player;
-using BattleRoyale.Scene;
-using BattleRoyale.UI;
+using BattleRoyale.CharacterSelectionModule;
+using BattleRoyale.LevelModule;
+using BattleRoyale.LobbyModule;
+using BattleRoyale.MainModule;
+using BattleRoyale.PlayerModule;
+using BattleRoyale.SceneModule;
+using BattleRoyale.UIModule;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.Network
+namespace BattleRoyale.NetworkModule
 {
     public class PlayerLobbyStateManager : NetworkBehaviour
     {
@@ -74,21 +75,25 @@ namespace BattleRoyale.Network
             }
 
             CharacterManager.Instance.SetCharacterStatus(clientId, true);
-    
-            bool allClientsReady = true;
 
-            foreach (ulong clientID in NetworkManager.Singleton.ConnectedClientsIds)
+            if (NetworkManager.Singleton.ConnectedClients.Count == MultiplayerManager.Instance.CURRENT_LOBBY_SIZE)
             {
-                if (!_playerStateDictionary.ContainsKey(clientID) || !_playerStateDictionary[clientID].isReady)
+                bool allClientsReady = true;
+
+                foreach (ulong clientID in NetworkManager.Singleton.ConnectedClientsIds)
                 {
-                    allClientsReady = false;
-                    break;
+                    if (!_playerStateDictionary.ContainsKey(clientID) || !_playerStateDictionary[clientID].isReady)
+                    {
+                        allClientsReady = false;
+                        break;
+                    }
                 }
-            }
 
-            if (allClientsReady)
-            {
-                SceneLoader.Instance.LoadScene(SceneName.GameScene, true);
+                if (allClientsReady)
+                {
+                    LobbyManager.Instance.DeleteLobby();
+                    SceneLoader.Instance.LoadScene(SceneName.GameScene, true);
+                }
             }
         }
 

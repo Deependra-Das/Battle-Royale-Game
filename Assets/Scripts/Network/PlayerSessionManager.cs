@@ -1,10 +1,10 @@
-using BattleRoyale.CharacterSelection;
+using BattleRoyale.CharacterSelectionModule;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.Network
+namespace BattleRoyale.NetworkModule
 {
     public class PlayerSessionManager : NetworkBehaviour
     {
@@ -24,20 +24,20 @@ namespace BattleRoyale.Network
             DontDestroyOnLoad(gameObject);
         }
 
-        public void RegisterPlayer(ulong clientId, string username)
+        public void RegisterPlayer(ulong clientId, string playerId, string username)
         {
             if (IsServer)
             {
-                RegisterPlayerServerRpc(clientId, username);
+                RegisterPlayerServerRpc(clientId,playerId, username);
             }
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void RegisterPlayerServerRpc(ulong clientId, string username, ServerRpcParams rpcParams = default)
+        private void RegisterPlayerServerRpc(ulong clientId, string playerId, string username, ServerRpcParams rpcParams = default)
         {
             if (!_sessionData.ContainsKey(clientId))
             {
-                _sessionData[clientId] = new PlayerSessionData(clientId, username);
+                _sessionData[clientId] = new PlayerSessionData(clientId, playerId, username);
             }
 
             SyncSessionDataToClient(clientId);
@@ -145,7 +145,7 @@ namespace BattleRoyale.Network
             {
                 if (!_sessionData.ContainsKey(dto.ClientId))
                 {
-                    _sessionData[dto.ClientId] = new PlayerSessionData(dto.ClientId, dto.Username);
+                    _sessionData[dto.ClientId] = new PlayerSessionData(dto.ClientId,dto.PlayerId, dto.Username);
                 }
 
                 _sessionData[dto.ClientId].SetGameplayStatus(dto.Status);

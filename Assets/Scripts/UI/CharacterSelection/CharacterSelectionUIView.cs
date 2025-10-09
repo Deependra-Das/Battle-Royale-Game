@@ -1,21 +1,28 @@
-using BattleRoyale.Event;
-using BattleRoyale.Main;
-using BattleRoyale.Network;
-using BattleRoyale.Player;
-using BattleRoyale.Scene;
+using BattleRoyale.EventModule;
+using BattleRoyale.LobbyModule;
+using BattleRoyale.NetworkModule;
+using BattleRoyale.PlayerModule;
+using BattleRoyale.SceneModule;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BattleRoyale.UI
+namespace BattleRoyale.UIModule
 {
     public class CharacterSelectionUIView : MonoBehaviour
     {
         [SerializeField] private Button _readyButtonPrefab;
         [SerializeField] private Button _notReadyButtonPrefab;
         [SerializeField] private Button _backToStartMenuButtonPrefab;
+
+        [SerializeField] private TMP_Text _lobbyNameText;
+        [SerializeField] private TMP_Text _lobbyCodeText;
+        [SerializeField] private TMP_Text _lobbyPrivacyText;
+        [SerializeField] private TMP_Text _lobbyCapacityText;
+        [SerializeField] private TMP_Text _lobbyAvaialableSlotsText;
 
         [Header ("Disconnected PopUp")] 
         [SerializeField] private GameObject _disconnectedPopUp;
@@ -32,7 +39,14 @@ namespace BattleRoyale.UI
         [SerializeField] private Transform _colorToggleGroupTransform;
         [SerializeField] private PlayerCharMatSkinColorScriptableObject _charSkinMatInfo_SO;
 
+        [Header("Kick Bar")]
+        [SerializeField] private GameObject _kickButtonPrefab;
+        [SerializeField] private Transform _kickButtonContainer;
+        [SerializeField] private HorizontalLayoutGroup _kickButtonContainerLayoutGroup;
+
         private List<Toggle> toggles = new List<Toggle>();
+        private int[] buttonOrder = { 6, 4, 2, 0, 1, 3, 5, 7 };
+        private List<GameObject> buttonsList = new List<GameObject>();
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -45,7 +59,8 @@ namespace BattleRoyale.UI
             _backToStartMenuButtonPrefab.onClick.AddListener(OnBackToStartMenuButtonClicked);
             _yesConfirmationButtonPrefab.onClick.AddListener(OnYesButtonClicked);
             _noConfirmationButtonPrefab.onClick.AddListener(OnNoButtonClicked);
-            NetworkManager.Singleton.OnClientDisconnectCallback += ShowDisconnectionCharSelectionUI;
+            NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnectCallbackCharSelectUI;
+            NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnectCallbackCharSelectUI;
             _disconnectedBackButtonPrefab.onClick.AddListener(OnDisconnectedBackButtonClicked);
         }
 
@@ -54,10 +69,11 @@ namespace BattleRoyale.UI
             _readyButtonPrefab.onClick.RemoveListener(OnReadyButtonClicked);
             _notReadyButtonPrefab.onClick.RemoveListener(OnNotReadyButtonClicked);
             _backToStartMenuButtonPrefab.onClick.RemoveListener(OnBackToStartMenuButtonClicked);
-            _yesConfirmationButtonPrefab.onClick.AddListener(OnYesButtonClicked);
-            _noConfirmationButtonPrefab.onClick.AddListener(OnNoButtonClicked);
-            NetworkManager.Singleton.OnClientDisconnectCallback -= ShowDisconnectionCharSelectionUI;
-            _disconnectedBackButtonPrefab.onClick.AddListener(OnDisconnectedBackButtonClicked);
+            _yesConfirmationButtonPrefab.onClick.RemoveListener(OnYesButtonClicked);
+            _noConfirmationButtonPrefab.onClick.RemoveListener(OnNoButtonClicked);
+            NetworkManager.Singleton.OnClientConnectedCallback -= HandleClientConnectCallbackCharSelectUI;
+            NetworkManager.Singleton.OnClientDisconnectCallback -= HandleClientDisconnectCallbackCharSelectUI;
+            _disconnectedBackButtonPrefab.onClick.RemoveListener(OnDisconnectedBackButtonClicked);
 
             foreach (var toggle in toggles)
             {
@@ -67,12 +83,29 @@ namespace BattleRoyale.UI
 
         private void Start()
         {
+            SetLobbyInformation();
             CreateColorButtons();
             _disconnectedPopUp.SetActive(false);
             _notReadyButtonPrefab.gameObject.SetActive(false);
             _readyButtonPrefab.gameObject.SetActive(true);
             SetHostLobbyNoticeText();
             HideBackToMainMenuConfirmationPopup();
+
+            if (NetworkManager.Singleton.IsServer)
+            {
+                CreateKickButtons();
+            }
+        }
+
+
+        private void SetLobbyInformation()
+        {
+            Lobby lobby = LobbyManager.Instance.GetLobby();
+            _lobbyNameText.text = lobby.Name;
+            _lobbyCodeText.text = lobby.LobbyCode;
+            _lobbyPrivacyText.text = lobby.IsPrivate ? "Private" : "Public";
+            _lobbyCapacityText.text = lobby.MaxPlayers.ToString();
+            _lobbyAvaialableSlotsText.text = lobby.AvailableSlots.ToString();
         }
 
         void CreateColorButtons()
@@ -168,6 +201,18 @@ namespace BattleRoyale.UI
         private void OnYesButtonClicked()
         {
             HideBackToMainMenuConfirmationPopup();
+         
+
+            if (NetworkManager.Singleton.IsServer)
+            {
+                LobbyManager.Instance.DeleteLobby();
+            }
+            else
+            {
+                LobbyManager.Instance.LeaveLobby();
+                NetworkManager.Singleton.Shutdown();
+            }
+
             SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
 
@@ -192,8 +237,20 @@ namespace BattleRoyale.UI
             gameObject.SetActive(false);
         }
 
-        private void ShowDisconnectionCharSelectionUI(ulong clientID)
+        private void HandleClientConnectCallbackCharSelectUI(ulong clientID)
         {
+            UpdateKickButtonVisibility();
+        }
+
+        private void HandleClientDisconnectCallbackCharSelectUI(ulong clientID)
+        {
+            ShowDisconnectionCharSelectUI(clientID);
+        }
+
+        private void ShowDisconnectionCharSelectUI(ulong clientID)
+        {
+            UpdateKickButtonVisibility();
+
             if ((NetworkManager.Singleton.IsServer && clientID == NetworkManager.Singleton.LocalClientId && NetworkManager.Singleton.ConnectedClients.Count <= 1) || !NetworkManager.Singleton.IsServer)
             {
                 _disconnectedPopUp.SetActive(true);
@@ -208,6 +265,58 @@ namespace BattleRoyale.UI
         private void HideBackToMainMenuConfirmationPopup()
         {
             _leaveLobbyConfirmationPopUp.SetActive(false);
+        }
+
+        private void CreateKickButtons()
+        {
+            RectTransform rt = _kickButtonPrefab.GetComponent<RectTransform>();
+            float spacing = (rt.rect.size.x) + 20f;
+            float startX = -((buttonOrder.Length - 1) * spacing) / 2f;
+
+            for (int i = 0; i < buttonOrder.Length; i++)
+            {
+                GameObject newButton = Instantiate(_kickButtonPrefab, _kickButtonContainer);
+
+                float posX = startX + i * spacing;
+                newButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(posX, 0);
+
+                int buttonIndex = buttonOrder[i];
+                newButton.GetComponent<Button>().onClick.AddListener(() => OnButtonClicked(buttonIndex));
+                buttonsList.Add(newButton);
+            }
+
+            foreach (var button in buttonsList)
+            {
+                button.SetActive(false);
+            }
+        }
+
+        void OnButtonClicked(int buttonIndex)
+        {
+            if (NetworkManager.Singleton.IsServer)
+            {
+                MultiplayerManager.Instance.KickPlayer(buttonIndex);
+            }
+        }
+
+        private void UpdateKickButtonVisibility()
+        {
+            if (NetworkManager.Singleton.IsServer)
+            {
+                var clients = NetworkManager.Singleton.ConnectedClients;
+
+                for (int i = 0; i < buttonOrder.Length; i++)
+                {
+                    if (buttonOrder[i] < clients.Count && buttonOrder[i] > 0)
+                    {
+                        buttonsList[i].SetActive(true);
+                    }
+                    else
+                    {
+                        buttonsList[i].SetActive(false);
+                    }
+                }
+            }
         }
     }
 }

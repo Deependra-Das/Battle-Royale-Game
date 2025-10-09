@@ -1159,11 +1159,11 @@ MonoBehaviour:
   _okButton: {fileID: 583319116775628295}
   _changeUsernameButton: {fileID: 938561761784274566}
   _usernameInputPopup: {fileID: 6649555732714529263}
-  successPopup: {fileID: 3014852290310524610}
+  _successPopup: {fileID: 3014852290310524610}
   _usernameInputField: {fileID: 1641172754977779090}
-  errorMessageText: {fileID: 8088061891383486364}
+  _errorMessageText: {fileID: 8088061891383486364}
   _topBar: {fileID: 417479238537243838}
-  usernameDisplayText: {fileID: 5539380911346926157}
+  _usernameDisplayText: {fileID: 5539380911346926157}
 --- !u!1 &4011429738657648211
 GameObject:
   m_ObjectHideFlags: 0

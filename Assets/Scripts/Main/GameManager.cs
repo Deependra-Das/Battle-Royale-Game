@@ -1,17 +1,17 @@
-using BattleRoyale.CharacterSelection;
-using BattleRoyale.Event;
-using BattleRoyale.Level;
-using BattleRoyale.Network;
-using BattleRoyale.Player;
-using BattleRoyale.Scene;
-using BattleRoyale.UI;
-using BattleRoyale.Utilities;
+using BattleRoyale.CharacterSelectionModule;
+using BattleRoyale.EventModule;
+using BattleRoyale.LevelModule;
+using BattleRoyale.NetworkModule;
+using BattleRoyale.PlayerModule;
+using BattleRoyale.SceneModule;
+using BattleRoyale.UIModule;
+using BattleRoyale.UtilitiesModule;
 using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace BattleRoyale.Main
+namespace BattleRoyale.MainModule
 {
     public class GameManager : GenericMonoSingleton<GameManager>
     {

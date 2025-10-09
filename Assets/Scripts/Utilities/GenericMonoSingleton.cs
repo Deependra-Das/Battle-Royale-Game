@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BattleRoyale.Utilities
+namespace BattleRoyale.UtilitiesModule
 {
     public class GenericMonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
     {

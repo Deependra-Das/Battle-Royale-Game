@@ -1,9 +1,9 @@
-using BattleRoyale.Network;
+using BattleRoyale.NetworkModule;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BattleRoyale.UI
+namespace BattleRoyale.UIModule
 {
     public class CharacterSkinColorSelectView : MonoBehaviour
     {

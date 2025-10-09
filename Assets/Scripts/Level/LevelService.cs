@@ -1,10 +1,10 @@
-using BattleRoyale.Tile;
+using BattleRoyale.TileModule;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BattleRoyale.Level
+namespace BattleRoyale.LevelModule
 {
     public class LevelService
     {
