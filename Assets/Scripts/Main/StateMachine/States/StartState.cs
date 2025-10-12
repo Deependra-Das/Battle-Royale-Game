@@ -1,24 +1,23 @@
-using BattleRoyale.EventModule;
-using BattleRoyale.LevelModule;
+using BattleRoyale.EnvironmentModule;
 using BattleRoyale.LobbyModule;
 using BattleRoyale.NetworkModule;
-using BattleRoyale.PlayerModule;
-using BattleRoyale.SceneModule;
 using BattleRoyale.UIModule;
-using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEngine;
 
 namespace BattleRoyale.MainModule
 {
     public class StartState : IGameState
     {
         private StartMenuUIService _startMenuUIObj;
+        private SkyboxService _skyboxObj;
 
         public void Enter()
         {
             MainMenuCleanup();
             RegisterGameplayServices();
+
+            _skyboxObj = GameManager.Instance.Get<SkyboxService>();
+            _skyboxObj.ApplySkyboxMaterialByType(SkyboxType.Day);
 
             _startMenuUIObj = GameManager.Instance.Get<StartMenuUIService>();
             _startMenuUIObj.ShowUI();
@@ -33,17 +32,20 @@ namespace BattleRoyale.MainModule
         public void Cleanup()
         {
             _startMenuUIObj.Dispose();
+            _skyboxObj.Dispose();
         }
 
         private void RegisterGameplayServices()
         {
             StartMenuUIView startMenuUIPrefab = GameManager.Instance.ui_SO.startMenuUIPrefab;
             ServiceLocator.Register(new StartMenuUIService(startMenuUIPrefab));
+            ServiceLocator.Register(new SkyboxService(GameManager.Instance.environment_SO.skyboxTypeMaterialMappings));
         }
 
         private void UnegisterGameplayServices()
         {
             ServiceLocator.Unregister<StartMenuUIService>();
+            ServiceLocator.Unregister<SkyboxService>();
         }
 
         private void MainMenuCleanup()

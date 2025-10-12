@@ -1,7 +1,8 @@
 using UnityEngine;
 
-namespace BattleRoyale.Environment
+namespace BattleRoyale.EnvironmentModule
 {
+    [System.Serializable]
     public class SkyboxTypeMaterialMapping
     {
         public SkyboxType skyboxType;

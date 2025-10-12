@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BattleRoyale.Environment
+namespace BattleRoyale.EnvironmentModule
 {
     public class SkyboxService
     {
@@ -15,7 +15,15 @@ namespace BattleRoyale.Environment
                 return;
             }
 
-            _skyboxMaterials = materials;
+            _skyboxMaterials = new List<SkyboxTypeMaterialMapping>(materials.Count);
+            foreach (var material in materials)
+            {
+                _skyboxMaterials.Add(new SkyboxTypeMaterialMapping
+                {
+                    skyboxType = material.skyboxType,
+                    skyboxMaterial = material.skyboxMaterial
+                });
+            }
         }
 
         public void ApplyRandomSkyboxMaterial()

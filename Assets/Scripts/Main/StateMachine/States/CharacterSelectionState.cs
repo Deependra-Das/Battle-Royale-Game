@@ -1,23 +1,23 @@
 using BattleRoyale.CharacterSelectionModule;
-using BattleRoyale.EventModule;
-using BattleRoyale.NetworkModule;
-using BattleRoyale.SceneModule;
+using BattleRoyale.EnvironmentModule;
 using BattleRoyale.UIModule;
-using System;
-using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace BattleRoyale.MainModule
 {
     public class CharacterSelectionState : IGameState
     {
         private CharacterSelectionUIService _characterSelectionUIObj;
+        private SkyboxService _skyboxObj;
 
         public void Enter()
         {    
             RegisterCharacterSelectionServices();
+
+            _skyboxObj = GameManager.Instance.Get<SkyboxService>();
+            _skyboxObj.ApplySkyboxMaterialByType(SkyboxType.Night);
+
             _characterSelectionUIObj = GameManager.Instance.Get<CharacterSelectionUIService>();
             _characterSelectionUIObj.ShowUI();
 
@@ -51,17 +51,20 @@ namespace BattleRoyale.MainModule
             }
 
             _characterSelectionUIObj.Dispose();
+            _skyboxObj.Dispose();
         }
 
         private void RegisterCharacterSelectionServices()
         {
             CharacterSelectionUIView characterSelectionUIPrefab = GameManager.Instance.ui_SO.characterSelectionUIPrefab;            
             ServiceLocator.Register(new CharacterSelectionUIService(characterSelectionUIPrefab));
+            ServiceLocator.Register(new SkyboxService(GameManager.Instance.environment_SO.skyboxTypeMaterialMappings));
         }
 
         private void UnegisterCharacterSelectionServices()
         {
             ServiceLocator.Unregister<CharacterSelectionUIService>();
+            ServiceLocator.Unregister<SkyboxService>();
         }
     }
 }
