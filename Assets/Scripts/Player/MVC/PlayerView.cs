@@ -144,23 +144,25 @@ namespace BattleRoyale.PlayerModule
 
         private void Update()
         {
-            if (!IsOwner) return;
+            if (IsOwner)
+            {
+                GroundedCheck();
+
+                if (_canMove)
+                {
+                    HandleJumpAndGravity();
+                    HandleMovement();
+                }
+                else
+                {
+                    _verticalVelocity = 0f;
+                    _animator.SetFloat(_animIDSpeed, 0f);
+                    _animator.SetBool(_animIDJump, false);
+                    _animator.SetBool(_animIDFreeFall, false);
+                }
+            }
 
             UsernameTextFaceToCam();
-            GroundedCheck();
-
-            if (_canMove)
-            {
-                HandleJumpAndGravity();
-                HandleMovement();
-            }
-            else
-            {
-                _verticalVelocity = 0f;
-                _animator.SetFloat(_animIDSpeed, 0f);
-                _animator.SetBool(_animIDJump, false);
-                _animator.SetBool(_animIDFreeFall, false);
-            }
         }
 
         private void LateUpdate()
