@@ -1,10 +1,7 @@
 using BattleRoyale.EventModule;
-using BattleRoyale.LevelModule;
 using BattleRoyale.MainModule;
-using BattleRoyale.NetworkModule;
 using BattleRoyale.TileModule;
 using TMPro;
-using Unity.Cinemachine;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
@@ -40,7 +37,7 @@ namespace BattleRoyale.PlayerModule
         [SerializeField] private float BottomClamp = -30.0f;
         [SerializeField] private float CameraAngleOverride = 0.0f;
 
-        [SerializeField] private bool LockCameraPosition = false;
+        [SerializeField] private bool _lockCameraPosition = false;
 
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
@@ -95,9 +92,8 @@ namespace BattleRoyale.PlayerModule
 
         public void Awake()
         {
-            _cinemachineTargetYaw = _cinemachineCameraTarget.transform.rotation.eulerAngles.y;
             AssignAnimationIDs();
-
+            _lockCameraPosition = true;
             _jumpTimeoutDelta = _jumpTimeout;
             _fallTimeoutDelta = _fallTimeout;
         }
@@ -115,10 +111,15 @@ namespace BattleRoyale.PlayerModule
             
             if (IsOwner)
             {
+                _cinemachineCameraTarget.transform.localRotation = Quaternion.identity;
+                _cinemachineTargetYaw = _cinemachineCameraTarget.transform.rotation.eulerAngles.y;
+             
                 _usernameText.text = _usernameNetworkText.Value.ToString();
                 _playerInput.enabled = true;
                 _playerInput.SwitchCurrentControlScheme(Keyboard.current, Mouse.current);
-                GameManager.Instance.Get<PlayerService>().SetupPlayerCam(PlayerCameraRoot.transform);
+            
+                GameManager.Instance.Get<PlayerService>().SetupPlayerCam(_cinemachineCameraTarget.transform);
+                _lockCameraPosition = false;
             }
             else
             {
@@ -143,23 +144,25 @@ namespace BattleRoyale.PlayerModule
 
         private void Update()
         {
-            if (!IsOwner) return;
+            if (IsOwner)
+            {
+                GroundedCheck();
+
+                if (_canMove)
+                {
+                    HandleJumpAndGravity();
+                    HandleMovement();
+                }
+                else
+                {
+                    _verticalVelocity = 0f;
+                    _animator.SetFloat(_animIDSpeed, 0f);
+                    _animator.SetBool(_animIDJump, false);
+                    _animator.SetBool(_animIDFreeFall, false);
+                }
+            }
 
             UsernameTextFaceToCam();
-            GroundedCheck();
-
-            if (_canMove)
-            {
-                HandleJumpAndGravity();
-                HandleMovement();
-            }
-            else
-            {
-                _verticalVelocity = 0f;
-                _animator.SetFloat(_animIDSpeed, 0f);
-                _animator.SetBool(_animIDJump, false);
-                _animator.SetBool(_animIDFreeFall, false);
-            }
         }
 
         private void LateUpdate()
@@ -262,7 +265,7 @@ namespace BattleRoyale.PlayerModule
 
         private void HandleCameraRotation()
         {
-            if (look.sqrMagnitude >= _threshold && !LockCameraPosition)
+            if (look.sqrMagnitude >= _threshold && !_lockCameraPosition)
             {
                 float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
@@ -282,23 +285,6 @@ namespace BattleRoyale.PlayerModule
             if (lfAngle > 360f) lfAngle -= 360f;
             return Mathf.Clamp(lfAngle, lfMin, lfMax);
         }
-
-        //private void OnDrawGizmosSelected()
-        //{
-        //    Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
-        //    Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
-
-        //    if (Grounded) Gizmos.color = transparentGreen;
-        //    else Gizmos.color = transparentRed;
-        //    Gizmos.DrawSphere(
-        //        new Vector3(transform.position.x, transform.position.y - _playerModel.GroundedOffset, transform.position.z),
-        //        _playerModel.GroundedRadius);
-        //}
-
-        //public void OnMove(InputValue value)
-        //{
-        //    move = value.Get<Vector2>();
-        //}
 
         public void OnLook(InputValue value)
         {
@@ -339,44 +325,9 @@ namespace BattleRoyale.PlayerModule
             }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        private void NotifyTileTouchedServerRpc(ulong tileNetworkObjectId)
-        {
-            if (NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(tileNetworkObjectId, out NetworkObject tileObj))
-            {
-                HexTileView tile = tileObj.GetComponent<HexTileView>();
-                if (tile != null)
-                {
-                    tile.PlayerOnTheTileDetected();
-                }
-            }
-        }
-
-        public GameObject PlayerCameraRoot { get { return _cinemachineCameraTarget; } }
-
-        //[ClientRpc]
-        //public void SetupInitialPostionClientRpc(Vector3 targetPosition)
-        //{
-        //    if (IsOwner)
-        //    {
-        //        GetComponent<CharacterController>().enabled = false;
-        //        transform.position = targetPosition;
-        //        GetComponent<CharacterController>().enabled = true;
-        //    }
-        //}
-
         public void SetCharacterSkinMaterial(int materialIndex)
         {
             SetMaterialIndexServerRpc(materialIndex);
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void SetMaterialIndexServerRpc(int materialIndex)
-        {
-            if (materialIndex >= 0 && materialIndex < _charSkinMatInfo_SO.charSkinInfoList.Length)
-            {
-                _selectedMaterialIndex.Value = materialIndex;
-            }
         }
 
         private void ApplySelectedMaterial(int oldMaterialIndex, int newMaterialIndex)
@@ -397,12 +348,6 @@ namespace BattleRoyale.PlayerModule
             SetUsernameServerRpc(usernameText);
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void SetUsernameServerRpc(string newUsername)
-        {
-            _usernameNetworkText.Value = newUsername;
-        }
-
         private void UpdateCharacterUsername(FixedString128Bytes oldValue, FixedString128Bytes newValue)
         {
             _usernameText.text = _usernameNetworkText.Value.ToString();
@@ -418,6 +363,34 @@ namespace BattleRoyale.PlayerModule
                 Quaternion lookRotation = Quaternion.LookRotation(directionToCamera);
                 _usernameText.transform.rotation = lookRotation;
             }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void NotifyTileTouchedServerRpc(ulong tileNetworkObjectId)
+        {
+            if (NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(tileNetworkObjectId, out NetworkObject tileObj))
+            {
+                HexTileView tile = tileObj.GetComponent<HexTileView>();
+                if (tile != null)
+                {
+                    tile.PlayerOnTheTileDetected();
+                }
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SetMaterialIndexServerRpc(int materialIndex)
+        {
+            if (materialIndex >= 0 && materialIndex < _charSkinMatInfo_SO.charSkinInfoList.Length)
+            {
+                _selectedMaterialIndex.Value = materialIndex;
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SetUsernameServerRpc(string newUsername)
+        {
+            _usernameNetworkText.Value = newUsername;
         }
     }
 }

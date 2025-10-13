@@ -25,15 +25,10 @@ namespace BattleRoyale.PlayerModule
         {
             if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
             {
-                PlayerView playerView = Object.Instantiate(_player_SO.playerPrefab, spawnPosition, Quaternion.identity);
                 Vector3 directionToCenter = Vector3.zero - spawnPosition;
                 directionToCenter.y = 0f;
 
-                if (directionToCenter != Vector3.zero)
-                {
-                    playerView.transform.rotation = Quaternion.LookRotation(directionToCenter);
-                }
-
+                PlayerView playerView = Object.Instantiate(_player_SO.playerPrefab, spawnPosition, Quaternion.LookRotation(directionToCenter));
                 playerView.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
                 playerView.SetUsernameText(PlayerSessionManager.Instance.GetPlayerSessionData(clientId).Username);
 
@@ -46,9 +41,8 @@ namespace BattleRoyale.PlayerModule
 
         public void SetupPlayerCam(Transform playerCameraRoot)
         {
-            _playerCamera = Object.Instantiate(_player_SO.playerCameraPrefab);
+            _playerCamera = Object.Instantiate(_player_SO.playerCameraPrefab, playerCameraRoot.transform.position, Quaternion.identity);
             _playerCamera.Follow = playerCameraRoot;
-            _playerCamera.transform.rotation = playerCameraRoot.rotation;
         }
 
         private void OnClientDisconnect(ulong clientId)

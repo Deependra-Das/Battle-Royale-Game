@@ -1,14 +1,9 @@
-using BattleRoyale.EventModule;
+using BattleRoyale.EnvironmentModule;
 using BattleRoyale.LevelModule;
 using BattleRoyale.NetworkModule;
 using BattleRoyale.PlayerModule;
-using BattleRoyale.SceneModule;
 using BattleRoyale.UIModule;
-using System;
-using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace BattleRoyale.MainModule
 {
@@ -17,29 +12,19 @@ namespace BattleRoyale.MainModule
         private LevelService _levelObj;
         private PlayerService _playerObj;
         private GameplayUIService _gameplayUIObj;
-        private NetworkObject _gameplayManagerNetworkObj;
+        private SkyboxService _skyboxObj;
 
         public void Enter()
         {
             RegisterGameplayServices();
-            _gameplayUIObj = GameManager.Instance.Get<GameplayUIService>();
+
+            _skyboxObj = GameManager.Instance.Get<SkyboxService>();
             _levelObj = GameManager.Instance.Get<LevelService>();
             _playerObj = GameManager.Instance.Get<PlayerService>();
+            _gameplayUIObj = GameManager.Instance.Get<GameplayUIService>();
 
-            if (NetworkManager.Singleton.IsServer)
-            {
-                SpawnGameplayManager();
-            }
-        }
-
-        private void SpawnGameplayManager()
-        {
-            if (GameplayManager.Instance != null) return;
-
-            GameObject _gameplayMngrObj = UnityEngine.Object.Instantiate(GameManager.Instance.network_SO.gameplayManagerPrefab.gameObject);
-            _gameplayMngrObj.name = "GameplayManager";
-            _gameplayManagerNetworkObj = _gameplayMngrObj.GetComponent<NetworkObject>();
-            _gameplayManagerNetworkObj.Spawn(true);
+            _skyboxObj.ApplyRandomSkyboxMaterial();
+            GameplayManager.Instance.Initialize();
         }
 
         public void Exit()
@@ -53,21 +38,25 @@ namespace BattleRoyale.MainModule
             _playerObj.Dispose();
             _levelObj.Dispose();
             _gameplayUIObj.Dispose();
+            _skyboxObj.Dispose();
 
-            if(NetworkManager.Singleton.IsServer && _gameplayManagerNetworkObj != null && _gameplayManagerNetworkObj.IsSpawned)
+            if (GameplayManager.Instance != null)
             {
-                _gameplayManagerNetworkObj.Despawn();
-                UnityEngine.Object.Destroy(_gameplayManagerNetworkObj.gameObject);
-            }     
+                if (GameplayManager.Instance.NetworkObject.IsSpawned && NetworkManager.Singleton.IsServer)
+                {
+                    GameplayManager.Instance.NetworkObject.Despawn();
+                }
+                UnityEngine.Object.Destroy(GameplayManager.Instance.gameObject);
+            }
         }
 
         private void RegisterGameplayServices()
         {
             GameplayUIView gameplayUIPrefab = GameManager.Instance.ui_SO.gameplayUIPrefab;
-
             ServiceLocator.Register(new LevelService(GameManager.Instance.level_SO));
             ServiceLocator.Register(new PlayerService(GameManager.Instance.player_SO));
             ServiceLocator.Register(new GameplayUIService(gameplayUIPrefab));
+            ServiceLocator.Register(new SkyboxService(GameManager.Instance.environment_SO.skyboxTypeMaterialMappings));
         }
 
         private void UnegisterGameplayServices()
@@ -75,6 +64,7 @@ namespace BattleRoyale.MainModule
             ServiceLocator.Unregister<LevelService>();
             ServiceLocator.Unregister<PlayerService>();
             ServiceLocator.Unregister<GameplayUIService>();
+            ServiceLocator.Unregister<SkyboxService>();
         }
     }
 }

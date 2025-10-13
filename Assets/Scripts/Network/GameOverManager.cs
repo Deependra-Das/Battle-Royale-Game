@@ -1,7 +1,4 @@
 using BattleRoyale.EventModule;
-using BattleRoyale.MainModule;
-using BattleRoyale.NetworkModule;
-using BattleRoyale.SceneModule;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -13,6 +10,7 @@ namespace BattleRoyale.NetworkModule
     {
         public static GameOverManager Instance { get; private set; }
 
+        private Dictionary<ulong, (string playerName, bool isFlagged)> _flagDictionary;
         private float _waitDurationBeforeScoreBoard = 3f;
 
         private void Awake()
@@ -24,14 +22,30 @@ namespace BattleRoyale.NetworkModule
             }
 
             Instance = this;
+            _flagDictionary = new Dictionary<ulong, (string, bool)>();
         }
 
-        public override void OnNetworkSpawn()
+        private void OnEnable()
         {
-            if (IsServer)
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
+        }
+
+        private void OnDisable()
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
+        }
+
+        private void OnClientDisconnect(ulong clientId)
+        {
+            if (_flagDictionary.ContainsKey(clientId))
             {
-                StartCoroutine(GameOverWaitBeforeScoreCardCoroutine(_waitDurationBeforeScoreBoard));
+                _flagDictionary.Remove(clientId);
             }
+        }
+
+        public void Initialize()
+        {
+            SetClientFlagServerRpc();
         }
 
         private IEnumerator GameOverWaitBeforeScoreCardCoroutine(float duration)
@@ -54,6 +68,39 @@ namespace BattleRoyale.NetworkModule
         private void RaiseGameOverScoreCardClientRpc()
         {
             EventBusManager.Instance.RaiseNoParams(EventName.GameOverScoreCard);
+        }
+
+
+        [ServerRpc(RequireOwnership = false)]
+        private void SetClientFlagServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            ulong clientId = serverRpcParams.Receive.SenderClientId;
+
+            if (!_flagDictionary.ContainsKey(clientId))
+            {
+                _flagDictionary.Add(clientId, ("Player" + clientId, true));
+            }
+            else
+            {
+                _flagDictionary[clientId] = (_flagDictionary[clientId].playerName, true);
+            }
+
+            bool allClientsFlagged = true;
+
+            foreach (ulong clientID in NetworkManager.Singleton.ConnectedClientsIds)
+            {
+                if (!_flagDictionary.ContainsKey(clientID) || !_flagDictionary[clientID].isFlagged)
+                {
+                    allClientsFlagged = false;
+                    break;
+                }
+            }
+
+            if (allClientsFlagged)
+            {
+                StartCoroutine(GameOverWaitBeforeScoreCardCoroutine(_waitDurationBeforeScoreBoard));
+            }
+     
         }
     }
 }
