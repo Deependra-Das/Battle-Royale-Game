@@ -1,3 +1,4 @@
+using BattleRoyale.AudioModule;
 using BattleRoyale.MainModule;
 using BattleRoyale.SceneModule;
 using System.Text.RegularExpressions;
@@ -9,17 +10,24 @@ namespace BattleRoyale.UIModule
 {
     public class StartMenuUIView : MonoBehaviour
     {
-        [SerializeField] private Button _newGameButton;
-        [SerializeField] private Button _quitGameButtonPrefab;
-        [SerializeField] private Button _saveUsernameButton;
-        [SerializeField] private Button _okButton;
-        [SerializeField] private Button _changeUsernameButton;
-        [SerializeField] private GameObject _usernameInputPopup;
-        [SerializeField] private GameObject _successPopup;
-        [SerializeField] private TMP_InputField _usernameInputField;
-        [SerializeField] private TMP_Text _errorMessageText;
+        [Header("Main Menu Content")]
         [SerializeField] private GameObject _topBar;
         [SerializeField] private TMP_Text _usernameDisplayText;
+        [SerializeField] private Button _changeUsernameButton;
+        [SerializeField] private Button _newGameButton;
+        [SerializeField] private Button _quitGameButtonPrefab;
+
+        [Header("Success PopUp")]
+        [SerializeField] private GameObject _successPopup;
+        [SerializeField] private Button _okButton;
+
+        [Header("Change Username PopUp")]
+        [SerializeField] private Button _saveUsernameButton;
+        [SerializeField] private Button _cancelButton;
+        [SerializeField] private GameObject _usernameInputPopup;
+        [SerializeField] private TMP_InputField _usernameInputField;
+        [SerializeField] private TMP_Text _errorMessageText;
+
 
         private const int minUserNameLength = 3;
         private const int maxUserNameLength = 15;
@@ -33,8 +41,9 @@ namespace BattleRoyale.UIModule
             _newGameButton.onClick.AddListener(OnNewGameButtonClicked);
             _quitGameButtonPrefab.onClick.AddListener(OnQuitGameButtonClicked);
             _saveUsernameButton.onClick.AddListener(OnSaveUsernameButtonClicked);
-            _okButton.onClick.AddListener(HideSuccessPopup);
-            _changeUsernameButton.onClick.AddListener(ShowUsernameInputPopup);
+            _cancelButton.onClick.AddListener(OnCancelButtonClicked);
+            _okButton.onClick.AddListener(OnOkButtonClicked);
+            _changeUsernameButton.onClick.AddListener(OnChangeUsernameButtonClicked);
         }
 
         private void UnsubscribeToEvents()
@@ -42,8 +51,9 @@ namespace BattleRoyale.UIModule
             _newGameButton.onClick.RemoveListener(OnNewGameButtonClicked);
             _quitGameButtonPrefab.onClick.RemoveListener(OnQuitGameButtonClicked);
             _saveUsernameButton.onClick.RemoveListener(OnSaveUsernameButtonClicked);
-            _okButton.onClick.RemoveListener(HideSuccessPopup);
-            _changeUsernameButton.onClick.RemoveListener(ShowUsernameInputPopup);
+            _cancelButton.onClick.RemoveListener(OnCancelButtonClicked);
+            _okButton.onClick.RemoveListener(OnOkButtonClicked);
+            _changeUsernameButton.onClick.RemoveListener(OnChangeUsernameButtonClicked);
         }
 
         private void OnNewGameButtonClicked()
@@ -67,18 +77,24 @@ namespace BattleRoyale.UIModule
             gameObject.SetActive(false);
         }
 
-        private void ShowUsernameInputPopup()
+        private void OnChangeUsernameButtonClicked()
         {
-            _errorMessageText.gameObject.SetActive(false);
+            ShowUsernameInputPopup();
             HideSuccessPopup();
-            _usernameInputPopup.SetActive(true);
-        }
-        private void HideUsernameInputPopup()
-        {
-            _errorMessageText.gameObject.SetActive(false);
-            _usernameInputPopup.SetActive(false);
         }
 
+        private void ShowUsernameInputPopup()
+        {
+            _usernameInputField.text =string.Empty;
+            _errorMessageText.text = string.Empty;
+            _usernameInputPopup.SetActive(true);
+        }
+
+        private void HideUsernameInputPopup()
+        {
+            _errorMessageText.text = string.Empty;
+            _usernameInputPopup.SetActive(false);
+        }
 
         void CheckPlayerNameExists()
         {
@@ -129,6 +145,16 @@ namespace BattleRoyale.UIModule
             HideUsernameInputPopup();
             CheckPlayerNameExists();
             ShowSuccessPopup();
+        }
+
+        private void OnOkButtonClicked()
+        {
+            HideSuccessPopup();
+        }
+
+        private void OnCancelButtonClicked()
+        {
+            HideUsernameInputPopup();
         }
 
         private bool IsValidPlayerName(string username)
