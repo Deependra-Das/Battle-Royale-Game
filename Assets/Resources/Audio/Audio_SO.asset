@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a0bbc20b1be1104aaf857a640f1b322, type: 3}
+  m_Name: Audio_SO
+  m_EditorClassIdentifier: Assembly-CSharp::BattleRoyale.AudioModule.AudioScriptableObject
+  bgmAudioList:
+  - audioType: 0
+    audioClip: {fileID: 0}
+  - audioType: 1
+    audioClip: {fileID: 0}
+  - audioType: 2
+    audioClip: {fileID: 0}
+  - audioType: 3
+    audioClip: {fileID: 0}
+  - audioType: 4
+    audioClip: {fileID: 0}
+  sfxAudioList:
+  - audioType: 5
+    audioClip: {fileID: 8300000, guid: dea5821eaccbeb34eacb72c30022134f, type: 3}
+  - audioType: 6
+    audioClip: {fileID: 0}
+  - audioType: 7
+    audioClip: {fileID: 0}
+  - audioType: 8
+    audioClip: {fileID: 0}
+  - audioType: 9
+    audioClip: {fileID: 0}
+  - audioType: 10
+    audioClip: {fileID: 0}
+  - audioType: 11
+    audioClip: {fileID: 0}
+  - audioType: 12
+    audioClip: {fileID: 0}
+  - audioType: 13
+    audioClip: {fileID: 0}
+  - audioType: 14
+    audioClip: {fileID: 0}
+  - audioType: 15
+    audioClip: {fileID: 0}
+  - audioType: 16
+    audioClip: {fileID: 0}
+  playerAudioList: []
