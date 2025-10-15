@@ -1,8 +1,10 @@
+using BattleRoyale.AudioModule;
 using BattleRoyale.EventModule;
 using BattleRoyale.LobbyModule;
 using BattleRoyale.NetworkModule;
 using BattleRoyale.PlayerModule;
 using BattleRoyale.SceneModule;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
@@ -26,7 +28,8 @@ namespace BattleRoyale.UIModule
 
         [Header ("Disconnected PopUp")] 
         [SerializeField] private GameObject _disconnectedPopUp;
-        [SerializeField] private Button _disconnectedBackButtonPrefab;
+        [SerializeField] private TMP_Text _disconnectedCountdownCharSelectUIText;
+        [SerializeField] float _disconnectedCountdownTime = 5f;
 
         [Header("Leave Lobby PopUp")]
         [SerializeField] private GameObject _leaveLobbyConfirmationPopUp;
@@ -47,6 +50,7 @@ namespace BattleRoyale.UIModule
         private List<Toggle> toggles = new List<Toggle>();
         private int[] buttonOrder = { 6, 4, 2, 0, 1, 3, 5, 7 };
         private List<GameObject> buttonsList = new List<GameObject>();
+        private bool isInitialSetup = true;
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -61,7 +65,6 @@ namespace BattleRoyale.UIModule
             _noConfirmationButtonPrefab.onClick.AddListener(OnNoButtonClicked);
             NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnectCallbackCharSelectUI;
             NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnectCallbackCharSelectUI;
-            _disconnectedBackButtonPrefab.onClick.AddListener(OnDisconnectedBackButtonClicked);
         }
 
         private void UnsubscribeToEvents()
@@ -73,7 +76,6 @@ namespace BattleRoyale.UIModule
             _noConfirmationButtonPrefab.onClick.RemoveListener(OnNoButtonClicked);
             NetworkManager.Singleton.OnClientConnectedCallback -= HandleClientConnectCallbackCharSelectUI;
             NetworkManager.Singleton.OnClientDisconnectCallback -= HandleClientDisconnectCallbackCharSelectUI;
-            _disconnectedBackButtonPrefab.onClick.RemoveListener(OnDisconnectedBackButtonClicked);
 
             foreach (var toggle in toggles)
             {
@@ -95,8 +97,9 @@ namespace BattleRoyale.UIModule
             {
                 CreateKickButtons();
             }
-        }
 
+            isInitialSetup = false;
+        }
 
         private void SetLobbyInformation()
         {
@@ -136,6 +139,9 @@ namespace BattleRoyale.UIModule
                 DeactivateOtherToggles(changedToggle);
                 PlayerLobbyStateManager.Instance.ChangeCharacterSkin(index);
             }
+
+            if (isInitialSetup) return;
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.CharacterSkinChanged);
         }
 
         private void DeactivateOtherToggles(Toggle changedToggle)
@@ -167,6 +173,7 @@ namespace BattleRoyale.UIModule
 
         private void OnReadyButtonClicked()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             PlayerLobbyStateManager.Instance.SetPlayerReady();
             _readyButtonPrefab.gameObject.SetActive(false);
             _notReadyButtonPrefab.gameObject.SetActive(true);
@@ -175,6 +182,7 @@ namespace BattleRoyale.UIModule
 
         private void OnNotReadyButtonClicked()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             PlayerLobbyStateManager.Instance.SetPlayerNotReady();
             _notReadyButtonPrefab.gameObject.SetActive(false);
             _readyButtonPrefab.gameObject.SetActive(true);
@@ -183,6 +191,7 @@ namespace BattleRoyale.UIModule
 
         private void OnBackToStartMenuButtonClicked()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             ShowBackToMainMenuConfirmationPopup();
         }
 
@@ -201,7 +210,7 @@ namespace BattleRoyale.UIModule
         private void OnYesButtonClicked()
         {
             HideBackToMainMenuConfirmationPopup();
-         
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
 
             if (NetworkManager.Singleton.IsServer)
             {
@@ -212,19 +221,12 @@ namespace BattleRoyale.UIModule
                 LobbyManager.Instance.LeaveLobby();
                 NetworkManager.Singleton.Shutdown();
             }
-
-            SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
 
         private void OnNoButtonClicked()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             HideBackToMainMenuConfirmationPopup();
-        }
-
-        private void OnDisconnectedBackButtonClicked()
-        {
-            _disconnectedPopUp.SetActive(false);
-            SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
 
         public void EnableView()
@@ -250,15 +252,33 @@ namespace BattleRoyale.UIModule
         private void ShowDisconnectionCharSelectUI(ulong clientID)
         {
             UpdateKickButtonVisibility();
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.DisconnectionPopUp);
 
             if ((NetworkManager.Singleton.IsServer && clientID == NetworkManager.Singleton.LocalClientId && NetworkManager.Singleton.ConnectedClients.Count <= 1) || !NetworkManager.Singleton.IsServer)
             {
                 _disconnectedPopUp.SetActive(true);
+                StartCoroutine(DisconnectedCountdownSequence());
             }
+        }
+
+        private IEnumerator DisconnectedCountdownSequence()
+        {
+            float currentTime = _disconnectedCountdownTime;
+
+            while (currentTime > 0)
+            {
+                _disconnectedCountdownCharSelectUIText.text = "Returning To Main Menu In... " + Mathf.Ceil(currentTime).ToString() + "s";
+                currentTime -= 1f;
+                yield return new WaitForSeconds(1f);
+            }
+
+            _disconnectedPopUp.SetActive(false);
+            SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
 
         private void ShowBackToMainMenuConfirmationPopup()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ConfirmationPopUp);
             _leaveLobbyConfirmationPopUp.SetActive(true);
         }
 
@@ -281,7 +301,7 @@ namespace BattleRoyale.UIModule
                 newButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(posX, 0);
 
                 int buttonIndex = buttonOrder[i];
-                newButton.GetComponent<Button>().onClick.AddListener(() => OnButtonClicked(buttonIndex));
+                newButton.GetComponent<Button>().onClick.AddListener(() => OnKickButtonClicked(buttonIndex));
                 buttonsList.Add(newButton);
             }
 
@@ -291,8 +311,9 @@ namespace BattleRoyale.UIModule
             }
         }
 
-        void OnButtonClicked(int buttonIndex)
+        void OnKickButtonClicked(int buttonIndex)
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             if (NetworkManager.Singleton.IsServer)
             {
                 MultiplayerManager.Instance.KickPlayer(buttonIndex);
