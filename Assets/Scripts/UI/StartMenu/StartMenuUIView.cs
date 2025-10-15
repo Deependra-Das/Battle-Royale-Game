@@ -58,16 +58,19 @@ namespace BattleRoyale.UIModule
 
         private void OnNewGameButtonClicked()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             SceneLoader.Instance.LoadScene(SceneName.LobbyScene, false);
         }
 
         private void OnQuitGameButtonClicked()
         {
-           Application.Quit();
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
+            Application.Quit();
         }
 
         public void EnableView()
         {
+            HideUsernameInputPopup();
             CheckPlayerNameExists();
             gameObject.SetActive(true);
         }
@@ -79,12 +82,14 @@ namespace BattleRoyale.UIModule
 
         private void OnChangeUsernameButtonClicked()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             ShowUsernameInputPopup();
             HideSuccessPopup();
         }
 
         private void ShowUsernameInputPopup()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ConfirmationPopUp);
             _usernameInputField.text =string.Empty;
             _errorMessageText.text = string.Empty;
             _usernameInputPopup.SetActive(true);
@@ -119,28 +124,28 @@ namespace BattleRoyale.UIModule
             if (string.IsNullOrEmpty(username))
             {
                 _errorMessageText.text = "Username cannot be empty!";
-                _errorMessageText.gameObject.SetActive(true);
+                AudioManager.Instance.PlaySFX(AudioModule.AudioType.ErrorPopUp);
                 return;
             }
             if (username.Length < minUserNameLength || username.Length > maxUserNameLength)
             {
                 _errorMessageText.text = "Username must be 3-16 characters long!";
-                _errorMessageText.gameObject.SetActive(true);
+                AudioManager.Instance.PlaySFX(AudioModule.AudioType.ErrorPopUp);
                 return;
             }
 
             if (!IsValidPlayerName(username))
             {
                 _errorMessageText.text = "Username contains invalid characters!";
-                _errorMessageText.gameObject.SetActive(true);
+                AudioManager.Instance.PlaySFX(AudioModule.AudioType.ErrorPopUp);
                 return;
             }
 
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             PlayerPrefs.SetString(GameManager.UsernameKey, username);
             PlayerPrefs.Save();
 
             _errorMessageText.text = string.Empty;
-            _errorMessageText.gameObject.SetActive(false);
 
             HideUsernameInputPopup();
             CheckPlayerNameExists();
@@ -149,11 +154,13 @@ namespace BattleRoyale.UIModule
 
         private void OnOkButtonClicked()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             HideSuccessPopup();
         }
 
         private void OnCancelButtonClicked()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             HideUsernameInputPopup();
         }
 
@@ -165,6 +172,7 @@ namespace BattleRoyale.UIModule
 
         private void ShowSuccessPopup()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.SuccessPopUp);
             _successPopup.SetActive(true);
         }
 
