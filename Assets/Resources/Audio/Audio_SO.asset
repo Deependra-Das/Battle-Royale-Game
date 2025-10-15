@@ -14,38 +14,62 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BattleRoyale.AudioModule.AudioScriptableObject
   bgmAudioList:
   - audioType: 0
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: bef13962ace3d7040bf84e1c866ed167, type: 3}
   - audioType: 1
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: 7c5b1fb0c18fd5941a565772cdddbe11, type: 3}
   - audioType: 2
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: 07c41b8b49302274d9b49b1470e7d472, type: 3}
   - audioType: 3
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: 5f8f4f0130efded4a9760fe7f6300b36, type: 3}
   - audioType: 4
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: a0b042da354309040a21c25acf28b533, type: 3}
   sfxAudioList:
   - audioType: 5
     audioClip: {fileID: 8300000, guid: dea5821eaccbeb34eacb72c30022134f, type: 3}
   - audioType: 6
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: d636df6c5970a9741a617b70b622dfa7, type: 3}
   - audioType: 7
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: fe8051d19ef9fc64f910b0615a598ab3, type: 3}
   - audioType: 8
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: e5e4eae6940b90d4d9c0dc9fab0a94a1, type: 3}
   - audioType: 9
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: f218654c79a82e84c9dc155e6539c7c5, type: 3}
   - audioType: 10
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: 4fd5aedc907a4fe4784211d869fed85d, type: 3}
   - audioType: 11
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: e876bd233421f5043a84589f46ae4b59, type: 3}
   - audioType: 12
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: a219d4a583f365f4d833a8fca6c62970, type: 3}
   - audioType: 13
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: 4180016aba3bad04fa1702864e0c0548, type: 3}
   - audioType: 14
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: dae052c366f6b6646b6eb186ddf4105a, type: 3}
   - audioType: 15
-    audioClip: {fileID: 0}
+    audioClip: {fileID: 8300000, guid: d3f226f12f61f9642b768a414ae6ef76, type: 3}
   - audioType: 16
-    audioClip: {fileID: 0}
-  playerAudioList: []
+    audioClip: {fileID: 8300000, guid: c00c5e64b9162dc4f9f646b9fd117c57, type: 3}
+  - audioType: 19
+    audioClip: {fileID: 8300000, guid: 005c8f9b818f0ad4b88ed6ba3ac34064, type: 3}
+  playerAudioList:
+  - audioType: 17
+    audioClip: {fileID: 8300000, guid: 9c64804c6acd4a4419d6467ff9faaed7, type: 3}
+  - audioType: 17
+    audioClip: {fileID: 8300000, guid: 39b97538ac9a20a45a4d6328587b0d6c, type: 3}
+  - audioType: 17
+    audioClip: {fileID: 8300000, guid: ee182ef3cdf62ea40a35bbc9da93671c, type: 3}
+  - audioType: 17
+    audioClip: {fileID: 8300000, guid: 213bf6474a3afb3468a848a4b32f3ed9, type: 3}
+  - audioType: 17
+    audioClip: {fileID: 8300000, guid: 3991dad02ce6119449b27036dc4bb086, type: 3}
+  - audioType: 17
+    audioClip: {fileID: 8300000, guid: 45e82578ee09c2b469b851b00ff313dd, type: 3}
+  - audioType: 17
+    audioClip: {fileID: 8300000, guid: 2741aa89d8699d445b34e89ffd837409, type: 3}
+  - audioType: 17
+    audioClip: {fileID: 8300000, guid: 8fadad7aab924d34e88bb169c6553f1e, type: 3}
+  - audioType: 17
+    audioClip: {fileID: 8300000, guid: 9ce17bda2589d0440b06857500c16fe0, type: 3}
+  - audioType: 17
+    audioClip: {fileID: 8300000, guid: abcb4696ef581304fb7cbe522424e1ef, type: 3}
+  - audioType: 18
+    audioClip: {fileID: 8300000, guid: b78109d8e8e4e2d489baea794ba8483f, type: 3}

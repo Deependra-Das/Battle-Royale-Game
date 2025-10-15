@@ -12,15 +12,16 @@ namespace BattleRoyale.AudioModule
         ErrorPopUp,
         ConfirmationPopUp,
         DisconnectionPopUp,
-        EliminationdPopUp,
         GameEndedPopUp,
         PlayerJoined,
         PlayerLeft,
         CharacterSkinChanged,
         GameStartCountdown,
-        GameStarted,   
+        GameStarted,
+        PlayerEliminated,
         PlayerFootstep,
         PlayerJumpLand,
+        TilePop,
     }
 }
 
