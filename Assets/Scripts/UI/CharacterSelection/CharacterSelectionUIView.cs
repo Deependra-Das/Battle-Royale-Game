@@ -246,19 +246,19 @@ namespace BattleRoyale.UIModule
 
         private void HandleClientDisconnectCallbackCharSelectUI(ulong clientID)
         {
-            ShowDisconnectionCharSelectUI(clientID);
-        }
-
-        private void ShowDisconnectionCharSelectUI(ulong clientID)
-        {
             UpdateKickButtonVisibility();
-            AudioManager.Instance.PlaySFX(AudioModule.AudioType.DisconnectionPopUp);
 
             if ((NetworkManager.Singleton.IsServer && clientID == NetworkManager.Singleton.LocalClientId && NetworkManager.Singleton.ConnectedClients.Count <= 1) || !NetworkManager.Singleton.IsServer)
             {
-                _disconnectedPopUp.SetActive(true);
-                StartCoroutine(DisconnectedCountdownSequence());
+                ShowDisconnectionCharSelectUI();
             }
+        }
+
+        private void ShowDisconnectionCharSelectUI()
+        {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.DisconnectionPopUp);
+            _disconnectedPopUp.SetActive(true);
+            StartCoroutine(DisconnectedCountdownSequence());
         }
 
         private IEnumerator DisconnectedCountdownSequence()
