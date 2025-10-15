@@ -35,7 +35,6 @@ namespace BattleRoyale.MainModule
         private void Start()
         {
             _stateMachine = new GameStateMachine();
-            SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
 
         public void ChangeGameState(GameState newState)

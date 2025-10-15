@@ -1,3 +1,4 @@
+using BattleRoyale.AudioModule;
 using BattleRoyale.NetworkModule;
 using BattleRoyale.UIModule;
 using Unity.Netcode;
@@ -14,6 +15,7 @@ namespace BattleRoyale.MainModule
             RegisterGameOverServices();
             _gameOverUIObj = GameManager.Instance.Get<GameOverUIService>();
             _gameOverUIObj.ShowUI();
+            AudioManager.Instance.PlayBGM(AudioModule.AudioType.GameOverBGM);
             GameOverManager.Instance.Initialize();
         }
 

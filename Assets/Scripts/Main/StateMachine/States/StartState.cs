@@ -1,3 +1,4 @@
+using BattleRoyale.AudioModule;
 using BattleRoyale.EnvironmentModule;
 using BattleRoyale.LobbyModule;
 using BattleRoyale.NetworkModule;
@@ -21,6 +22,7 @@ namespace BattleRoyale.MainModule
 
             _startMenuUIObj = GameManager.Instance.Get<StartMenuUIService>();
             _startMenuUIObj.ShowUI();
+            AudioManager.Instance.PlayBGM(AudioType.MainMenuBGM);
         }
 
         public void Exit()

@@ -1,3 +1,4 @@
+using BattleRoyale.AudioModule;
 using BattleRoyale.EventModule;
 using BattleRoyale.NetworkModule;
 using BattleRoyale.SceneModule;
@@ -19,6 +20,7 @@ namespace BattleRoyale.MainModule
             _lobbyUIObj = GameManager.Instance.Get<LobbyUIService>();
 
             _lobbyUIObj.ShowUI();
+            AudioManager.Instance.PlayBGM(AudioModule.AudioType.LobbyBGM);
         }
 
         public void Exit()

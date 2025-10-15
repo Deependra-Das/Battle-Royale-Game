@@ -1,3 +1,4 @@
+using BattleRoyale.AudioModule;
 using BattleRoyale.EnvironmentModule;
 using BattleRoyale.LevelModule;
 using BattleRoyale.NetworkModule;
@@ -24,6 +25,7 @@ namespace BattleRoyale.MainModule
             _gameplayUIObj = GameManager.Instance.Get<GameplayUIService>();
 
             _skyboxObj.ApplyRandomSkyboxMaterial();
+            AudioManager.Instance.PlayBGM(AudioType.GameplayBGM);
             GameplayManager.Instance.Initialize();
         }
 

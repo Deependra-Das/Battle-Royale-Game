@@ -1,3 +1,4 @@
+using BattleRoyale.AudioModule;
 using BattleRoyale.CharacterSelectionModule;
 using BattleRoyale.EnvironmentModule;
 using BattleRoyale.UIModule;
@@ -20,6 +21,8 @@ namespace BattleRoyale.MainModule
 
             _characterSelectionUIObj = GameManager.Instance.Get<CharacterSelectionUIService>();
             _characterSelectionUIObj.ShowUI();
+
+            AudioManager.Instance.PlayBGM(AudioModule.AudioType.CharSelectionBGM);
 
             if (NetworkManager.Singleton.IsServer)
             {
