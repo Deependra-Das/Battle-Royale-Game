@@ -1,3 +1,4 @@
+using BattleRoyale.AudioModule;
 using BattleRoyale.LobbyModule;
 using TMPro;
 using Unity.Services.Lobbies.Models;
@@ -47,6 +48,7 @@ namespace BattleRoyale.UIModule
 
         private void OnLobbyEntryButtonClicked()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             LobbyManager.Instance.JoinWithId(_lobby.Id);
         }
     }

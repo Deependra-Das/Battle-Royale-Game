@@ -2,6 +2,7 @@ using BattleRoyale.EventModule;
 using BattleRoyale.LobbyModule;
 using BattleRoyale.NetworkModule;
 using BattleRoyale.SceneModule;
+using BattleRoyale.AudioModule;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;
@@ -55,6 +56,9 @@ namespace BattleRoyale.UIModule
         [SerializeField] private TMP_Text _lobbyMessageText;
         [SerializeField] private Button _okButtonPrefab;
 
+        private bool isInitialTabSelection = true;
+        private bool isInitialFormSetup = true;
+
         private void OnEnable() => SubscribeToEvents();
 
         private void OnDisable() => UnsubscribeToEvents();
@@ -66,7 +70,7 @@ namespace BattleRoyale.UIModule
             _quickJoinButtonPrefab.onClick.AddListener(OnQuickJoinButtonClicked);
             _joinLobbyWithCodeButtonPrefab.onClick.AddListener(OnJoinWithCodeButtonClicked);            
             _backToStartMenuButtonPrefab.onClick.AddListener(OnBackToStartMenuButtonClicked);
-            _okButtonPrefab.onClick.AddListener(HideLobbyMessagePopUp);
+            _okButtonPrefab.onClick.AddListener(OnOkButtonClicked);
 
             _createLobbyToggle.onValueChanged.AddListener((isOn) => HandleMainTabSwitch(isOn, 1));
             _joinLobbyToggle.onValueChanged.AddListener((isOn) => HandleMainTabSwitch(isOn, 2));
@@ -91,7 +95,7 @@ namespace BattleRoyale.UIModule
             _quickJoinButtonPrefab.onClick.RemoveListener(OnQuickJoinButtonClicked);
             _joinLobbyWithCodeButtonPrefab.onClick.RemoveListener(OnJoinWithCodeButtonClicked);
             _backToStartMenuButtonPrefab.onClick.RemoveListener(OnBackToStartMenuButtonClicked);
-            _okButtonPrefab.onClick.RemoveListener(HideLobbyMessagePopUp);
+            _okButtonPrefab.onClick.RemoveListener(OnOkButtonClicked);
 
             _createLobbyToggle.onValueChanged.RemoveListener((isOn) => HandleMainTabSwitch(isOn, 1));
             _joinLobbyToggle.onValueChanged.RemoveListener((isOn) => HandleMainTabSwitch(isOn, 2));
@@ -122,6 +126,9 @@ namespace BattleRoyale.UIModule
             HideLobbyMessagePopUp();
             HideInterstitialPopUp();
             UpdateLobbyListUI(new List<Lobby>());
+
+            isInitialTabSelection = false;
+            isInitialFormSetup = false;
         }
 
         void HandleMainTabSwitch(bool isOn, int tabIndex)
@@ -145,6 +152,9 @@ namespace BattleRoyale.UIModule
                     _joinLobbyTabContainer.SetActive(true);
                 }
             }
+
+            if (isInitialTabSelection) return;
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
         }
 
         void CreateCapacityNumToggles()
@@ -177,6 +187,9 @@ namespace BattleRoyale.UIModule
                 changedToggle.image.color = Color.white;
                 DeactivateOtherCapacityNumToggles(changedToggle);
             }
+
+            if (isInitialFormSetup) return;
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
         }
 
         private void DeactivateOtherCapacityNumToggles(Toggle changedToggle)
@@ -210,6 +223,9 @@ namespace BattleRoyale.UIModule
                     _privacySelected = true;
                 }
             }
+
+            if (isInitialFormSetup) return;
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
         }
 
         private bool IsLobbyNameValid(string name)
@@ -268,21 +284,30 @@ namespace BattleRoyale.UIModule
 
             if (IsLobbyNameValid(lobbyName))
             {
+                AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
                 _lobbyNameErrorMessageText.text = string.Empty;
                 LobbyManager.Instance.CreateLobby(lobbyName, _capacitySelected, _privacySelected);
+            }
+            else
+            {
+                AudioManager.Instance.PlaySFX(AudioModule.AudioType.ErrorPopUp);
             }
         }
 
         private void OnResetButtonClicked()
         {
-             _lobbyNameInputField.text = string.Empty;
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
+            isInitialFormSetup = true;
+            _lobbyNameInputField.text = string.Empty;
              _lobbyNameErrorMessageText.text = string.Empty;
             toggles[0].isOn = true;
             HandlePrivacyToggleSwitch(true, 1);
+            isInitialFormSetup = false;
         }
 
         private void OnQuickJoinButtonClicked()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             LobbyManager.Instance.QuickJoin();
         }
 
@@ -292,13 +317,19 @@ namespace BattleRoyale.UIModule
 
             if (IsLobbyCodeValid(lobbyCode))
             {
+                AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
                 _lobbyCodeErrorMessageText.text = string.Empty;
                 LobbyManager.Instance.JoinWithCode(_joinCodeInputField.text);
+            }
+            else
+            {
+                AudioManager.Instance.PlaySFX(AudioModule.AudioType.ErrorPopUp);
             }
         }
 
         private void OnBackToStartMenuButtonClicked()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             LobbyManager.Instance.LeaveLobby();
             SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
@@ -329,6 +360,7 @@ namespace BattleRoyale.UIModule
                 _lobbyMessageText.text = "Failed To Connect.";
             }
 
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ErrorPopUp);
             ShowLobbyMessagePopUp();
         }
 
@@ -342,6 +374,7 @@ namespace BattleRoyale.UIModule
         {
             HideInterstitialPopUp();
             _lobbyMessageText.text = "Failed To Create Lobby.";
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ErrorPopUp);
             ShowLobbyMessagePopUp();
         }
 
@@ -355,6 +388,7 @@ namespace BattleRoyale.UIModule
         {
             HideInterstitialPopUp();
             _lobbyMessageText.text = "Unable to Find a Lobby to Quick Join.";
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ErrorPopUp);
             ShowLobbyMessagePopUp();
         }
 
@@ -362,6 +396,7 @@ namespace BattleRoyale.UIModule
         {
             HideInterstitialPopUp();
             _lobbyMessageText.text = "Failed To Join Lobby.";
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ErrorPopUp);
             ShowLobbyMessagePopUp();
         }
 
@@ -385,6 +420,12 @@ namespace BattleRoyale.UIModule
             _lobbyMessagePopUp.SetActive(false);
         }
 
+        private void OnOkButtonClicked()
+        {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
+            HideLobbyMessagePopUp();
+        }
+
         private void OnLobbyListChangedUI(object[] parameters)
         {
             List<Lobby> lobbyList = (List<Lobby>)parameters[0];
@@ -396,6 +437,7 @@ namespace BattleRoyale.UIModule
             CleanUpLobbyEntryButtons();
             CreateLobbyEntryButtons(lobbyList);
         }
+
         private void CleanUpLobbyEntryButtons()
         {
             foreach (Transform child in _lobbyListScrollViewContent)
