@@ -1,3 +1,4 @@
+using BattleRoyale.AudioModule;
 using BattleRoyale.EventModule;
 using BattleRoyale.LevelModule;
 using BattleRoyale.MainModule;
@@ -83,6 +84,7 @@ namespace BattleRoyale.TileModule
         [ClientRpc]
         private void PlayTileTouchedVisualsClientRpc()
         {
+            AudioManager.Instance.PlayTilePopSFX(AudioModule.AudioType.TilePop, transform.TransformPoint((Vector3.zero)));
             StartCoroutine(ChangeMaterial());
             StartCoroutine(ScaleObject(transform.localScale, _targetScale, _lifetime));
         }

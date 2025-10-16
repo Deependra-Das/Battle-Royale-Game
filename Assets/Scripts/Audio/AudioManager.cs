@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.UIElements;
 
 namespace BattleRoyale.AudioModule
 {
@@ -18,6 +19,7 @@ namespace BattleRoyale.AudioModule
         private AudioClip _jumpLandAudioClip;
 
         [Range(0, 1)] public float footstepAudioVolume = 1.0f;
+        [Range(0, 1)] public float tilepopAudioVolume = 1.0f;
 
         protected override void Awake()
         {
@@ -108,6 +110,10 @@ namespace BattleRoyale.AudioModule
                         var index = UnityEngine.Random.Range(0, _footstepsAudioList.Count);
                         AudioSource.PlayClipAtPoint(_footstepsAudioList[index], position, footstepAudioVolume);
                     }
+                    else
+                    {
+                        Debug.LogWarning("Audio not found for type: " + audioType);
+                    }
                     break;
 
                 case AudioType.PlayerJumpLand:
@@ -116,7 +122,23 @@ namespace BattleRoyale.AudioModule
                     {
                         AudioSource.PlayClipAtPoint(_jumpLandAudioClip, position, footstepAudioVolume);
                     }
+                    else
+                    {
+                        Debug.LogWarning("Audio not found for type: " + audioType);
+                    }
                     break;
+            }
+        }
+
+        public void PlayTilePopSFX(AudioType audioType, Vector3 position)
+        {
+            if (_sfxAudioDictionary.TryGetValue(audioType, out AudioClip clip))
+            {
+                AudioSource.PlayClipAtPoint(clip, position, tilepopAudioVolume);
+            }
+            else
+            {
+                Debug.LogWarning("Audio not found for type: " + audioType);
             }
         }
     }
