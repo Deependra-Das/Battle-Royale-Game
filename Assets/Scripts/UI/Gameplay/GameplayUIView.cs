@@ -1,3 +1,4 @@
+using BattleRoyale.AudioModule;
 using BattleRoyale.EventModule;
 using BattleRoyale.MainModule;
 using BattleRoyale.SceneModule;
@@ -77,6 +78,7 @@ namespace BattleRoyale.UIModule
 
             if (secondsRemaining > 0)
             {
+                AudioManager.Instance.PlaySFX(AudioModule.AudioType.GameStartCountdown);
                 _gameplayStartCountdownText.text = secondsRemaining.ToString();
                 _gameplayStartCountdownText.gameObject.SetActive(true);
                 _currentCountdownValue = secondsRemaining;
@@ -84,6 +86,7 @@ namespace BattleRoyale.UIModule
             }
             else
             {
+                AudioManager.Instance.PlaySFX(AudioModule.AudioType.GameStarted);
                 _gameplayStartCountdownText.text = "GO!";
                 _isCountingDown = false;
                 _gameplayStartCountdownText.transform.localScale = _originalScale;
@@ -133,6 +136,7 @@ namespace BattleRoyale.UIModule
 
         public void ShowEliminatedPopup()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.PlayerEliminated);
             StartCoroutine(EliminationPopupSequence());
         }
 
@@ -159,6 +163,7 @@ namespace BattleRoyale.UIModule
 
         private void ShowDisconnectionGameplayUI()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.DisconnectionPopUp);
             _disconnectedMessageGameplayUIPopUp.SetActive(true);
             StartCoroutine(DisconnectedCountdownSequence());
         }
