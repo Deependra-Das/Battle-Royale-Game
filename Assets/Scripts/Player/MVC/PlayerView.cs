@@ -1,3 +1,4 @@
+using BattleRoyale.AudioModule;
 using BattleRoyale.EventModule;
 using BattleRoyale.MainModule;
 using BattleRoyale.TileModule;
@@ -362,6 +363,22 @@ namespace BattleRoyale.PlayerModule
             {
                 Quaternion lookRotation = Quaternion.LookRotation(directionToCamera);
                 _usernameText.transform.rotation = lookRotation;
+            }
+        }
+
+        private void OnFootstep(AnimationEvent animationEvent)
+        {
+            if (animationEvent.animatorClipInfo.weight > 0.5f)
+            {
+                AudioManager.Instance.PlayFootStepsAudio(AudioModule.AudioType.PlayerFootstep, transform.TransformPoint(_charController.center));
+            }
+        }
+
+        private void OnLand(AnimationEvent animationEvent)
+        {
+            if (animationEvent.animatorClipInfo.weight > 0.5f)
+            {
+                AudioManager.Instance.PlayFootStepsAudio(AudioModule.AudioType.PlayerJumpLand, transform.TransformPoint(_charController.center));
             }
         }
 

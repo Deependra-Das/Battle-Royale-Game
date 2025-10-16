@@ -17,7 +17,7 @@ namespace BattleRoyale.AudioModule
         private List<AudioClip> _footstepsAudioList;
         private AudioClip _jumpLandAudioClip;
 
-        [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
+        [Range(0, 1)] public float footstepAudioVolume = 1.0f;
 
         protected override void Awake()
         {
@@ -106,7 +106,7 @@ namespace BattleRoyale.AudioModule
                     if (_footstepsAudioList.Count > 0)
                     {
                         var index = UnityEngine.Random.Range(0, _footstepsAudioList.Count);
-                        AudioSource.PlayClipAtPoint(_footstepsAudioList[index], position, FootstepAudioVolume);
+                        AudioSource.PlayClipAtPoint(_footstepsAudioList[index], position, footstepAudioVolume);
                     }
                     break;
 
@@ -114,7 +114,7 @@ namespace BattleRoyale.AudioModule
 
                     if (_jumpLandAudioClip != null)
                     {
-                        AudioSource.PlayClipAtPoint(_jumpLandAudioClip, position, FootstepAudioVolume);
+                        AudioSource.PlayClipAtPoint(_jumpLandAudioClip, position, footstepAudioVolume);
                     }
                     break;
             }
