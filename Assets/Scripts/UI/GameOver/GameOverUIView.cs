@@ -1,3 +1,4 @@
+using BattleRoyale.AudioModule;
 using BattleRoyale.EventModule;
 using BattleRoyale.MainModule;
 using BattleRoyale.SceneModule;
@@ -33,13 +34,13 @@ namespace BattleRoyale.UIModule
         private void SubscribeToEvents()
         {
             EventBusManager.Instance.Subscribe(EventName.GameOverScoreCard, HandleGameOverScoreCard);
-            NetworkManager.Singleton.OnClientDisconnectCallback += ShowDisconnectionGameOverUI;
+            NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnectCallbackGameOverUI;
         }
 
         private void UnsubscribeToEvents()
         {
             EventBusManager.Instance.Unsubscribe(EventName.GameOverScoreCard, HandleGameOverScoreCard);
-            NetworkManager.Singleton.OnClientDisconnectCallback -= ShowDisconnectionGameOverUI;
+            NetworkManager.Singleton.OnClientDisconnectCallback -= HandleClientDisconnectCallbackGameOverUI;
         }
 
         private void Start()
@@ -74,13 +75,19 @@ namespace BattleRoyale.UIModule
             return _scoreboardContentTransform;
         }
 
-        private void ShowDisconnectionGameOverUI(ulong clientID)
+        private void HandleClientDisconnectCallbackGameOverUI(ulong clientID)
         {
             if ((NetworkManager.Singleton.IsServer && clientID == NetworkManager.Singleton.LocalClientId && NetworkManager.Singleton.ConnectedClients.Count <= 1) || !NetworkManager.Singleton.IsServer)
             {
-                _disconnectedGameOverUIPopUp.SetActive(true);
-                StartCoroutine(DisconnectedCountdownSequence());
+                ShowDisconnectionGameOverUI();
             }
+        }
+
+        private void ShowDisconnectionGameOverUI()
+        {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.DisconnectionPopUp);
+            _disconnectedGameOverUIPopUp.SetActive(true);
+            StartCoroutine(DisconnectedCountdownSequence());
         }
 
         private IEnumerator DisconnectedCountdownSequence()
@@ -94,6 +101,7 @@ namespace BattleRoyale.UIModule
                 yield return new WaitForSeconds(1f);
             }
 
+            _disconnectedGameOverUIPopUp.SetActive(false);
             SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
 
@@ -120,6 +128,7 @@ namespace BattleRoyale.UIModule
 
         public void ShowGameOverPopUp()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.GameEndedPopUp);
             _gameOverPopUp.SetActive(true);
         }
 

@@ -53,15 +53,8 @@ namespace BattleRoyale.NetworkModule
             if (IsServer)
             {
                 yield return new WaitForSeconds(duration);
-
-                RaiseGameOverScoreCardLocally();
                 RaiseGameOverScoreCardClientRpc();
             }
-        }
-
-        private void RaiseGameOverScoreCardLocally()
-        {
-            EventBusManager.Instance.RaiseNoParams(EventName.GameOverScoreCard);
         }
 
         [ClientRpc]
