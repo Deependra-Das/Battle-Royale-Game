@@ -16,15 +16,16 @@ namespace BattleRoyale.UIModule
         [Header("Gameplay UI PopUp")]
         [SerializeField] private GameObject _eliminationsPanel;
         [SerializeField] private TMP_Text _eliminatedCounterText;
-        [SerializeField] private TMP_Text _eliminationCountdownText;
-        [SerializeField] private float _animationSpeed = 3f;
         [SerializeField] private GameObject _rankPanel;
         [SerializeField] private TMP_Text _rankText;
 
+        [SerializeField] private TMP_Text _gameplayStartCountdownText;
+        [SerializeField] private float _animationSpeed = 1f;
+ 
+
         [Header("Eliminated PopUp")]
         [SerializeField] private GameObject _eliminationPopup;
-        [SerializeField] private float _popupDuration = 2f;
-        [SerializeField] private AnimationCurve _popupScaleCurve;
+        [SerializeField] private float _popupDuration = 3f;
 
         [Header("Gameplay Disconnected UI PopUp")]
         [SerializeField] private GameObject _disconnectedMessageGameplayUIPopUp;
@@ -38,9 +39,6 @@ namespace BattleRoyale.UIModule
         private int _currentEliminatedCount = 0;
         public float _disconnectedCountdownTime = 5f;
 
-        private Coroutine _popupCoroutine;
-        private Vector3 _popupOriginalScale;
-
         private void OnEnable() => SubscribeToEvents();
 
         private void OnDisable() => UnsubscribeToEvents();
@@ -48,19 +46,18 @@ namespace BattleRoyale.UIModule
         private void SubscribeToEvents()
         {
             EventBusManager.Instance.Subscribe(EventName.GameplayStartCountdownTick, HandleCountdownTick);
-            NetworkManager.Singleton.OnClientDisconnectCallback += ShowDisconnectionGameplayUI;
+            NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnectCallbackGameplayUI;
         }
 
         private void UnsubscribeToEvents()
         {
             EventBusManager.Instance.Unsubscribe(EventName.GameplayStartCountdownTick, HandleCountdownTick);
-            NetworkManager.Singleton.OnClientDisconnectCallback -= ShowDisconnectionGameplayUI;
+            NetworkManager.Singleton.OnClientDisconnectCallback -= HandleClientDisconnectCallbackGameplayUI;
         }
 
         private void Start()
         {
-            _originalScale = _eliminationCountdownText.transform.localScale;
-            _popupOriginalScale = _eliminationPopup.transform.localScale;
+            _originalScale = _gameplayStartCountdownText.transform.localScale;
             _eliminationPopup.SetActive(false);
             _rankPanel.SetActive(false);
             _disconnectedMessageGameplayUIPopUp.SetActive(false);
@@ -80,30 +77,30 @@ namespace BattleRoyale.UIModule
 
             if (secondsRemaining > 0)
             {
-                _eliminationCountdownText.text = secondsRemaining.ToString();
-                _eliminationCountdownText.gameObject.SetActive(true);
+                _gameplayStartCountdownText.text = secondsRemaining.ToString();
+                _gameplayStartCountdownText.gameObject.SetActive(true);
                 _currentCountdownValue = secondsRemaining;
                 _isCountingDown = true;
             }
             else
             {
-                _eliminationCountdownText.text = "GO!";
+                _gameplayStartCountdownText.text = "GO!";
                 _isCountingDown = false;
-                _eliminationCountdownText.transform.localScale = _originalScale;
+                _gameplayStartCountdownText.transform.localScale = _originalScale;
                 Invoke(nameof(HideCountdown), 1f);
             }
         }
 
         private void HideCountdown()
         {
-            _eliminationCountdownText.gameObject.SetActive(false);
-            _eliminationCountdownText.transform.localScale = _originalScale;
+            _gameplayStartCountdownText.gameObject.SetActive(false);
+            _gameplayStartCountdownText.transform.localScale = _originalScale;
         }
 
         private void AnimateText()
         {
             float scaleFactor = Mathf.PingPong(Time.time * _animationSpeed, 0.5f) + 1f;
-            _eliminationCountdownText.transform.localScale = _originalScale * scaleFactor;
+            _gameplayStartCountdownText.transform.localScale = _originalScale * scaleFactor;
         }
 
 
@@ -136,32 +133,13 @@ namespace BattleRoyale.UIModule
 
         public void ShowEliminatedPopup()
         {
-            if (_popupCoroutine != null)
-                StopCoroutine(_popupCoroutine);
-
-            _popupCoroutine = StartCoroutine(EliminationPopupSequence());
+            StartCoroutine(EliminationPopupSequence());
         }
 
         private IEnumerator EliminationPopupSequence()
         {
             _eliminationPopup.SetActive(true);
-            _eliminationPopup.transform.localScale = Vector3.zero;
-
-            float time = 0f;
-            float duration = 0.5f;
-
-            while (time < duration)
-            {
-                float scale = _popupScaleCurve.Evaluate(time / duration);
-                _eliminationPopup.transform.localScale = _popupOriginalScale * scale;
-                time += Time.deltaTime;
-                yield return null;
-            }
-
-            _eliminationPopup.transform.localScale = _popupOriginalScale;
-
             yield return new WaitForSeconds(_popupDuration);
-
             _eliminationPopup.SetActive(false);
         }
 
@@ -171,13 +149,18 @@ namespace BattleRoyale.UIModule
             _rankPanel.SetActive(true);
         }
 
-        private void ShowDisconnectionGameplayUI(ulong clientID)
+        private void HandleClientDisconnectCallbackGameplayUI(ulong clientID)
         {
             if ((NetworkManager.Singleton.IsServer && clientID == NetworkManager.Singleton.LocalClientId && NetworkManager.Singleton.ConnectedClients.Count <= 1) || !NetworkManager.Singleton.IsServer)
             {
-                _disconnectedMessageGameplayUIPopUp.SetActive(true);
-                StartCoroutine(DisconnectedCountdownSequence());
+                ShowDisconnectionGameplayUI();
             }
+        }
+
+        private void ShowDisconnectionGameplayUI()
+        {
+            _disconnectedMessageGameplayUIPopUp.SetActive(true);
+            StartCoroutine(DisconnectedCountdownSequence());
         }
 
         private IEnumerator DisconnectedCountdownSequence()
