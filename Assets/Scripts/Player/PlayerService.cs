@@ -12,7 +12,7 @@ namespace BattleRoyale.PlayerModule
     public class PlayerService
     {
         private PlayerScriptableObject _player_SO;
-        private Dictionary<ulong, PlayerView> players = new();
+        private Dictionary<ulong, PlayerController> players = new();
         private CinemachineCamera _playerCamera;
 
         public PlayerService(PlayerScriptableObject player_SO)
@@ -28,14 +28,14 @@ namespace BattleRoyale.PlayerModule
                 Vector3 directionToCenter = Vector3.zero - spawnPosition;
                 directionToCenter.y = 0f;
 
-                PlayerView playerView = Object.Instantiate(_player_SO.playerPrefab, spawnPosition, Quaternion.LookRotation(directionToCenter));
-                playerView.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
-                playerView.SetUsernameText(PlayerSessionManager.Instance.GetPlayerSessionData(clientId).Username);
+                PlayerController playerController = Object.Instantiate(_player_SO.playerPrefab, spawnPosition, Quaternion.LookRotation(directionToCenter));
+                playerController.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+                playerController.SetUsernameText(PlayerSessionManager.Instance.GetPlayerSessionData(clientId).Username);
 
                 int charSkinColorIndex = PlayerSessionManager.Instance.GetPlayerSessionData(clientId).SkinColorIndex;
-                playerView.SetCharacterSkinMaterial(charSkinColorIndex);
+                playerController.SetCharacterSkinMaterial(charSkinColorIndex);
 
-                players[clientId] = playerView;
+                players[clientId] = playerController;
             }     
         }
 
@@ -54,14 +54,14 @@ namespace BattleRoyale.PlayerModule
         {
             if (players.ContainsKey(clientId))
             {
-                PlayerView playerView = players[clientId];
+                PlayerController playerController = players[clientId];
 
-                if(playerView.NetworkObject.IsSpawned)
+                if(playerController.NetworkObject.IsSpawned)
                 {
-                    playerView.NetworkObject.Despawn();
+                    playerController.NetworkObject.Despawn();
                 }
 
-                Object.Destroy(playerView.gameObject);
+                Object.Destroy(playerController.gameObject);
                 players.Remove(clientId);
             }
         }

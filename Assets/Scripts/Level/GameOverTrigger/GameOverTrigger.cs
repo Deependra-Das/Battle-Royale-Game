@@ -11,12 +11,12 @@ namespace BattleRoyale.LevelModule
     {
         void OnTriggerEnter(Collider other)
         {
-            PlayerView _playerView = other.gameObject.GetComponent<PlayerView>();
-            if (_playerView!=null)
+            PlayerController _playerController = other.gameObject.GetComponent<PlayerController>();
+            if (_playerController!=null)
             {
-                if (_playerView != null && NetworkManager.Singleton.IsServer)
+                if (_playerController != null && NetworkManager.Singleton.IsServer)
                 {
-                    GameplayManager.Instance.HandlePlayerGameOver(_playerView.OwnerClientId);
+                    GameplayManager.Instance.HandlePlayerGameOver(_playerController.OwnerClientId);
                 }
             }
         }

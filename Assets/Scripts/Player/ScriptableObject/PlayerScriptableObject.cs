@@ -6,7 +6,7 @@ namespace BattleRoyale.PlayerModule
     [CreateAssetMenu(fileName = "PlayerScriptableObject", menuName = "ScriptableObjects/PlayerScriptableObject")]
     public class PlayerScriptableObject : ScriptableObject
     {
-        public PlayerView playerPrefab;
+        public PlayerController playerPrefab;
         public CinemachineCamera playerCameraPrefab;
     }
 }

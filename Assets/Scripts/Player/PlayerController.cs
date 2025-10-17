@@ -10,7 +10,7 @@ using UnityEngine.InputSystem;
 
 namespace BattleRoyale.PlayerModule
 {
-    public class PlayerView : NetworkBehaviour
+    public class PlayerController : NetworkBehaviour
     {
         [SerializeField] private GameObject _cinemachineCameraTarget;
         [SerializeField] private CharacterController _charController;
