@@ -173,7 +173,7 @@ namespace BattleRoyale.NetworkModule
                 UpdateGameplayCountdownClientRpc(0);
                 _state.Value = GameplayState.GamePlaying;
                 ActivatePlayerForGameplayClientRpc();
-                //EventBusManager.Instance.Raise(EventName.ActivateTilesForGameplay, true);
+                EventBusManager.Instance.Raise(EventName.ActivateTilesForGameplay, true);
             }
         }
 

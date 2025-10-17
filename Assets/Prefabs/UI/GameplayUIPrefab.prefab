@@ -1237,7 +1237,7 @@ GameObject:
   - component: {fileID: 7151446128634051559}
   - component: {fileID: 1084637183759257969}
   m_Layer: 5
-  m_Name: EliminationCountDownText
+  m_Name: GameplayStartCountDownText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1260,7 +1260,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 320, y: 160}
+  m_SizeDelta: {x: 400, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7151446128634051559
 CanvasRenderer:
@@ -1317,8 +1317,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 120
-  m_fontSizeBase: 120
+  m_fontSize: 160
+  m_fontSizeBase: 160
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1602,18 +1602,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _eliminationsPanel: {fileID: 5989995488424452385}
   _eliminatedCounterText: {fileID: 4927942276941289162}
-  _eliminationCountdownText: {fileID: 1084637183759257969}
-  _animationSpeed: 1
   _rankPanel: {fileID: 7917247976101630167}
   _rankText: {fileID: 6109277047035682414}
+  _gameplayStartCountdownText: {fileID: 1084637183759257969}
+  _animationSpeed: 1
   _eliminationPopup: {fileID: 1042888530430651973}
-  _popupDuration: 2
-  _popupScaleCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  _popupDuration: 3
   _disconnectedMessageGameplayUIPopUp: {fileID: 1158087887594439112}
   _disconnectedCountdownGameplayUIText: {fileID: 3094447666037185117}
   _disconnectedCountdownTime: 5

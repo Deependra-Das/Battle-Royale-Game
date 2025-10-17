@@ -1,3 +1,4 @@
+using BattleRoyale.AudioModule;
 using BattleRoyale.CharacterSelectionModule;
 using BattleRoyale.EventModule;
 using BattleRoyale.LobbyModule;
@@ -72,12 +73,24 @@ namespace BattleRoyale.NetworkModule
             {
                 RequestPlayerRegistrationServerRpc(clientId, AuthenticationService.Instance.PlayerId, PlayerUsername);
             }
+            string activeSceneName = SceneManager.GetActiveScene().name.ToString();
+            Enum.TryParse<SceneName>(activeSceneName, out var sceneEnumValue);
+
+            if (sceneEnumValue == SceneName.CharacterSelectionScene)
+            {
+                AudioManager.Instance.PlaySFX(AudioModule.AudioType.PlayerJoined);
+            }
         }
 
         private void OnClientHostDisconnected(ulong clientId)
         {
             string activeSceneName = SceneManager.GetActiveScene().name.ToString();
             Enum.TryParse<SceneName>(activeSceneName, out var sceneEnumValue);
+
+            if (sceneEnumValue == SceneName.CharacterSelectionScene)
+            {
+                AudioManager.Instance.PlaySFX(AudioModule.AudioType.PlayerLeft);
+            }
 
             if (NetworkManager.Singleton.IsServer && sceneEnumValue == SceneName.CharacterSelectionScene)
             {
@@ -95,13 +108,16 @@ namespace BattleRoyale.NetworkModule
         {
             CURRENT_LOBBY_SIZE = size;
         }
-
-        private IEnumerator DelayedReturnToStartScreen(float duration)
+        public void KickPlayer(int index)
         {
-            yield return new WaitForSeconds(duration);
-            SceneLoader.Instance.LoadScene(SceneName.LobbyScene, true);
+            if (IsServer)
+            {
+                ulong clientId = CharacterManager.Instance.GetCharacterClientIdByIndex(index);
+                LobbyManager.Instance.KickPlayer(PlayerSessionManager.Instance.GetPlayerSessionData(clientId).PlayerId);
+                NetworkManager.Singleton.DisconnectClient(clientId);
+            }
         }
-    
+
         [ServerRpc(RequireOwnership = false)]
         public void RequestPlayerRegistrationServerRpc(ulong clientId, string playerId, string username)
         {
@@ -122,16 +138,6 @@ namespace BattleRoyale.NetworkModule
         public void RequestPlayerDeregistrationServerRpc(ulong clientId)
         {
             PlayerSessionManager.Instance.DeregisterPlayer(clientId);
-        }
-
-        public void KickPlayer(int index)
-        {
-            if (IsServer)
-            {
-                ulong clientId = CharacterManager.Instance.GetCharacterClientIdByIndex(index);
-                LobbyManager.Instance.KickPlayer(PlayerSessionManager.Instance.GetPlayerSessionData(clientId).PlayerId);
-                NetworkManager.Singleton.DisconnectClient(clientId);
-            }
         }
     }
 }
