@@ -221,6 +221,7 @@ namespace BattleRoyale.UIModule
                 LobbyManager.Instance.LeaveLobby();
                 NetworkManager.Singleton.Shutdown();
             }
+            SceneLoader.Instance.LoadScene(SceneName.StartScene, false);
         }
 
         private void OnNoButtonClicked()
