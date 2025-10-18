@@ -18,8 +18,20 @@ namespace BattleRoyale.AudioModule
         private List<AudioClip> _footstepsAudioList;
         private AudioClip _jumpLandAudioClip;
 
-        [Range(0, 1)] public float footstepAudioVolume = 1.0f;
-        [Range(0, 1)] public float tilepopAudioVolume = 1.0f;
+        [Range(0, 1)] [SerializeField] private float _tilepopAudioVolume = 1.0f;
+        [Range(0, 1)] [SerializeField] private float _bgmVolume = 1.0f;
+        [Range(0, 1)] [SerializeField] private float _playerSFXVolume = 1.0f;
+        [Range(0, 1)] [SerializeField] private float _uiSFXVolume = 1.0f;
+
+        private const float _defaultBGMVolume = 0.05f;
+        private const float _defaultPlayerSFXVolume = 1.0f;
+        private const float _defaultUIVolume = 0.5f;
+        private const float _defaultTilePopVolume = 1.0f;
+
+        private const string BGMMusicVolumeKey = "BGMMusicVolume";
+        private const string PlayerSFXVolumeKey = "PlayerSFXVolume";
+        private const string UISFXVolumeKey = "UISFXVolume";
+        private const string TilePopVolumeKey = "TilePopVolume";
 
         protected override void Awake()
         {
@@ -28,6 +40,7 @@ namespace BattleRoyale.AudioModule
 
         void Start()
         {
+            LoadVolumeSettings();
             InitializeSFXAudio();
             InitializeBGMAudio();
             InitializePlayerAudio();
@@ -77,6 +90,7 @@ namespace BattleRoyale.AudioModule
         {
             if (_sfxAudioDictionary.TryGetValue(audioType, out AudioClip clip))
             {
+                audioSource_SFX.volume = _uiSFXVolume;
                 audioSource_SFX.PlayOneShot(clip);
             }
             else
@@ -91,6 +105,7 @@ namespace BattleRoyale.AudioModule
             {
                 audioSource_BGM.loop = true;
                 audioSource_BGM.clip = clip;
+                audioSource_BGM.volume = _bgmVolume;
                 audioSource_BGM.Play();
             }
             else
@@ -104,11 +119,10 @@ namespace BattleRoyale.AudioModule
             switch (audioType)
             {
                 case AudioType.PlayerFootstep:
-
                     if (_footstepsAudioList.Count > 0)
                     {
                         var index = UnityEngine.Random.Range(0, _footstepsAudioList.Count);
-                        AudioSource.PlayClipAtPoint(_footstepsAudioList[index], position, footstepAudioVolume);
+                        AudioSource.PlayClipAtPoint(_footstepsAudioList[index], position, _playerSFXVolume);
                     }
                     else
                     {
@@ -117,10 +131,9 @@ namespace BattleRoyale.AudioModule
                     break;
 
                 case AudioType.PlayerJumpLand:
-
                     if (_jumpLandAudioClip != null)
                     {
-                        AudioSource.PlayClipAtPoint(_jumpLandAudioClip, position, footstepAudioVolume);
+                        AudioSource.PlayClipAtPoint(_jumpLandAudioClip, position, _playerSFXVolume);
                     }
                     else
                     {
@@ -134,12 +147,82 @@ namespace BattleRoyale.AudioModule
         {
             if (_sfxAudioDictionary.TryGetValue(audioType, out AudioClip clip))
             {
-                AudioSource.PlayClipAtPoint(clip, position, tilepopAudioVolume);
+                AudioSource.PlayClipAtPoint(clip, position, _tilepopAudioVolume);
             }
             else
             {
                 Debug.LogWarning("Audio not found for type: " + audioType);
             }
         }
+
+        #region Volume Control Methods
+
+        public void SetBGMVolume(float volume)
+        {
+            _bgmVolume = Mathf.Clamp(volume, 0f, 1f);
+            SaveVolumeSetting(BGMMusicVolumeKey, _bgmVolume);
+        }
+
+        public void SetPlayerSFXVolume(float volume)
+        {
+            _playerSFXVolume = Mathf.Clamp(volume, 0f, 1f);
+            SaveVolumeSetting(PlayerSFXVolumeKey, _playerSFXVolume);
+        }
+
+        public void SetUISFXVolume(float volume)
+        {
+            _uiSFXVolume = Mathf.Clamp(volume, 0f, 1f);
+            SaveVolumeSetting(UISFXVolumeKey, _uiSFXVolume);
+        }
+
+        public void SetTilePopVolume(float volume)
+        {
+            _tilepopAudioVolume = Mathf.Clamp(volume, 0f, 1f);
+            SaveVolumeSetting(TilePopVolumeKey, _tilepopAudioVolume);
+        }
+
+        public void SetAllAudioVolumes(float bgmVol, float playerSFXVol, float uiSFXVol, float tilePopVol)
+        {
+            SetBGMVolume(bgmVol);
+            SetPlayerSFXVolume(playerSFXVol);
+            SetUISFXVolume(uiSFXVol);
+            SetTilePopVolume(tilePopVol);
+        }
+
+        public void RestoreDefaultAudioSettings()
+        {
+            SetBGMVolume(_defaultBGMVolume);
+            SetPlayerSFXVolume(_defaultPlayerSFXVolume);
+            SetUISFXVolume(_defaultUIVolume);
+            SetTilePopVolume(_defaultTilePopVolume);
+        }
+
+        #endregion
+
+        #region Save & Load Methods
+
+        private void SaveVolumeSetting(string key, float volume)
+        {
+            PlayerPrefs.SetFloat(key, volume);
+            PlayerPrefs.Save();
+        }
+
+        private void LoadVolumeSettings()
+        {
+            _bgmVolume = PlayerPrefs.GetFloat(BGMMusicVolumeKey, _defaultBGMVolume);
+            _playerSFXVolume = PlayerPrefs.GetFloat(PlayerSFXVolumeKey, _defaultPlayerSFXVolume);
+            _uiSFXVolume = PlayerPrefs.GetFloat(UISFXVolumeKey, _defaultUIVolume);
+            _tilepopAudioVolume = PlayerPrefs.GetFloat(TilePopVolumeKey, _defaultTilePopVolume);
+
+            audioSource_BGM.volume = _bgmVolume;
+        }
+
+        public float BGMVolume { get { return _bgmVolume; }}
+        public float PlayerSFXVolume { get { return _playerSFXVolume; } }
+        public float UIVolume { get { return _uiSFXVolume; } }
+        public float TilePopVolume { get { return _tilepopAudioVolume; } }
+
+        #endregion
     }
+
 }
