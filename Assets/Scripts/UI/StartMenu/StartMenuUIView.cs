@@ -44,6 +44,7 @@ namespace BattleRoyale.UIModule
         [SerializeField] private Slider _bgmVolumeSlider;
         [SerializeField] private Slider _uiSFXVolumeSlider;
         [SerializeField] private Slider _playerSFXVolumeSlider;
+        [SerializeField] private Slider _tileFXVolumeSlider;
         [SerializeField] private Button _saveAudioSettingsButton;
         [SerializeField] private Button _cancelAudioSettingsButton;
         [SerializeField] private Button _restoreDefaultButton;
@@ -71,6 +72,7 @@ namespace BattleRoyale.UIModule
             _audioSettingsButton.onClick.AddListener(OnAudioSettingsButonClicked);
             _saveAudioSettingsButton.onClick.AddListener(OnSaveAudioSettingsButonClicked);
             _cancelAudioSettingsButton.onClick.AddListener(OnCancelAudioSettingsButonClicked);
+            _restoreDefaultButton.onClick.AddListener(OnRestoreDefaultAudioSettingsButonClicked);
         }
 
         private void UnsubscribeToEvents()
@@ -88,6 +90,7 @@ namespace BattleRoyale.UIModule
             _audioSettingsButton.onClick.RemoveListener(OnAudioSettingsButonClicked);
             _saveAudioSettingsButton.onClick.RemoveListener(OnSaveAudioSettingsButonClicked);
             _cancelAudioSettingsButton.onClick.RemoveListener(OnCancelAudioSettingsButonClicked);
+            _restoreDefaultButton.onClick.RemoveListener(OnRestoreDefaultAudioSettingsButonClicked);
         }
 
         public void Initialize(List<Sprite> galleryImages)
@@ -285,6 +288,7 @@ namespace BattleRoyale.UIModule
 
         private void OnAudioSettingsButonClicked()
         {
+            SetAudioSliderValue();
             ShowAudioSettingsPopup();
         }
 
@@ -293,9 +297,14 @@ namespace BattleRoyale.UIModule
             AudioManager.Instance.PlaySFX(AudioModule.AudioType.ConfirmationPopUp);
             _audioSettingsPopup.SetActive(true);
         }
+        private void HideAudioSettingsPopup()
+        {
+            _audioSettingsPopup.SetActive(false);
+        }
 
         private void OnSaveAudioSettingsButonClicked()
         {
+            AudioManager.Instance.SetAllAudioVolumes(_bgmVolumeSlider.value, _playerSFXVolumeSlider.value, _uiSFXVolumeSlider.value, _tileFXVolumeSlider.value);
             HideAudioSettingsPopup();
         }
 
@@ -303,14 +312,18 @@ namespace BattleRoyale.UIModule
         {
             HideAudioSettingsPopup();
         }
-
-        private void HideAudioSettingsPopup()
+        private void OnRestoreDefaultAudioSettingsButonClicked()
         {
-            _audioSettingsPopup.SetActive(false);
+            AudioManager.Instance.RestoreDefaultAudioSettings();
+            SetAudioSliderValue();
         }
-
-    
-
-    
+        
+        private void SetAudioSliderValue()
+        {
+            _bgmVolumeSlider.value = AudioManager.Instance.BGMVolume;
+            _playerSFXVolumeSlider.value = AudioManager.Instance.PlayerSFXVolume;
+            _uiSFXVolumeSlider.value = AudioManager.Instance.UIVolume;
+            _tileFXVolumeSlider.value = AudioManager.Instance.TilePopVolume;
+        }   
     }
 }
