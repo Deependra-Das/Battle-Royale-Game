@@ -23,6 +23,7 @@ namespace BattleRoyale.UIModule
 
         [Header("Success PopUp")]
         [SerializeField] private GameObject _successPopup;
+        [SerializeField] private TMP_Text _successMessageText;
         [SerializeField] private Button _okButton;
 
         [Header("Change Username PopUp")]
@@ -203,6 +204,7 @@ namespace BattleRoyale.UIModule
 
             HideUsernameInputPopup();
             CheckPlayerNameExists();
+            _successMessageText.text = "Username Saved Successfully!";
             ShowSuccessPopup();
         }
 
@@ -305,17 +307,26 @@ namespace BattleRoyale.UIModule
         private void OnSaveAudioSettingsButonClicked()
         {
             AudioManager.Instance.SetAllAudioVolumes(_bgmVolumeSlider.value, _playerSFXVolumeSlider.value, _uiSFXVolumeSlider.value, _tileFXVolumeSlider.value);
+            _restoreDefaultButton.interactable = true;
             HideAudioSettingsPopup();
+            _successMessageText.text = "Audio Settings Saved Successfully!";
+            ShowSuccessPopup();
         }
 
         private void OnCancelAudioSettingsButonClicked()
         {
+            _restoreDefaultButton.interactable = true;
             HideAudioSettingsPopup();
         }
+
         private void OnRestoreDefaultAudioSettingsButonClicked()
         {
-            AudioManager.Instance.RestoreDefaultAudioSettings();
-            SetAudioSliderValue();
+            _bgmVolumeSlider.value = AudioManager.Instance.DefaultBGMVolume;
+            _playerSFXVolumeSlider.value = AudioManager.Instance.DefaultPlayerSFXVolume;
+            _uiSFXVolumeSlider.value = AudioManager.Instance.DefaultUIVolume;
+            _tileFXVolumeSlider.value = AudioManager.Instance.DefaultTilePopVolume;
+
+            _restoreDefaultButton.interactable = false;
         }
         
         private void SetAudioSliderValue()

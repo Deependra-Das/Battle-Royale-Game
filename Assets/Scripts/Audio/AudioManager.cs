@@ -189,13 +189,15 @@ namespace BattleRoyale.AudioModule
             SetTilePopVolume(tilePopVol);
         }
 
-        public void RestoreDefaultAudioSettings()
-        {
-            SetBGMVolume(_defaultBGMVolume);
-            SetPlayerSFXVolume(_defaultPlayerSFXVolume);
-            SetUISFXVolume(_defaultUIVolume);
-            SetTilePopVolume(_defaultTilePopVolume);
-        }
+        public float BGMVolume { get { return _bgmVolume; } }
+        public float PlayerSFXVolume { get { return _playerSFXVolume; } }
+        public float UIVolume { get { return _uiSFXVolume; } }
+        public float TilePopVolume { get { return _tilepopAudioVolume; } }
+
+        public float DefaultBGMVolume { get { return _defaultBGMVolume; } }
+        public float DefaultPlayerSFXVolume { get { return _defaultPlayerSFXVolume; } }
+        public float DefaultUIVolume { get { return _defaultUIVolume; } }
+        public float DefaultTilePopVolume { get { return _defaultTilePopVolume; } }
 
         #endregion
 
@@ -216,11 +218,6 @@ namespace BattleRoyale.AudioModule
 
             audioSource_BGM.volume = _bgmVolume;
         }
-
-        public float BGMVolume { get { return _bgmVolume; }}
-        public float PlayerSFXVolume { get { return _playerSFXVolume; } }
-        public float UIVolume { get { return _uiSFXVolume; } }
-        public float TilePopVolume { get { return _tilepopAudioVolume; } }
 
         #endregion
     }
