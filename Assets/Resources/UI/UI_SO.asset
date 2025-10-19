@@ -18,5 +18,7 @@ MonoBehaviour:
   gameplayUIPrefab: {fileID: 3082746108889097132, guid: b01f7dcab1897e94c9140fa64551da1b, type: 3}
   gameOverUIPrefab: {fileID: 5326468102242051605, guid: 4438e482f6efbf345996237b2d3cd007, type: 3}
   scoreboardEntryUIPrefab: {fileID: 3022402256903129148, guid: f546b42099dd83e40bf2a770d5e682f6, type: 3}
-  gameplayCountdownDuration: 3
-  gameOverCountdownDuration: 15
+  galleryImages:
+  - {fileID: 735483999, guid: 84ff3faaa6456a94aa5c2cad083582b4, type: 3}
+  - {fileID: 1101419115, guid: 00cb115c98de7b54ebd48063ee514799, type: 3}
+  - {fileID: 735483999, guid: 84ff3faaa6456a94aa5c2cad083582b4, type: 3}

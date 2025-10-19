@@ -36,6 +36,7 @@ namespace BattleRoyale.UIModule
         [Header("How To Play PopUp")]
         [SerializeField] private GameObject _howToPlayPopup;
         [SerializeField] private Image _displayImage;
+        [SerializeField] private TMP_Text _currentImageIndexText;
         [SerializeField] private Button _nextButton;
         [SerializeField] private Button _prevButton;
         [SerializeField] private Button _closeHowToPlayButton;
@@ -51,10 +52,10 @@ namespace BattleRoyale.UIModule
         [SerializeField] private Button _restoreDefaultButton;
 
         private List<Sprite> _galleryImageList;
-        private int currentIndex = 0;
+        private int _currentImageIndex = 0;
 
-        private const int minUserNameLength = 3;
-        private const int maxUserNameLength = 15;
+        private const int _minUserNameLength = 3;
+        private const int _maxUserNameLength = 15;
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -74,6 +75,8 @@ namespace BattleRoyale.UIModule
             _saveAudioSettingsButton.onClick.AddListener(OnSaveAudioSettingsButonClicked);
             _cancelAudioSettingsButton.onClick.AddListener(OnCancelAudioSettingsButonClicked);
             _restoreDefaultButton.onClick.AddListener(OnRestoreDefaultAudioSettingsButonClicked);
+            _nextButton.onClick.AddListener(OnNextImageButtonClicked);
+            _prevButton.onClick.AddListener(OnPreviousImageButtonClicked);
         }
 
         private void UnsubscribeToEvents()
@@ -92,23 +95,13 @@ namespace BattleRoyale.UIModule
             _saveAudioSettingsButton.onClick.RemoveListener(OnSaveAudioSettingsButonClicked);
             _cancelAudioSettingsButton.onClick.RemoveListener(OnCancelAudioSettingsButonClicked);
             _restoreDefaultButton.onClick.RemoveListener(OnRestoreDefaultAudioSettingsButonClicked);
+            _nextButton.onClick.RemoveListener(OnNextImageButtonClicked);
+            _prevButton.onClick.RemoveListener(OnPreviousImageButtonClicked);
         }
 
         public void Initialize(List<Sprite> galleryImages)
         {
             _galleryImageList = galleryImages;
-
-            if (_galleryImageList != null && _galleryImageList.Count > 0)
-            {
-                _displayImage.sprite = _galleryImageList[currentIndex];
-            }
-            else
-            {
-                Debug.LogWarning("Gallery is empty or null.");
-            }
-
-            _nextButton.onClick.AddListener(OnNextImageButtonClicked);
-            _prevButton.onClick.AddListener(OnPreviousImageButtonClicked);
         }
 
         private void OnNewGameButtonClicked()
@@ -182,7 +175,7 @@ namespace BattleRoyale.UIModule
                 AudioManager.Instance.PlaySFX(AudioModule.AudioType.ErrorPopUp);
                 return;
             }
-            if (username.Length < minUserNameLength || username.Length > maxUserNameLength)
+            if (username.Length < _minUserNameLength || username.Length > _maxUserNameLength)
             {
                 _errorMessageText.text = "Username must be 3-16 characters long!";
                 AudioManager.Instance.PlaySFX(AudioModule.AudioType.ErrorPopUp);
@@ -239,10 +232,11 @@ namespace BattleRoyale.UIModule
 
         void OnNextImageButtonClicked()
         {
-            if (currentIndex < _galleryImageList.Count - 1)
+            if (_currentImageIndex < _galleryImageList.Count - 1)
             {
-                currentIndex++;
-                _displayImage.sprite = _galleryImageList[currentIndex];
+                _currentImageIndex++;
+                SetHowToPlayDisplayImage();
+                UpdateCurrentImageIndexText();
             }
             else
             {
@@ -254,10 +248,11 @@ namespace BattleRoyale.UIModule
 
         void OnPreviousImageButtonClicked()
         {
-            if (currentIndex > 0)
+            if (_currentImageIndex > 0)
             {
-                currentIndex--;
-                _displayImage.sprite = _galleryImageList[currentIndex];
+                _currentImageIndex--;
+                SetHowToPlayDisplayImage();
+                UpdateCurrentImageIndexText();
             }
             else
             {
@@ -267,8 +262,21 @@ namespace BattleRoyale.UIModule
             _nextButton.interactable = true;
         }
 
+        private void UpdateCurrentImageIndexText()
+        {
+            _currentImageIndexText.text = (_currentImageIndex + 1).ToString()+"/"+_galleryImageList.Count;
+        }
+
+        private void SetHowToPlayDisplayImage()
+        {
+            _displayImage.sprite = _galleryImageList[_currentImageIndex];
+        }
+
         private void OnHowToPlayButonClicked()
         {
+            _currentImageIndex = 0;
+            SetHowToPlayDisplayImage();
+            UpdateCurrentImageIndexText();
             ShowHowTopPlayPopup();
         }
 
@@ -307,7 +315,6 @@ namespace BattleRoyale.UIModule
         private void OnSaveAudioSettingsButonClicked()
         {
             AudioManager.Instance.SetAllAudioVolumes(_bgmVolumeSlider.value, _playerSFXVolumeSlider.value, _uiSFXVolumeSlider.value, _tileFXVolumeSlider.value);
-            _restoreDefaultButton.interactable = true;
             HideAudioSettingsPopup();
             _successMessageText.text = "Audio Settings Saved Successfully!";
             ShowSuccessPopup();
@@ -315,7 +322,6 @@ namespace BattleRoyale.UIModule
 
         private void OnCancelAudioSettingsButonClicked()
         {
-            _restoreDefaultButton.interactable = true;
             HideAudioSettingsPopup();
         }
 
@@ -325,8 +331,6 @@ namespace BattleRoyale.UIModule
             _playerSFXVolumeSlider.value = AudioManager.Instance.DefaultPlayerSFXVolume;
             _uiSFXVolumeSlider.value = AudioManager.Instance.DefaultUIVolume;
             _tileFXVolumeSlider.value = AudioManager.Instance.DefaultTilePopVolume;
-
-            _restoreDefaultButton.interactable = false;
         }
         
         private void SetAudioSliderValue()
