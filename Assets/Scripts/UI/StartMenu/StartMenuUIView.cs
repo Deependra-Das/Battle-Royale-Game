@@ -101,7 +101,10 @@ namespace BattleRoyale.UIModule
 
         public void Initialize(List<Sprite> galleryImages)
         {
-            _galleryImageList = galleryImages;
+            if (galleryImages != null && galleryImages.Count > 0)
+            {
+                _galleryImageList = galleryImages;
+            }
         }
 
         private void OnNewGameButtonClicked()
@@ -238,7 +241,8 @@ namespace BattleRoyale.UIModule
                 SetHowToPlayDisplayImage();
                 UpdateCurrentImageIndexText();
             }
-            else
+
+            if (_currentImageIndex >= _galleryImageList.Count - 1)
             {
                 _nextButton.interactable = false;
             }
@@ -254,7 +258,8 @@ namespace BattleRoyale.UIModule
                 SetHowToPlayDisplayImage();
                 UpdateCurrentImageIndexText();
             }
-            else
+
+            if (_currentImageIndex <= 0)
             {
                 _prevButton.interactable = false;
             }
@@ -277,6 +282,7 @@ namespace BattleRoyale.UIModule
             _currentImageIndex = 0;
             SetHowToPlayDisplayImage();
             UpdateCurrentImageIndexText();
+            _prevButton.interactable = false;
             ShowHowTopPlayPopup();
         }
 
