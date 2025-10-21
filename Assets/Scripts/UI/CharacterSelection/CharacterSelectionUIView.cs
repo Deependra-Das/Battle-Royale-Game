@@ -24,7 +24,6 @@ namespace BattleRoyale.UIModule
         [SerializeField] private TMP_Text _lobbyCodeText;
         [SerializeField] private TMP_Text _lobbyPrivacyText;
         [SerializeField] private TMP_Text _lobbyCapacityText;
-        [SerializeField] private TMP_Text _lobbyAvaialableSlotsText;
 
         [Header ("Disconnected PopUp")] 
         [SerializeField] private GameObject _disconnectedPopUp;
@@ -107,8 +106,7 @@ namespace BattleRoyale.UIModule
             _lobbyNameText.text = lobby.Name;
             _lobbyCodeText.text = lobby.LobbyCode;
             _lobbyPrivacyText.text = lobby.IsPrivate ? "Private" : "Public";
-            _lobbyCapacityText.text = lobby.MaxPlayers.ToString();
-            _lobbyAvaialableSlotsText.text = lobby.AvailableSlots.ToString();
+            _lobbyCapacityText.text = lobby.AvailableSlots.ToString()+"/"+lobby.MaxPlayers.ToString();
         }
 
         void CreateColorButtons()
