@@ -2,7 +2,6 @@ using BattleRoyale.AudioModule;
 using BattleRoyale.NetworkModule;
 using BattleRoyale.UIModule;
 using Unity.Netcode;
-using UnityEngine;
 
 namespace BattleRoyale.MainModule
 {

@@ -4,13 +4,9 @@ using BattleRoyale.EventModule;
 using BattleRoyale.LevelModule;
 using BattleRoyale.NetworkModule;
 using BattleRoyale.PlayerModule;
-using BattleRoyale.SceneModule;
 using BattleRoyale.UIModule;
 using BattleRoyale.UtilitiesModule;
-using System.Collections;
-using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace BattleRoyale.MainModule
 {
@@ -23,7 +19,7 @@ namespace BattleRoyale.MainModule
         [SerializeField] public CharacterScriptableObject character_SO;
         [SerializeField] public EnvironmentScriptableObject environment_SO; 
 
-       private GameStateMachine _stateMachine;
+        private GameStateMachine _stateMachine;
 
         public const string UsernameKey = "Username";
 

@@ -55,7 +55,6 @@ namespace BattleRoyale.MainModule
 
         private void MainMenuCleanup()
         {
-
             if (LobbyManager.Instance != null)
             {
                 UnityEngine.Object.Destroy(LobbyManager.Instance.gameObject);

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace BattleRoyale.MainModule
 {
@@ -38,6 +37,7 @@ namespace BattleRoyale.MainModule
                 if (state.Value == _currentState)
                     return state.Key;
             }
+
             return GameState.Start;
         }
     }

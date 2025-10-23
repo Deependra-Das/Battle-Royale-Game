@@ -45,8 +45,6 @@ namespace BattleRoyale.MainModule
             {
                 throw new InvalidOperationException($"Service of type {type.Name} is not registered.");
             }
-
-
         }
     }
 }

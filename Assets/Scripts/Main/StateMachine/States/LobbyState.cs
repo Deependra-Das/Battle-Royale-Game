@@ -1,12 +1,5 @@
 using BattleRoyale.AudioModule;
-using BattleRoyale.EventModule;
-using BattleRoyale.NetworkModule;
-using BattleRoyale.SceneModule;
 using BattleRoyale.UIModule;
-using System;
-using Unity.Netcode;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace BattleRoyale.MainModule
 {

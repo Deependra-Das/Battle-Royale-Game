@@ -48,6 +48,7 @@ namespace BattleRoyale.MainModule
                 {
                     GameplayManager.Instance.NetworkObject.Despawn();
                 }
+
                 UnityEngine.Object.Destroy(GameplayManager.Instance.gameObject);
             }
         }
