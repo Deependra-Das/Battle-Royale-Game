@@ -1,8 +1,6 @@
-using BattleRoyale.CharacterSelectionModule;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
-using UnityEngine;
 
 namespace BattleRoyale.NetworkModule
 {
@@ -29,6 +27,83 @@ namespace BattleRoyale.NetworkModule
             if (IsServer)
             {
                 RegisterPlayerServerRpc(clientId,playerId, username);
+            }
+        }        
+
+        public void SyncSessionDataToClient(ulong targetClientId)
+        {
+            if (!IsServer) return;
+
+            var dataArray = _sessionData.Values
+                .Select(data => new PlayerSessionDataDTO(data))
+                .ToArray();
+
+            var rpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new[] { targetClientId }
+                }
+            };
+
+            SyncAllSessionDataClientRpc(dataArray, rpcParams);
+        }
+
+
+        public PlayerSessionData GetPlayerSessionData(ulong clientId)
+        {
+            return _sessionData.TryGetValue(clientId, out var data) ? data : null;
+        }
+
+        public Dictionary<ulong, PlayerSessionData> GetAllPlayerSessionData()
+        {
+            return new Dictionary<ulong, PlayerSessionData>(_sessionData);
+        }
+
+        public void ResetAllSessions()
+        {
+            if (IsServer)
+            {
+                RemoveDisconnectedClientsServerRpc();
+
+                foreach (var data in _sessionData.Values)
+                {
+                    data.Reset();
+                    SyncPlayerStatusClientRpc(data.ClientId, PlayerState.Waiting);
+                    SyncPlayerRankClientRpc(data.ClientId, -1);
+                }
+            }
+        }
+
+        public void ClearAllSessions()
+        {
+            if (IsServer)
+            {
+                _sessionData.Clear();
+            }
+        }
+
+        public void DeregisterPlayer(ulong clientId)
+        {
+            if (IsServer && _sessionData.ContainsKey(clientId))
+            {
+                _sessionData.Remove(clientId);
+                RemovePlayerSessionClientRpc(clientId);
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void RemoveDisconnectedClientsServerRpc()
+        {
+            var disconnectedPlayers = _sessionData
+           .Where(entry => entry.Value.ConnectionStatus == PlayerConnectionState.Disconnected)
+           .Select(entry => entry.Key)
+           .ToList();
+
+            foreach (var clientId in disconnectedPlayers)
+            {
+                _sessionData.Remove(clientId);
+                RemovePlayerSessionClientRpc(clientId);
             }
         }
 
@@ -145,90 +220,13 @@ namespace BattleRoyale.NetworkModule
             {
                 if (!_sessionData.ContainsKey(dto.ClientId))
                 {
-                    _sessionData[dto.ClientId] = new PlayerSessionData(dto.ClientId,dto.PlayerId, dto.Username);
+                    _sessionData[dto.ClientId] = new PlayerSessionData(dto.ClientId, dto.PlayerId, dto.Username);
                 }
 
                 _sessionData[dto.ClientId].SetGameplayStatus(dto.Status);
                 _sessionData[dto.ClientId].SetConnectionStatus(dto.ConnectionStatus);
                 _sessionData[dto.ClientId].SetRank(dto.Rank);
                 _sessionData[dto.ClientId].SetSkinColorIndex(dto.SkinColorIndex);
-            }
-        }
-
-        public void SyncSessionDataToClient(ulong targetClientId)
-        {
-            if (!IsServer) return;
-
-            var dataArray = _sessionData.Values
-                .Select(data => new PlayerSessionDataDTO(data))
-                .ToArray();
-
-            var rpcParams = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = new[] { targetClientId }
-                }
-            };
-
-            SyncAllSessionDataClientRpc(dataArray, rpcParams);
-        }
-
-
-        public PlayerSessionData GetPlayerSessionData(ulong clientId)
-        {
-            return _sessionData.TryGetValue(clientId, out var data) ? data : null;
-        }
-
-        public Dictionary<ulong, PlayerSessionData> GetAllPlayerSessionData()
-        {
-            return new Dictionary<ulong, PlayerSessionData>(_sessionData);
-        }
-
-        public void ResetAllSessions()
-        {
-            if (IsServer)
-            {
-                RemoveDisconnectedClientsServerRpc();
-
-                foreach (var data in _sessionData.Values)
-                {
-                    data.Reset();
-                    SyncPlayerStatusClientRpc(data.ClientId, PlayerState.Waiting);
-                    SyncPlayerRankClientRpc(data.ClientId, -1);
-                }
-            }
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void RemoveDisconnectedClientsServerRpc()
-        {
-            var disconnectedPlayers = _sessionData
-           .Where(entry => entry.Value.ConnectionStatus == PlayerConnectionState.Disconnected)
-           .Select(entry => entry.Key)
-           .ToList();
-
-            foreach (var clientId in disconnectedPlayers)
-            {
-                _sessionData.Remove(clientId);
-                RemovePlayerSessionClientRpc(clientId);
-            }
-        }
-
-        public void ClearAllSessions()
-        {
-            if (IsServer)
-            {
-                _sessionData.Clear();
-            }
-        }
-
-        public void DeregisterPlayer(ulong clientId)
-        {
-            if (IsServer && _sessionData.ContainsKey(clientId))
-            {
-                _sessionData.Remove(clientId);
-                RemovePlayerSessionClientRpc(clientId);
             }
         }
 

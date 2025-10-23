@@ -93,7 +93,6 @@ namespace BattleRoyale.NetworkModule
             {
                 StartCoroutine(GameOverWaitBeforeScoreCardCoroutine(_waitDurationBeforeScoreBoard));
             }
-     
         }
     }
 }

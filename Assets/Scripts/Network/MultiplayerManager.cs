@@ -5,7 +5,6 @@ using BattleRoyale.LobbyModule;
 using BattleRoyale.MainModule;
 using BattleRoyale.SceneModule;
 using System;
-using System.Collections;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
