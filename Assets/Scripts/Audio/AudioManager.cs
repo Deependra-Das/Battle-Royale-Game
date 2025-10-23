@@ -161,6 +161,7 @@ namespace BattleRoyale.AudioModule
         {
             _bgmVolume = Mathf.Clamp(volume, 0f, 1f);
             SaveVolumeSetting(BGMMusicVolumeKey, _bgmVolume);
+            audioSource_BGM.volume = _bgmVolume;
         }
 
         public void SetPlayerSFXVolume(float volume)
