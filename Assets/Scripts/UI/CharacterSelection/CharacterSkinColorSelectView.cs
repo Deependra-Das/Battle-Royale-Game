@@ -1,5 +1,3 @@
-using BattleRoyale.NetworkModule;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 

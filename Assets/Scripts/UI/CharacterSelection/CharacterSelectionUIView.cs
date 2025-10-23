@@ -1,5 +1,4 @@
 using BattleRoyale.AudioModule;
-using BattleRoyale.EventModule;
 using BattleRoyale.LobbyModule;
 using BattleRoyale.NetworkModule;
 using BattleRoyale.PlayerModule;
@@ -46,10 +45,10 @@ namespace BattleRoyale.UIModule
         [SerializeField] private Transform _kickButtonContainer;
         [SerializeField] private HorizontalLayoutGroup _kickButtonContainerLayoutGroup;
 
-        private List<Toggle> toggles = new List<Toggle>();
+        private List<Toggle> _toggles = new List<Toggle>();
         private int[] buttonOrder = { 6, 4, 2, 0, 1, 3, 5, 7 };
-        private List<GameObject> buttonsList = new List<GameObject>();
-        private bool isInitialSetup = true;
+        private List<GameObject> _buttonsList = new List<GameObject>();
+        private bool _isInitialSetup = true;
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -76,7 +75,7 @@ namespace BattleRoyale.UIModule
             NetworkManager.Singleton.OnClientConnectedCallback -= HandleClientConnectCallbackCharSelectUI;
             NetworkManager.Singleton.OnClientDisconnectCallback -= HandleClientDisconnectCallbackCharSelectUI;
 
-            foreach (var toggle in toggles)
+            foreach (var toggle in _toggles)
             {
                 toggle.onValueChanged.RemoveListener((isOn) => OnToggleChanged(toggle, isOn, toggle.group.transform.GetSiblingIndex()));
             }
@@ -97,7 +96,7 @@ namespace BattleRoyale.UIModule
                 CreateKickButtons();
             }
 
-            isInitialSetup = false;
+            _isInitialSetup = false;
         }
 
         private void SetLobbyInformation()
@@ -116,7 +115,7 @@ namespace BattleRoyale.UIModule
                 AddRadioButton(_charSkinMatInfo_SO.charSkinInfoList[i].skincolorIndex, _charSkinMatInfo_SO.charSkinInfoList[i].skinColorName, _charSkinMatInfo_SO.charSkinInfoList[i].skincolorHexValue);
             }
 
-            toggles[0].isOn = true;
+            _toggles[0].isOn = true;
         }
 
         public void AddRadioButton(int togglecolorIndex, string toggleColorName, string toggleColor)
@@ -126,7 +125,7 @@ namespace BattleRoyale.UIModule
             Toggle newToggle = toggleObject.GetComponent<Toggle>();
             colorButtonSelectObj.Initialize(togglecolorIndex, toggleColorName, toggleColor);
 
-            toggles.Add(newToggle);
+            _toggles.Add(newToggle);
             newToggle.onValueChanged.AddListener((isOn) => OnToggleChanged(newToggle, isOn, togglecolorIndex));
         }
 
@@ -138,13 +137,13 @@ namespace BattleRoyale.UIModule
                 PlayerLobbyStateManager.Instance.ChangeCharacterSkin(index);
             }
 
-            if (isInitialSetup) return;
+            if (_isInitialSetup) return;
             AudioManager.Instance.PlaySFX(AudioModule.AudioType.CharacterSkinChanged);
         }
 
         private void DeactivateOtherToggles(Toggle changedToggle)
         {
-            foreach (var toggle in toggles)
+            foreach (var toggle in _toggles)
             {
                 if (toggle != changedToggle)
                 {
@@ -155,7 +154,7 @@ namespace BattleRoyale.UIModule
 
         public void HideAllToggles()
         {
-            foreach (var toggle in toggles)
+            foreach (var toggle in _toggles)
             {
                 toggle.gameObject.SetActive(false);
             }
@@ -163,7 +162,7 @@ namespace BattleRoyale.UIModule
 
         public void ShowAllToggles()
         {
-            foreach (var toggle in toggles)
+            foreach (var toggle in _toggles)
             {
                 toggle.gameObject.SetActive(true);
             }
@@ -301,10 +300,10 @@ namespace BattleRoyale.UIModule
 
                 int buttonIndex = buttonOrder[i];
                 newButton.GetComponent<Button>().onClick.AddListener(() => OnKickButtonClicked(buttonIndex));
-                buttonsList.Add(newButton);
+                _buttonsList.Add(newButton);
             }
 
-            foreach (var button in buttonsList)
+            foreach (var button in _buttonsList)
             {
                 button.SetActive(false);
             }
@@ -329,11 +328,11 @@ namespace BattleRoyale.UIModule
                 {
                     if (buttonOrder[i] < clients.Count && buttonOrder[i] > 0)
                     {
-                        buttonsList[i].SetActive(true);
+                        _buttonsList[i].SetActive(true);
                     }
                     else
                     {
-                        buttonsList[i].SetActive(false);
+                        _buttonsList[i].SetActive(false);
                     }
                 }
             }

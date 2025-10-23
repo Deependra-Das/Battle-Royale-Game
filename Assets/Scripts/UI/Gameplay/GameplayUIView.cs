@@ -1,13 +1,10 @@
 using BattleRoyale.AudioModule;
 using BattleRoyale.EventModule;
-using BattleRoyale.MainModule;
 using BattleRoyale.SceneModule;
 using System.Collections;
 using TMPro;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace BattleRoyale.UIModule

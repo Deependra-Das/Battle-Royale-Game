@@ -1,7 +1,6 @@
 using BattleRoyale.AudioModule;
 using BattleRoyale.MainModule;
 using BattleRoyale.SceneModule;
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;
