@@ -19,6 +19,6 @@ MonoBehaviour:
   gameOverUIPrefab: {fileID: 5326468102242051605, guid: 4438e482f6efbf345996237b2d3cd007, type: 3}
   scoreboardEntryUIPrefab: {fileID: 3022402256903129148, guid: f546b42099dd83e40bf2a770d5e682f6, type: 3}
   galleryImages:
-  - {fileID: 735483999, guid: 84ff3faaa6456a94aa5c2cad083582b4, type: 3}
-  - {fileID: 1101419115, guid: 00cb115c98de7b54ebd48063ee514799, type: 3}
-  - {fileID: 735483999, guid: 84ff3faaa6456a94aa5c2cad083582b4, type: 3}
+  - {fileID: 1729470615, guid: ca8b2407bf09ede4780698f6244ae570, type: 3}
+  - {fileID: -1740509338, guid: 390c151eba35c984eb130a708f3e5fcd, type: 3}
+  - {fileID: -941105664, guid: bd1e6165ab266084cbe1976aa51f1461, type: 3}
