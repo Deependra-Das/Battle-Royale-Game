@@ -1,4 +1,3 @@
-using BattleRoyale.TileModule;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -103,29 +102,28 @@ namespace BattleRoyale.LevelModule
                 yield return GenerateHexTileMapCoroutine(_mapFloorRadius, newFloor.transform, _hexTilePrefabList[i]);
             }
         }
-
      
-    private IEnumerator GenerateSpawnTileClusterCoroutine(int numberOfPlayers)
-    {
-        float angleIncrement = 360f / numberOfPlayers;
-        for (int i = 0; i < numberOfPlayers; i++)
+        private IEnumerator GenerateSpawnTileClusterCoroutine(int numberOfPlayers)
         {
-            float angle = i * angleIncrement;
-            float radian = angle * Mathf.Deg2Rad;
-            Vector3 position = new Vector3(Mathf.Cos(radian) * _spawnFloorRadius, (_floorCount + 1) * _floorHeightIncrement, Mathf.Sin(radian) * _spawnFloorRadius);
-            GameObject newSpawnTileCluster = Object.Instantiate(_spawnContainerPrefab, position, Quaternion.identity);
-            newSpawnTileCluster.name = "SpawnTileCluster_" + (i + 1);
+            float angleIncrement = 360f / numberOfPlayers;
+            for (int i = 0; i < numberOfPlayers; i++)
+            {
+                float angle = i * angleIncrement;
+                float radian = angle * Mathf.Deg2Rad;
+                Vector3 position = new Vector3(Mathf.Cos(radian) * _spawnFloorRadius, (_floorCount + 1) * _floorHeightIncrement, Mathf.Sin(radian) * _spawnFloorRadius);
+                GameObject newSpawnTileCluster = Object.Instantiate(_spawnContainerPrefab, position, Quaternion.identity);
+                newSpawnTileCluster.name = "SpawnTileCluster_" + (i + 1);
 
-            _playerSpawnPointsList.Add(position + new Vector3(0,0.5f,0));
-            _floorsList.Add(newSpawnTileCluster);
+                _playerSpawnPointsList.Add(position + new Vector3(0,0.5f,0));
+                _floorsList.Add(newSpawnTileCluster);
 
-            NetworkObject networkObject = newSpawnTileCluster.GetComponent<NetworkObject>();
-            if (networkObject != null) networkObject.Spawn();
-            newSpawnTileCluster.transform.parent = _parentTransform;
+                NetworkObject networkObject = newSpawnTileCluster.GetComponent<NetworkObject>();
+                if (networkObject != null) networkObject.Spawn();
+                newSpawnTileCluster.transform.parent = _parentTransform;
 
-            yield return GenerateHexTileMapCoroutine(_spawnClusterRadius, newSpawnTileCluster.transform, _hexTilePrefabList[0]);
+                yield return GenerateHexTileMapCoroutine(_spawnClusterRadius, newSpawnTileCluster.transform, _hexTilePrefabList[0]);
+            }
         }
-    }
 
         private IEnumerator GenerateHexTileMapCoroutine(int radius, Transform container, GameObject hexTilePrefab)
         {

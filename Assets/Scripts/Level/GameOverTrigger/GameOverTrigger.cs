@@ -1,7 +1,5 @@
-using BattleRoyale.MainModule;
 using BattleRoyale.PlayerModule;
 using BattleRoyale.NetworkModule;
-using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
