@@ -664,7 +664,7 @@ GameObject:
   - component: {fileID: 2005574013}
   - component: {fileID: 2005574014}
   m_Layer: 0
-  m_Name: SplashScreenController
+  m_Name: SplashScreenManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -697,9 +697,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: deaf46e5dcff14a4d984510b2bba4dce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SplashScreenManager
-  splashCanvasGroup: {fileID: 2122317867}
-  fadeDuration: 1.5
-  displayDuration: 3
+  _splashCanvasGroup: {fileID: 2122317867}
+  _fadeDuration: 1.5
+  _displayDuration: 3
 --- !u!1 &2103376336
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,15 +1,14 @@
 using BattleRoyale.SceneModule;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace BattleRoyale.SplashModule
 {
     public class SplashScreenManager : MonoBehaviour
     {
         [Header("Fade Settings")]
-        [SerializeField] private CanvasGroup splashCanvasGroup;
-        [SerializeField] private float fadeDuration = 1.5f;
-        [SerializeField] private float displayDuration = 3f;
+        [SerializeField] private CanvasGroup _splashCanvasGroup;
+        [SerializeField] private float _fadeDuration = 1.5f;
+        [SerializeField] private float _displayDuration = 3f;
 
         private void Start()
         {
@@ -20,22 +19,22 @@ namespace BattleRoyale.SplashModule
         {
             float fadeInElapsedTime = 0f;
 
-            while (fadeInElapsedTime < fadeDuration)
+            while (fadeInElapsedTime < _fadeDuration)
             {
                 fadeInElapsedTime += Time.deltaTime;
-                float fadeInProgress = fadeInElapsedTime / fadeDuration;
-                splashCanvasGroup.alpha = Mathf.Lerp(0f, 1f, fadeInProgress);
+                float fadeInProgress = fadeInElapsedTime / _fadeDuration;
+                _splashCanvasGroup.alpha = Mathf.Lerp(0f, 1f, fadeInProgress);
                 yield return null;
             }
 
-            yield return new WaitForSeconds(displayDuration);
+            yield return new WaitForSeconds(_displayDuration);
 
             float fadeOutElapsedTime = 0f;
-            while (fadeOutElapsedTime < fadeDuration)
+            while (fadeOutElapsedTime < _fadeDuration)
             {
                 fadeOutElapsedTime += Time.deltaTime;
-                float fadeOutProgress = fadeOutElapsedTime / fadeDuration;
-                splashCanvasGroup.alpha = Mathf.Lerp(1f, 0f, fadeOutProgress);
+                float fadeOutProgress = fadeOutElapsedTime / _fadeDuration;
+                _splashCanvasGroup.alpha = Mathf.Lerp(1f, 0f, fadeOutProgress);
                 yield return null;
             }
 
