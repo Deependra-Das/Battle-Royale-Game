@@ -1,10 +1,7 @@
 using BattleRoyale.AudioModule;
 using BattleRoyale.EventModule;
-using BattleRoyale.LevelModule;
-using BattleRoyale.MainModule;
 using BattleRoyale.NetworkModule;
 using System.Collections;
-using System.Globalization;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -19,12 +16,10 @@ namespace BattleRoyale.TileModule
 
         private Vector3 _originalScale;
 
-        [SerializeField]
-        private NetworkVariable<HexTileStates> _networkTileState =
+        [SerializeField] private NetworkVariable<HexTileStates> _networkTileState =
             new NetworkVariable<HexTileStates>(HexTileStates.Untouched, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-        [SerializeField]
-        private NetworkVariable<bool> _networkIsTileActive =
+        [SerializeField] private NetworkVariable<bool> _networkIsTileActive =
             new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         private void OnEnable()
@@ -69,24 +64,6 @@ namespace BattleRoyale.TileModule
             {
                 SetTileTouchedServerRpc();
             }
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        private void SetTileTouchedServerRpc()
-        {
-            if (_networkTileState.Value != HexTileStates.Untouched) return;
-
-            _networkTileState.Value = HexTileStates.Touched;
-            PlayTileTouchedVisualsClientRpc();
-            StartCoroutine(DeactivateTileAfterDelay());
-        }
-
-        [ClientRpc]
-        private void PlayTileTouchedVisualsClientRpc()
-        {
-            AudioManager.Instance.PlayTilePopSFX(AudioModule.AudioType.TilePop, transform.TransformPoint((Vector3.zero)));
-            StartCoroutine(ChangeMaterial());
-            StartCoroutine(ScaleObject(transform.localScale, _targetScale, _lifetime));
         }
 
         private IEnumerator DeactivateTileAfterDelay()
@@ -138,6 +115,24 @@ namespace BattleRoyale.TileModule
                 yield return null;
             }
             transform.localScale = finalScale;
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void SetTileTouchedServerRpc()
+        {
+            if (_networkTileState.Value != HexTileStates.Untouched) return;
+
+            _networkTileState.Value = HexTileStates.Touched;
+            PlayTileTouchedVisualsClientRpc();
+            StartCoroutine(DeactivateTileAfterDelay());
+        }
+
+        [ClientRpc]
+        private void PlayTileTouchedVisualsClientRpc()
+        {
+            AudioManager.Instance.PlayTilePopSFX(AudioModule.AudioType.TilePop, transform.TransformPoint((Vector3.zero)));
+            StartCoroutine(ChangeMaterial());
+            StartCoroutine(ScaleObject(transform.localScale, _targetScale, _lifetime));
         }
     }
 }
