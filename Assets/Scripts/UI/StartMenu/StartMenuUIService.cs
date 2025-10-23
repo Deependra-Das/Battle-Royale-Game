@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace BattleRoyale.UIModule
@@ -6,10 +7,11 @@ namespace BattleRoyale.UIModule
     {
         private StartMenuUIView _startMenuUIView; 
 
-        public StartMenuUIService(StartMenuUIView startMenuUIPrefab)
+        public StartMenuUIService(StartMenuUIView startMenuUIPrefab, List<Sprite> galleryImages)
         {
             Transform canvasTransform = CanvasUIManager.Instance.canvasTransform;
             _startMenuUIView = Object.Instantiate(startMenuUIPrefab, canvasTransform);
+            _startMenuUIView.Initialize(galleryImages);
             HideUI();
         }
 

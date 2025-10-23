@@ -33,7 +33,7 @@ namespace BattleRoyale.UIModule
         {
             _lobby = lobby;
             SetLobbyName(lobby.Name);
-            SetLobbyCapacity(lobby.MaxPlayers);
+            SetLobbyCapacity(lobby.Players.Count, lobby.MaxPlayers);
         }
 
         private void SetLobbyName(string lobbyName)
@@ -41,9 +41,9 @@ namespace BattleRoyale.UIModule
             _lobbyName.text = lobbyName;
         }
 
-        private void SetLobbyCapacity(int lobbyCapacity)
+        private void SetLobbyCapacity(int joinedPlayers, int lobbyCapacity)
         {
-            _lobbyCapacity.text = lobbyCapacity.ToString();
+            _lobbyCapacity.text = joinedPlayers.ToString()+"/"+lobbyCapacity.ToString();
         }
 
         private void OnLobbyEntryButtonClicked()

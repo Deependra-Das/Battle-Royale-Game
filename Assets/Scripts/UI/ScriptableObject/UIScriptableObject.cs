@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace BattleRoyale.UIModule
@@ -11,5 +12,6 @@ namespace BattleRoyale.UIModule
         public GameplayUIView gameplayUIPrefab;
         public GameOverUIView gameOverUIPrefab;
         public ScoreboardEntryUIView scoreboardEntryUIPrefab;
+        public List<Sprite> galleryImages;
     }
 }

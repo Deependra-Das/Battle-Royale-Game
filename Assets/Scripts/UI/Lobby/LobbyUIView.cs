@@ -20,15 +20,27 @@ namespace BattleRoyale.UIModule
         [Header ("Main Tab Toggles")]
         [SerializeField] private Toggle _createLobbyToggle;
         [SerializeField] private Toggle _joinLobbyToggle;
+        [SerializeField] private TMP_Text _createLobbyToggleText;
+        [SerializeField] private TMP_Text _joinLobbyToggleText;
         [SerializeField] private GameObject _createLobbyTabContainer;
         [SerializeField] private GameObject _joinLobbyTabContainer;
+        [SerializeField] private Sprite _selectedTabToggleSprite;
+        [SerializeField] private Sprite _normalTabToggleSprite;
+        [SerializeField] private Color _selectedTabToggleTextColor;
+        [SerializeField] private Color _normalTabToggleTextColor;
 
         [Header("Create Lobby Content")]
         [SerializeField] private TMP_InputField _lobbyNameInputField;
         [SerializeField] private TMP_Text _lobbyNameErrorMessageText;
         [SerializeField] private Toggle _capacityNumTogglePrefab;
+        [SerializeField] private Sprite _selectedNumToggleSprite;
+        [SerializeField] private Sprite _normalNumToggleSprite;
         [SerializeField] private Toggle _publicToggle;
-        [SerializeField] private Toggle _privateToggle;    
+        [SerializeField] private Toggle _privateToggle;
+        [SerializeField] private Sprite _selectedPublicToggleSprite;
+        [SerializeField] private Sprite _normalPublicToggleSprite;
+        [SerializeField] private Sprite _selectedPrivateToggleSprite;
+        [SerializeField] private Sprite _normalPrivateToggleSprite;
         [SerializeField] private Transform _capacityNumToggleGroupTransform;
         [SerializeField] private Button _createLobbyButtonPrefab;
         [SerializeField] private Button _resetButtonPrefab;
@@ -138,16 +150,20 @@ namespace BattleRoyale.UIModule
                 if (tabIndex == 1)
                 {
                     _joinLobbyToggle.isOn = false;
-                    _joinLobbyToggle.image.color = Color.gray;
-                    _createLobbyToggle.image.color = Color.white;
+                    _joinLobbyToggle.image.sprite = _normalTabToggleSprite;
+                    _createLobbyToggle.image.sprite = _selectedTabToggleSprite;
+                    _createLobbyToggleText.color = _selectedTabToggleTextColor;
+                    _joinLobbyToggleText.color = _normalTabToggleTextColor;
                     _createLobbyTabContainer.SetActive(true);
                     _joinLobbyTabContainer.SetActive(false);
                 }
                 else if (tabIndex == 2)
                 {
                     _createLobbyToggle.isOn = false;
-                    _createLobbyToggle.image.color = Color.gray;
-                    _joinLobbyToggle.image.color = Color.white;
+                    _createLobbyToggle.image.sprite = _normalTabToggleSprite;
+                    _joinLobbyToggle.image.sprite = _selectedTabToggleSprite;
+                    _createLobbyToggleText.color = _normalTabToggleTextColor;
+                    _joinLobbyToggleText.color = _selectedTabToggleTextColor;
                     _createLobbyTabContainer.SetActive(false);
                     _joinLobbyTabContainer.SetActive(true);
                 }
@@ -173,7 +189,7 @@ namespace BattleRoyale.UIModule
         {
             GameObject toggleObject = Instantiate(_capacityNumTogglePrefab.gameObject, _capacityNumToggleGroupTransform);
             Toggle newToggle = toggleObject.GetComponent<Toggle>();
-            newToggle.image.color = Color.gray;
+            newToggle.image.sprite = _normalNumToggleSprite;
             newToggle.GetComponentInChildren<TMP_Text>().text = index.ToString();
             toggles.Add(newToggle);
             newToggle.onValueChanged.AddListener((isOn) => OnCapacityNumToggleChanged(newToggle, isOn, index));
@@ -184,7 +200,7 @@ namespace BattleRoyale.UIModule
             if (isOn)
             {
                 _capacitySelected = index;
-                changedToggle.image.color = Color.white;
+                changedToggle.image.sprite = _selectedNumToggleSprite;
                 DeactivateOtherCapacityNumToggles(changedToggle);
             }
 
@@ -198,7 +214,7 @@ namespace BattleRoyale.UIModule
             {
                 if (toggle != changedToggle)
                 {
-                    toggle.image.color = Color.gray;
+                    toggle.image.sprite = _normalNumToggleSprite;
                     toggle.isOn = false;
                 }
             }
@@ -211,15 +227,15 @@ namespace BattleRoyale.UIModule
                 if (tabIndex == 1)
                 {
                     _privateToggle.isOn = false;
-                    _privateToggle.image.color = Color.gray;
-                    _publicToggle.image.color = Color.white;
+                    _privateToggle.image.sprite = _normalPrivateToggleSprite;
+                    _publicToggle.image.sprite = _selectedPublicToggleSprite;
                     _privacySelected = false;
                 }
                 else if (tabIndex == 2)
                 {
                     _publicToggle.isOn = false;
-                    _publicToggle.image.color = Color.gray;
-                    _privateToggle.image.color = Color.white;
+                    _publicToggle.image.sprite = _normalPublicToggleSprite;
+                    _privateToggle.image.sprite = _selectedPrivateToggleSprite;
                     _privacySelected = true;
                 }
             }

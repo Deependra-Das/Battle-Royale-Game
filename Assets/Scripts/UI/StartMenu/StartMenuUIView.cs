@@ -1,6 +1,8 @@
 using BattleRoyale.AudioModule;
 using BattleRoyale.MainModule;
 using BattleRoyale.SceneModule;
+using NUnit.Framework;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
@@ -15,22 +17,45 @@ namespace BattleRoyale.UIModule
         [SerializeField] private TMP_Text _usernameDisplayText;
         [SerializeField] private Button _changeUsernameButton;
         [SerializeField] private Button _newGameButton;
+        [SerializeField] private Button _howToPlayButton;
+        [SerializeField] private Button _audioSettingsButton;
         [SerializeField] private Button _quitGameButtonPrefab;
 
         [Header("Success PopUp")]
         [SerializeField] private GameObject _successPopup;
+        [SerializeField] private TMP_Text _successMessageText;
         [SerializeField] private Button _okButton;
 
         [Header("Change Username PopUp")]
         [SerializeField] private Button _saveUsernameButton;
-        [SerializeField] private Button _cancelButton;
+        [SerializeField] private Button _cancelUsernameChangeButton;
         [SerializeField] private GameObject _usernameInputPopup;
         [SerializeField] private TMP_InputField _usernameInputField;
         [SerializeField] private TMP_Text _errorMessageText;
 
+        [Header("How To Play PopUp")]
+        [SerializeField] private GameObject _howToPlayPopup;
+        [SerializeField] private Image _displayImage;
+        [SerializeField] private TMP_Text _currentImageIndexText;
+        [SerializeField] private Button _nextButton;
+        [SerializeField] private Button _prevButton;
+        [SerializeField] private Button _closeHowToPlayButton;
 
-        private const int minUserNameLength = 3;
-        private const int maxUserNameLength = 15;
+        [Header("Audio Settings PopUp")]
+        [SerializeField] private GameObject _audioSettingsPopup;
+        [SerializeField] private Slider _bgmVolumeSlider;
+        [SerializeField] private Slider _uiSFXVolumeSlider;
+        [SerializeField] private Slider _playerSFXVolumeSlider;
+        [SerializeField] private Slider _tileFXVolumeSlider;
+        [SerializeField] private Button _saveAudioSettingsButton;
+        [SerializeField] private Button _cancelAudioSettingsButton;
+        [SerializeField] private Button _restoreDefaultButton;
+
+        private List<Sprite> _galleryImageList;
+        private int _currentImageIndex = 0;
+
+        private const int _minUserNameLength = 3;
+        private const int _maxUserNameLength = 15;
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -41,9 +66,17 @@ namespace BattleRoyale.UIModule
             _newGameButton.onClick.AddListener(OnNewGameButtonClicked);
             _quitGameButtonPrefab.onClick.AddListener(OnQuitGameButtonClicked);
             _saveUsernameButton.onClick.AddListener(OnSaveUsernameButtonClicked);
-            _cancelButton.onClick.AddListener(OnCancelButtonClicked);
+            _cancelUsernameChangeButton.onClick.AddListener(OnCancelUsernameChangeButtonClicked);
             _okButton.onClick.AddListener(OnOkButtonClicked);
             _changeUsernameButton.onClick.AddListener(OnChangeUsernameButtonClicked);
+            _howToPlayButton.onClick.AddListener(OnHowToPlayButonClicked);
+            _closeHowToPlayButton.onClick.AddListener(OnCloseHowToPlayButonClicked);
+            _audioSettingsButton.onClick.AddListener(OnAudioSettingsButonClicked);
+            _saveAudioSettingsButton.onClick.AddListener(OnSaveAudioSettingsButonClicked);
+            _cancelAudioSettingsButton.onClick.AddListener(OnCancelAudioSettingsButonClicked);
+            _restoreDefaultButton.onClick.AddListener(OnRestoreDefaultAudioSettingsButonClicked);
+            _nextButton.onClick.AddListener(OnNextImageButtonClicked);
+            _prevButton.onClick.AddListener(OnPreviousImageButtonClicked);
         }
 
         private void UnsubscribeToEvents()
@@ -51,9 +84,27 @@ namespace BattleRoyale.UIModule
             _newGameButton.onClick.RemoveListener(OnNewGameButtonClicked);
             _quitGameButtonPrefab.onClick.RemoveListener(OnQuitGameButtonClicked);
             _saveUsernameButton.onClick.RemoveListener(OnSaveUsernameButtonClicked);
-            _cancelButton.onClick.RemoveListener(OnCancelButtonClicked);
+            _cancelUsernameChangeButton.onClick.RemoveListener(OnCancelUsernameChangeButtonClicked);
             _okButton.onClick.RemoveListener(OnOkButtonClicked);
             _changeUsernameButton.onClick.RemoveListener(OnChangeUsernameButtonClicked);
+            _nextButton.onClick.RemoveListener(OnNextImageButtonClicked);
+            _prevButton.onClick.RemoveListener(OnPreviousImageButtonClicked);
+            _howToPlayButton.onClick.RemoveListener(OnHowToPlayButonClicked);
+            _closeHowToPlayButton.onClick.RemoveListener(OnCloseHowToPlayButonClicked);
+            _audioSettingsButton.onClick.RemoveListener(OnAudioSettingsButonClicked);
+            _saveAudioSettingsButton.onClick.RemoveListener(OnSaveAudioSettingsButonClicked);
+            _cancelAudioSettingsButton.onClick.RemoveListener(OnCancelAudioSettingsButonClicked);
+            _restoreDefaultButton.onClick.RemoveListener(OnRestoreDefaultAudioSettingsButonClicked);
+            _nextButton.onClick.RemoveListener(OnNextImageButtonClicked);
+            _prevButton.onClick.RemoveListener(OnPreviousImageButtonClicked);
+        }
+
+        public void Initialize(List<Sprite> galleryImages)
+        {
+            if (galleryImages != null && galleryImages.Count > 0)
+            {
+                _galleryImageList = galleryImages;
+            }
         }
 
         private void OnNewGameButtonClicked()
@@ -127,7 +178,7 @@ namespace BattleRoyale.UIModule
                 AudioManager.Instance.PlaySFX(AudioModule.AudioType.ErrorPopUp);
                 return;
             }
-            if (username.Length < minUserNameLength || username.Length > maxUserNameLength)
+            if (username.Length < _minUserNameLength || username.Length > _maxUserNameLength)
             {
                 _errorMessageText.text = "Username must be 3-16 characters long!";
                 AudioManager.Instance.PlaySFX(AudioModule.AudioType.ErrorPopUp);
@@ -149,6 +200,7 @@ namespace BattleRoyale.UIModule
 
             HideUsernameInputPopup();
             CheckPlayerNameExists();
+            _successMessageText.text = "Username Saved Successfully!";
             ShowSuccessPopup();
         }
 
@@ -158,7 +210,7 @@ namespace BattleRoyale.UIModule
             HideSuccessPopup();
         }
 
-        private void OnCancelButtonClicked()
+        private void OnCancelUsernameChangeButtonClicked()
         {
             AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             HideUsernameInputPopup();
@@ -180,5 +232,119 @@ namespace BattleRoyale.UIModule
         {
             _successPopup.SetActive(false);
         }
+
+        void OnNextImageButtonClicked()
+        {
+            if (_currentImageIndex < _galleryImageList.Count - 1)
+            {
+                _currentImageIndex++;
+                SetHowToPlayDisplayImage();
+                UpdateCurrentImageIndexText();
+            }
+
+            if (_currentImageIndex >= _galleryImageList.Count - 1)
+            {
+                _nextButton.interactable = false;
+            }
+
+            _prevButton.interactable = true;
+        }
+
+        void OnPreviousImageButtonClicked()
+        {
+            if (_currentImageIndex > 0)
+            {
+                _currentImageIndex--;
+                SetHowToPlayDisplayImage();
+                UpdateCurrentImageIndexText();
+            }
+
+            if (_currentImageIndex <= 0)
+            {
+                _prevButton.interactable = false;
+            }
+
+            _nextButton.interactable = true;
+        }
+
+        private void UpdateCurrentImageIndexText()
+        {
+            _currentImageIndexText.text = (_currentImageIndex + 1).ToString()+"/"+_galleryImageList.Count;
+        }
+
+        private void SetHowToPlayDisplayImage()
+        {
+            _displayImage.sprite = _galleryImageList[_currentImageIndex];
+        }
+
+        private void OnHowToPlayButonClicked()
+        {
+            _currentImageIndex = 0;
+            SetHowToPlayDisplayImage();
+            UpdateCurrentImageIndexText();
+            _prevButton.interactable = false;
+            ShowHowTopPlayPopup();
+        }
+
+        private void ShowHowTopPlayPopup()
+        {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ConfirmationPopUp);
+            _howToPlayPopup.SetActive(true);
+        }
+
+        private void OnCloseHowToPlayButonClicked()
+        {
+            HideHowTopPlayPopup();
+        }
+
+        private void HideHowTopPlayPopup()
+        {
+            _howToPlayPopup.SetActive(false);
+        }    
+
+        private void OnAudioSettingsButonClicked()
+        {
+            SetAudioSliderValue();
+            ShowAudioSettingsPopup();
+        }
+
+        private void ShowAudioSettingsPopup()
+        {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ConfirmationPopUp);
+            _audioSettingsPopup.SetActive(true);
+        }
+        private void HideAudioSettingsPopup()
+        {
+            _audioSettingsPopup.SetActive(false);
+        }
+
+        private void OnSaveAudioSettingsButonClicked()
+        {
+            AudioManager.Instance.SetAllAudioVolumes(_bgmVolumeSlider.value, _playerSFXVolumeSlider.value, _uiSFXVolumeSlider.value, _tileFXVolumeSlider.value);
+            HideAudioSettingsPopup();
+            _successMessageText.text = "Audio Settings Saved Successfully!";
+            ShowSuccessPopup();
+        }
+
+        private void OnCancelAudioSettingsButonClicked()
+        {
+            HideAudioSettingsPopup();
+        }
+
+        private void OnRestoreDefaultAudioSettingsButonClicked()
+        {
+            _bgmVolumeSlider.value = AudioManager.Instance.DefaultBGMVolume;
+            _playerSFXVolumeSlider.value = AudioManager.Instance.DefaultPlayerSFXVolume;
+            _uiSFXVolumeSlider.value = AudioManager.Instance.DefaultUIVolume;
+            _tileFXVolumeSlider.value = AudioManager.Instance.DefaultTilePopVolume;
+        }
+        
+        private void SetAudioSliderValue()
+        {
+            _bgmVolumeSlider.value = AudioManager.Instance.BGMVolume;
+            _playerSFXVolumeSlider.value = AudioManager.Instance.PlayerSFXVolume;
+            _uiSFXVolumeSlider.value = AudioManager.Instance.UIVolume;
+            _tileFXVolumeSlider.value = AudioManager.Instance.TilePopVolume;
+        }   
     }
 }

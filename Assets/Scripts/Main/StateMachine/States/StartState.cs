@@ -3,7 +3,9 @@ using BattleRoyale.EnvironmentModule;
 using BattleRoyale.LobbyModule;
 using BattleRoyale.NetworkModule;
 using BattleRoyale.UIModule;
+using System.Collections.Generic;
 using Unity.Netcode;
+using UnityEngine;
 
 namespace BattleRoyale.MainModule
 {
@@ -22,7 +24,7 @@ namespace BattleRoyale.MainModule
 
             _startMenuUIObj = GameManager.Instance.Get<StartMenuUIService>();
             _startMenuUIObj.ShowUI();
-            AudioManager.Instance.PlayBGM(AudioType.MainMenuBGM);
+            AudioManager.Instance.PlayBGM(AudioModule.AudioType.MainMenuBGM);
         }
 
         public void Exit()
@@ -40,7 +42,8 @@ namespace BattleRoyale.MainModule
         private void RegisterGameplayServices()
         {
             StartMenuUIView startMenuUIPrefab = GameManager.Instance.ui_SO.startMenuUIPrefab;
-            ServiceLocator.Register(new StartMenuUIService(startMenuUIPrefab));
+            List<Sprite> galleryImages = GameManager.Instance.ui_SO.galleryImages;
+            ServiceLocator.Register(new StartMenuUIService(startMenuUIPrefab, galleryImages));
             ServiceLocator.Register(new SkyboxService(GameManager.Instance.environment_SO.skyboxTypeMaterialMappings));
         }
 

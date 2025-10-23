@@ -7,7 +7,6 @@ public class ScoreboardEntryUIView : MonoBehaviour
     [Header("UI Elements")]
     [SerializeField] private TextMeshProUGUI _rankText;
     [SerializeField] private TextMeshProUGUI _nameText;
-    [SerializeField] private Image _avatarImage;
 
     [SerializeField] private Sprite defaultAvatarSprite;
 
@@ -15,6 +14,5 @@ public class ScoreboardEntryUIView : MonoBehaviour
     {
         _rankText.text = rank.ToString();
         _nameText.text = playerName;
-        _avatarImage.sprite = defaultAvatarSprite;
     }
 }

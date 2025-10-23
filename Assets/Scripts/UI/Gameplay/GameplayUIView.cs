@@ -20,9 +20,12 @@ namespace BattleRoyale.UIModule
         [SerializeField] private GameObject _rankPanel;
         [SerializeField] private TMP_Text _rankText;
 
-        [SerializeField] private TMP_Text _gameplayStartCountdownText;
-        [SerializeField] private float _animationSpeed = 1f;
- 
+        [SerializeField] private RawImage _gameplayStartCountdownImage;
+        [SerializeField] private Texture2D _countdownImage_3;
+        [SerializeField] private Texture2D _countdownImage_2;
+        [SerializeField] private Texture2D _countdownImage_1;
+        [SerializeField] private Texture2D _countdownImage_GO;
+        [SerializeField] private float _animationSpeed = 1f; 
 
         [Header("Eliminated PopUp")]
         [SerializeField] private GameObject _eliminationPopup;
@@ -58,7 +61,7 @@ namespace BattleRoyale.UIModule
 
         private void Start()
         {
-            _originalScale = _gameplayStartCountdownText.transform.localScale;
+            _originalScale = _gameplayStartCountdownImage.transform.localScale;
             _eliminationPopup.SetActive(false);
             _rankPanel.SetActive(false);
             _disconnectedMessageGameplayUIPopUp.SetActive(false);
@@ -79,31 +82,47 @@ namespace BattleRoyale.UIModule
             if (secondsRemaining > 0)
             {
                 AudioManager.Instance.PlaySFX(AudioModule.AudioType.GameStartCountdown);
-                _gameplayStartCountdownText.text = secondsRemaining.ToString();
-                _gameplayStartCountdownText.gameObject.SetActive(true);
+                SetCountdownImage(secondsRemaining);
+                _gameplayStartCountdownImage.gameObject.SetActive(true);
                 _currentCountdownValue = secondsRemaining;
                 _isCountingDown = true;
             }
             else
             {
                 AudioManager.Instance.PlaySFX(AudioModule.AudioType.GameStarted);
-                _gameplayStartCountdownText.text = "GO!";
+                _gameplayStartCountdownImage.texture = _countdownImage_GO;
                 _isCountingDown = false;
-                _gameplayStartCountdownText.transform.localScale = _originalScale;
+                _gameplayStartCountdownImage.transform.localScale = _originalScale;
                 Invoke(nameof(HideCountdown), 1f);
+            }
+        }
+
+        private void SetCountdownImage(int secondsRemaining)
+        {
+            switch(secondsRemaining)
+            {
+                case 1:
+                    _gameplayStartCountdownImage.texture = _countdownImage_1;
+                    break;
+                case 2:
+                    _gameplayStartCountdownImage.texture = _countdownImage_2;
+                    break;
+                case 3:
+                    _gameplayStartCountdownImage.texture = _countdownImage_3;
+                    break;
             }
         }
 
         private void HideCountdown()
         {
-            _gameplayStartCountdownText.gameObject.SetActive(false);
-            _gameplayStartCountdownText.transform.localScale = _originalScale;
+            _gameplayStartCountdownImage.gameObject.SetActive(false);
+            _gameplayStartCountdownImage.transform.localScale = _originalScale;
         }
 
         private void AnimateText()
         {
             float scaleFactor = Mathf.PingPong(Time.time * _animationSpeed, 0.5f) + 1f;
-            _gameplayStartCountdownText.transform.localScale = _originalScale * scaleFactor;
+            _gameplayStartCountdownImage.transform.localScale = _originalScale * scaleFactor;
         }
 
 
