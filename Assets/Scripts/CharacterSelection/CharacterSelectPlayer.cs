@@ -1,12 +1,8 @@
-using BattleRoyale.EventModule;
-using BattleRoyale.NetworkModule;
 using BattleRoyale.PlayerModule;
-using System;
 using TMPro;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace BattleRoyale.CharacterSelectionModule
 {
