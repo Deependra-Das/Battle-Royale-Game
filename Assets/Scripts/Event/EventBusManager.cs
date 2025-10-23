@@ -8,21 +8,21 @@ namespace BattleRoyale.EventModule
 {
     public class EventBusManager : GenericMonoSingleton<EventBusManager>
     {
-        private readonly Dictionary<string, UnityEvent<object[]>> eventDictionary = new Dictionary<string, UnityEvent<object[]>>();
+        private readonly Dictionary<string, UnityEvent<object[]>> _eventDictionary = new Dictionary<string, UnityEvent<object[]>>();
 
         public void Subscribe(EventName eventName, UnityAction<object[]> listener)
         {
-            if (!eventDictionary.TryGetValue(eventName.ToString(), out var thisEvent))
+            if (!_eventDictionary.TryGetValue(eventName.ToString(), out var thisEvent))
             {
                 thisEvent = new UnityEvent<object[]>();
-                eventDictionary.Add(eventName.ToString(), thisEvent);
+                _eventDictionary.Add(eventName.ToString(), thisEvent);
             }
             thisEvent.AddListener(listener);
         }
 
         public void Unsubscribe(EventName eventName, UnityAction<object[]> listener)
         {
-            if (eventDictionary.TryGetValue(eventName.ToString(), out var thisEvent))
+            if (_eventDictionary.TryGetValue(eventName.ToString(), out var thisEvent))
             {
                 thisEvent.RemoveListener(listener);
             }
@@ -30,7 +30,7 @@ namespace BattleRoyale.EventModule
 
         public void Raise(EventName eventName, params object[] parameters)
         {
-            if (eventDictionary.TryGetValue(eventName.ToString(), out var thisEvent))
+            if (_eventDictionary.TryGetValue(eventName.ToString(), out var thisEvent))
             {
                 if (parameters == null || parameters.Length == 0)
                 {
@@ -45,7 +45,7 @@ namespace BattleRoyale.EventModule
 
         public void RaiseNoParams(EventName eventName)
         {
-            if (eventDictionary.TryGetValue(eventName.ToString(), out var thisEvent))
+            if (_eventDictionary.TryGetValue(eventName.ToString(), out var thisEvent))
             {
                 thisEvent.Invoke(new object[0]);
             }
