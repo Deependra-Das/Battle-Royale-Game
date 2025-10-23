@@ -6,6 +6,7 @@ using BattleRoyale.NetworkModule;
 using BattleRoyale.PlayerModule;
 using BattleRoyale.UIModule;
 using BattleRoyale.UtilitiesModule;
+using BattleRoyale.XPModule;
 using UnityEngine;
 
 namespace BattleRoyale.MainModule
@@ -17,7 +18,8 @@ namespace BattleRoyale.MainModule
         [SerializeField] public UIScriptableObject ui_SO;
         [SerializeField] public NetworkScriptableObject network_SO;
         [SerializeField] public CharacterScriptableObject character_SO;
-        [SerializeField] public EnvironmentScriptableObject environment_SO; 
+        [SerializeField] public EnvironmentScriptableObject environment_SO;
+        [SerializeField] public XPMileStoneScriptableObject xpMileStone_SO;
 
         private GameStateMachine _stateMachine;
 

@@ -1,5 +1,8 @@
+using BattleRoyale.MainModule;
 using BattleRoyale.NetworkModule;
+using BattleRoyale.XPModule;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace BattleRoyale.UIModule
@@ -52,6 +55,17 @@ namespace BattleRoyale.UIModule
                     player.Rank,
                     player.Username.ToString()
                 );
+            }
+
+            int myrank = sortedPlayers.Find(x => x.ClientId == NetworkManager.Singleton.LocalClientId).Rank;
+            AddXpBasedOnRank(myrank);
+        }
+
+        private void AddXpBasedOnRank(int rank)
+        {
+            if(rank<=3)
+            {
+                GameManager.Instance.Get<XPService>().AddXPOnGameOver(rank);
             }
         }
     }

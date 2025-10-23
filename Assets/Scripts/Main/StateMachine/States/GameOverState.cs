@@ -1,6 +1,7 @@
 using BattleRoyale.AudioModule;
 using BattleRoyale.NetworkModule;
 using BattleRoyale.UIModule;
+using BattleRoyale.XPModule;
 using Unity.Netcode;
 
 namespace BattleRoyale.MainModule
@@ -41,6 +42,7 @@ namespace BattleRoyale.MainModule
 
         private void RegisterGameOverServices()
         {
+            ServiceLocator.Register(new XPService(GameManager.Instance.xpMileStone_SO.xpMilestones));
             GameOverUIView gameOverUIPrefab = GameManager.Instance.ui_SO.gameOverUIPrefab;
             ScoreboardEntryUIView scoreboardEntryUIPrefab = GameManager.Instance.ui_SO.scoreboardEntryUIPrefab;
             ServiceLocator.Register(new GameOverUIService(gameOverUIPrefab, scoreboardEntryUIPrefab));
@@ -49,6 +51,7 @@ namespace BattleRoyale.MainModule
         private void UnegisterGameOverServices()
         {
             ServiceLocator.Unregister<GameOverUIService>();
+            ServiceLocator.Unregister<XPService>();
         }
     }
 }

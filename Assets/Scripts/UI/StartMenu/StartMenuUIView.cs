@@ -1,6 +1,7 @@
 using BattleRoyale.AudioModule;
 using BattleRoyale.MainModule;
 using BattleRoyale.SceneModule;
+using BattleRoyale.XPModule;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;
@@ -14,6 +15,8 @@ namespace BattleRoyale.UIModule
         [Header("Main Menu Content")]
         [SerializeField] private GameObject _topBar;
         [SerializeField] private TMP_Text _usernameDisplayText;
+        [SerializeField] private TMP_Text _xpDisplayText;
+        [SerializeField] private Slider _xpSlider;
         [SerializeField] private Button _changeUsernameButton;
         [SerializeField] private Button _newGameButton;
         [SerializeField] private Button _howToPlayButton;
@@ -122,6 +125,7 @@ namespace BattleRoyale.UIModule
         {
             HideUsernameInputPopup();
             CheckPlayerNameExists();
+            SetXPData();
             gameObject.SetActive(true);
         }
 
@@ -345,5 +349,15 @@ namespace BattleRoyale.UIModule
             _uiSFXVolumeSlider.value = AudioManager.Instance.UIVolume;
             _tileFXVolumeSlider.value = AudioManager.Instance.TilePopVolume;
         }   
+
+        private void SetXPData()
+        {
+            int currentTotalXP = GameManager.Instance.Get<XPService>().GetCurrentTotalXP();
+            int currentXPMileStone = GameManager.Instance.Get<XPService>().GetNextXPMileStone();
+
+            _xpSlider.value = currentTotalXP;
+            _xpSlider.maxValue = currentXPMileStone;
+            _xpDisplayText.text = currentTotalXP.ToString()+" / "+currentXPMileStone.ToString();
+        }
     }
 }

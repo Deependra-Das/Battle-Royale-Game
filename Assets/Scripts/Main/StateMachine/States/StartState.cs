@@ -3,6 +3,7 @@ using BattleRoyale.EnvironmentModule;
 using BattleRoyale.LobbyModule;
 using BattleRoyale.NetworkModule;
 using BattleRoyale.UIModule;
+using BattleRoyale.XPModule;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -41,6 +42,7 @@ namespace BattleRoyale.MainModule
 
         private void RegisterGameplayServices()
         {
+            ServiceLocator.Register(new XPService(GameManager.Instance.xpMileStone_SO.xpMilestones));
             StartMenuUIView startMenuUIPrefab = GameManager.Instance.ui_SO.startMenuUIPrefab;
             List<Sprite> galleryImages = GameManager.Instance.ui_SO.galleryImages;
             ServiceLocator.Register(new StartMenuUIService(startMenuUIPrefab, galleryImages));
@@ -51,6 +53,7 @@ namespace BattleRoyale.MainModule
         {
             ServiceLocator.Unregister<StartMenuUIService>();
             ServiceLocator.Unregister<SkyboxService>();
+            ServiceLocator.Unregister<XPService>();
         }
 
         private void MainMenuCleanup()
@@ -66,7 +69,8 @@ namespace BattleRoyale.MainModule
                 {
                     PlayerSessionManager.Instance.NetworkObject.Despawn();
                 }
-                    UnityEngine.Object.Destroy(PlayerSessionManager.Instance.gameObject);
+                
+                UnityEngine.Object.Destroy(PlayerSessionManager.Instance.gameObject);
             }
 
             if (MultiplayerManager.Instance != null)
@@ -75,7 +79,8 @@ namespace BattleRoyale.MainModule
                 {
                     MultiplayerManager.Instance.NetworkObject.Despawn();
                 }
-                    UnityEngine.Object.Destroy(MultiplayerManager.Instance.gameObject);
+                
+                UnityEngine.Object.Destroy(MultiplayerManager.Instance.gameObject);
             }
 
             if (NetworkManager.Singleton != null)
