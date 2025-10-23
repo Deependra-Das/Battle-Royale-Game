@@ -5608,9 +5608,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87e4fde083ad3e84fb958b4c12fad46a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleRoyale.AudioModule.AudioManager
-  audioSource_SFX: {fileID: 823099842}
-  audioSource_BGM: {fileID: 1839492499}
-  audio_SO: {fileID: 11400000, guid: a8cfe839289307e4f85eafe7286387b7, type: 2}
+  _audioSource_SFX: {fileID: 823099842}
+  _audioSource_BGM: {fileID: 1839492499}
+  _audio_SO: {fileID: 11400000, guid: a8cfe839289307e4f85eafe7286387b7, type: 2}
   _tilepopAudioVolume: 1
   _bgmVolume: 1
   _playerSFXVolume: 1

@@ -2,16 +2,14 @@ using BattleRoyale.UtilitiesModule;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Audio;
-using UnityEngine.UIElements;
 
 namespace BattleRoyale.AudioModule
 {
     public class AudioManager : GenericMonoSingleton<AudioManager>
     {
-        [SerializeField] private AudioSource audioSource_SFX;
-        [SerializeField] private AudioSource audioSource_BGM;
-        [SerializeField] private AudioScriptableObject audio_SO;
+        [SerializeField] private AudioSource _audioSource_SFX;
+        [SerializeField] private AudioSource _audioSource_BGM;
+        [SerializeField] private AudioScriptableObject _audio_SO;
 
         private Dictionary<AudioType, AudioClip> _sfxAudioDictionary;
         private Dictionary<AudioType, AudioClip> _bgmAudioDictionary;
@@ -50,7 +48,7 @@ namespace BattleRoyale.AudioModule
         {
             _sfxAudioDictionary = new Dictionary<AudioType, AudioClip>();
 
-            foreach (var entry in audio_SO.sfxAudioList)
+            foreach (var entry in _audio_SO.sfxAudioList)
             {
                 if (!_sfxAudioDictionary.ContainsKey(entry.audioType))
                 {
@@ -63,7 +61,7 @@ namespace BattleRoyale.AudioModule
         {
             _bgmAudioDictionary = new Dictionary<AudioType, AudioClip>();
 
-            foreach (var entry in audio_SO.bgmAudioList)
+            foreach (var entry in _audio_SO.bgmAudioList)
             {
                 if (!_bgmAudioDictionary.ContainsKey(entry.audioType))
                 {
@@ -76,22 +74,22 @@ namespace BattleRoyale.AudioModule
         {
             _footstepsAudioList = new List<AudioClip>();
 
-            var footstepClips = audio_SO.playerAudioList.FindAll(x => x.audioType == AudioType.PlayerFootstep);
+            var footstepClips = _audio_SO.playerAudioList.FindAll(x => x.audioType == AudioType.PlayerFootstep);
 
             foreach (var entry in footstepClips)
             {
                 _footstepsAudioList.Add(entry.audioClip);
             }
 
-            _jumpLandAudioClip = audio_SO.playerAudioList.Find(x => x.audioType == AudioType.PlayerJumpLand).audioClip;
+            _jumpLandAudioClip = _audio_SO.playerAudioList.Find(x => x.audioType == AudioType.PlayerJumpLand).audioClip;
         }
 
         public void PlaySFX(AudioType audioType)
         {
             if (_sfxAudioDictionary.TryGetValue(audioType, out AudioClip clip))
             {
-                audioSource_SFX.volume = _uiSFXVolume;
-                audioSource_SFX.PlayOneShot(clip);
+                _audioSource_SFX.volume = _uiSFXVolume;
+                _audioSource_SFX.PlayOneShot(clip);
             }
             else
             {
@@ -103,10 +101,10 @@ namespace BattleRoyale.AudioModule
         {
             if (_bgmAudioDictionary.TryGetValue(audioType, out AudioClip clip))
             {
-                audioSource_BGM.loop = true;
-                audioSource_BGM.clip = clip;
-                audioSource_BGM.volume = _bgmVolume;
-                audioSource_BGM.Play();
+                _audioSource_BGM.loop = true;
+                _audioSource_BGM.clip = clip;
+                _audioSource_BGM.volume = _bgmVolume;
+                _audioSource_BGM.Play();
             }
             else
             {
@@ -155,13 +153,11 @@ namespace BattleRoyale.AudioModule
             }
         }
 
-        #region Volume Control Methods
-
         public void SetBGMVolume(float volume)
         {
             _bgmVolume = Mathf.Clamp(volume, 0f, 1f);
             SaveVolumeSetting(BGMMusicVolumeKey, _bgmVolume);
-            audioSource_BGM.volume = _bgmVolume;
+            _audioSource_BGM.volume = _bgmVolume;
         }
 
         public void SetPlayerSFXVolume(float volume)
@@ -190,20 +186,6 @@ namespace BattleRoyale.AudioModule
             SetTilePopVolume(tilePopVol);
         }
 
-        public float BGMVolume { get { return _bgmVolume; } }
-        public float PlayerSFXVolume { get { return _playerSFXVolume; } }
-        public float UIVolume { get { return _uiSFXVolume; } }
-        public float TilePopVolume { get { return _tilepopAudioVolume; } }
-
-        public float DefaultBGMVolume { get { return _defaultBGMVolume; } }
-        public float DefaultPlayerSFXVolume { get { return _defaultPlayerSFXVolume; } }
-        public float DefaultUIVolume { get { return _defaultUIVolume; } }
-        public float DefaultTilePopVolume { get { return _defaultTilePopVolume; } }
-
-        #endregion
-
-        #region Save & Load Methods
-
         private void SaveVolumeSetting(string key, float volume)
         {
             PlayerPrefs.SetFloat(key, volume);
@@ -217,10 +199,17 @@ namespace BattleRoyale.AudioModule
             _uiSFXVolume = PlayerPrefs.GetFloat(UISFXVolumeKey, _defaultUIVolume);
             _tilepopAudioVolume = PlayerPrefs.GetFloat(TilePopVolumeKey, _defaultTilePopVolume);
 
-            audioSource_BGM.volume = _bgmVolume;
+            _audioSource_BGM.volume = _bgmVolume;
         }
 
-        #endregion
-    }
+        public float BGMVolume { get { return _bgmVolume; } }
+        public float PlayerSFXVolume { get { return _playerSFXVolume; } }
+        public float UIVolume { get { return _uiSFXVolume; } }
+        public float TilePopVolume { get { return _tilepopAudioVolume; } }
 
+        public float DefaultBGMVolume { get { return _defaultBGMVolume; } }
+        public float DefaultPlayerSFXVolume { get { return _defaultPlayerSFXVolume; } }
+        public float DefaultUIVolume { get { return _defaultUIVolume; } }
+        public float DefaultTilePopVolume { get { return _defaultTilePopVolume; } }
+    }
 }
