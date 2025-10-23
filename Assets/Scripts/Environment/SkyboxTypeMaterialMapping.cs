@@ -14,5 +14,4 @@ namespace BattleRoyale.EnvironmentModule
         Day,
         Night,
     }
-
 }
