@@ -17645,6 +17645,7 @@ MonoBehaviour:
   network_SO: {fileID: 11400000, guid: 817994cb01831f64695edeaa2fb3ace6, type: 2}
   character_SO: {fileID: 11400000, guid: dafbb67ba1e1b9c47ac051d8d3a2b3d1, type: 2}
   environment_SO: {fileID: 11400000, guid: 2e8b8847a544eb94b9caa2b88b11ef39, type: 2}
+  xpMileStone_SO: {fileID: 11400000, guid: 35e6e830d6efaff49b6be7d7c807aaba, type: 2}
 --- !u!1 &865722574
 GameObject:
   m_ObjectHideFlags: 0

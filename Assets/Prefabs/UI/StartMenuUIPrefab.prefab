@@ -1585,6 +1585,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _topBar: {fileID: 605148581317713505}
   _usernameDisplayText: {fileID: 5489426806048075031}
+  _xpDisplayText: {fileID: 242827528945310797}
+  _xpSlider: {fileID: 5712137040781075116}
   _changeUsernameButton: {fileID: 7115428897440744754}
   _newGameButton: {fileID: 8546754518210157886}
   _howToPlayButton: {fileID: 879940746882271642}
