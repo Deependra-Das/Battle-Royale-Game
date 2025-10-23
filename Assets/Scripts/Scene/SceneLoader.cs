@@ -1,9 +1,5 @@
-using BattleRoyale.EventModule;
-using BattleRoyale.MainModule;
 using BattleRoyale.UtilitiesModule;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -42,6 +38,5 @@ namespace BattleRoyale.SceneModule
                 yield return null;
             }
         }
-          
     }
 }
