@@ -1,6 +1,3 @@
-using BattleRoyale.EventModule;
-using BattleRoyale.LevelModule;
-using BattleRoyale.MainModule;
 using BattleRoyale.NetworkModule;
 using System.Collections.Generic;
 using Unity.Cinemachine;
@@ -12,7 +9,7 @@ namespace BattleRoyale.PlayerModule
     public class PlayerService
     {
         private PlayerScriptableObject _player_SO;
-        private Dictionary<ulong, PlayerController> players = new();
+        private Dictionary<ulong, PlayerController> _activePlayers = new();
         private CinemachineCamera _playerCamera;
 
         public PlayerService(PlayerScriptableObject player_SO)
@@ -35,7 +32,7 @@ namespace BattleRoyale.PlayerModule
                 int charSkinColorIndex = PlayerSessionManager.Instance.GetPlayerSessionData(clientId).SkinColorIndex;
                 playerController.SetCharacterSkinMaterial(charSkinColorIndex);
 
-                players[clientId] = playerController;
+                _activePlayers[clientId] = playerController;
             }     
         }
 
@@ -52,9 +49,9 @@ namespace BattleRoyale.PlayerModule
 
         public void RemovePlayer(ulong clientId)
         {
-            if (players.ContainsKey(clientId))
+            if (_activePlayers.ContainsKey(clientId))
             {
-                PlayerController playerController = players[clientId];
+                PlayerController playerController = _activePlayers[clientId];
 
                 if(playerController.NetworkObject.IsSpawned)
                 {
@@ -62,13 +59,13 @@ namespace BattleRoyale.PlayerModule
                 }
 
                 Object.Destroy(playerController.gameObject);
-                players.Remove(clientId);
+                _activePlayers.Remove(clientId);
             }
         }
 
         public void Dispose()
         {
-            foreach (var player in players.Values)
+            foreach (var player in _activePlayers.Values)
             {
                 if (player != null)
                 {
@@ -77,7 +74,7 @@ namespace BattleRoyale.PlayerModule
                 }
             }
 
-            players.Clear();
+            _activePlayers.Clear();
 
             if (_playerCamera != null)
             {

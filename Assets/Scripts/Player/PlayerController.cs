@@ -29,14 +29,14 @@ namespace BattleRoyale.PlayerModule
         [SerializeField] private float _fallTimeout = 0.15f;
         [SerializeField] private float _groundedOffset = -0.14f;
         [SerializeField] private float _groundedRadius  = 0.28f;
-        private bool _grounded = true;
+
         [SerializeField] private LayerMask _groundLayers;
-        [Range(0.5f, 5f)] [SerializeField] private float strength = 1.1f;
+        private bool _grounded = true;
 
         [Header("Cinemachine")]
-        [SerializeField] private float TopClamp = 70.0f;
-        [SerializeField] private float BottomClamp = -30.0f;
-        [SerializeField] private float CameraAngleOverride = 0.0f;
+        [SerializeField] private float _topClamp = 70.0f;
+        [SerializeField] private float _bottomClamp = -30.0f;
+        [SerializeField] private float _cameraAngleOverride = 0.0f;
 
         [SerializeField] private bool _lockCameraPosition = false;
 
@@ -66,7 +66,7 @@ namespace BattleRoyale.PlayerModule
         public bool analogMovement;
         public bool cursorLocked = true;
         public bool cursorInputForLook = true;
-        private bool IsCurrentDeviceMouse { get { return _playerInput.currentControlScheme == "KeyboardMouse"; } }
+        private bool _isCurrentDeviceMouse { get { return _playerInput.currentControlScheme == "KeyboardMouse"; } }
         private bool _canMove = false;
 
         [Header("Player Character Skin")]
@@ -268,15 +268,15 @@ namespace BattleRoyale.PlayerModule
         {
             if (look.sqrMagnitude >= _threshold && !_lockCameraPosition)
             {
-                float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
+                float deltaTimeMultiplier = _isCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
                 _cinemachineTargetYaw += look.x * deltaTimeMultiplier;
                 _cinemachineTargetPitch += look.y * deltaTimeMultiplier;
             }
             _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
-            _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
+            _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, _bottomClamp, _topClamp);
 
-            _cinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
+            _cinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + _cameraAngleOverride,
                 _cinemachineTargetYaw, 0.0f);
         }
 

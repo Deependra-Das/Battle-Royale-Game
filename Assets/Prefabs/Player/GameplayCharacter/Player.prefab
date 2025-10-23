@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3944808484
+  GlobalObjectIdHash: 569019828
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -302,7 +302,6 @@ MonoBehaviour:
   _groundLayers:
     serializedVersion: 2
     m_Bits: 64
-  strength: 1.1
   TopClamp: 70
   BottomClamp: -30
   CameraAngleOverride: 0
