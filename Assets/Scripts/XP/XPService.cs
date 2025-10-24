@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace BattleRoyale.XPModule
 {
     public class XPService
     {
-        private int _xpToAdd = 100;
+        private int _baseXP = 100;
         private int _currentTotalXP;
         private int _currentXPMileStone;
         private List<int> _xpMilestones;
@@ -28,8 +29,25 @@ namespace BattleRoyale.XPModule
 
         public void AddXPOnGameOver(int rank)
         {
-            _currentTotalXP += Mathf.FloorToInt(_xpToAdd/rank);
+            int xpToAdd = 0;
 
+            switch (rank)
+            {
+                case 1:
+                    xpToAdd = Mathf.RoundToInt(_baseXP * 1.0f);
+                    break;
+                case 2:
+                    xpToAdd = Mathf.RoundToInt(_baseXP * 0.75f);
+                    break;
+                case 3:
+                    xpToAdd = Mathf.RoundToInt(_baseXP * 0.5f);
+                    break;
+                default:
+                    xpToAdd = 0;
+                    break;
+            }
+
+            _currentTotalXP += xpToAdd;
             UpdateXPMileStone();
             PlayerPrefs.SetInt(CurrentTotalXPKey, _currentTotalXP);
             PlayerPrefs.Save();

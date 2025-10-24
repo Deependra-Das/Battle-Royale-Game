@@ -105,7 +105,7 @@ namespace BattleRoyale.UIModule
             _lobbyNameText.text = lobby.Name;
             _lobbyCodeText.text = lobby.LobbyCode;
             _lobbyPrivacyText.text = lobby.IsPrivate ? "Private" : "Public";
-            _lobbyCapacityText.text = lobby.AvailableSlots.ToString()+"/"+lobby.MaxPlayers.ToString();
+            _lobbyCapacityText.text = lobby.MaxPlayers.ToString();
         }
 
         void CreateColorButtons()
