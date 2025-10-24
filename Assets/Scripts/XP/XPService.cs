@@ -53,6 +53,7 @@ namespace BattleRoyale.XPModule
             _currentTotalXP = 0;
             PlayerPrefs.SetInt(CurrentTotalXPKey, _currentTotalXP);
             PlayerPrefs.Save();
+            UpdateXPMileStone();
         }
 
         public int GetCurrentTotalXP()

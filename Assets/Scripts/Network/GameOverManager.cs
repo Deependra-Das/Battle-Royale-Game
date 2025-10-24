@@ -1,4 +1,6 @@
 using BattleRoyale.EventModule;
+using BattleRoyale.MainModule;
+using BattleRoyale.XPModule;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -53,7 +55,15 @@ namespace BattleRoyale.NetworkModule
             if (IsServer)
             {
                 yield return new WaitForSeconds(duration);
+                AddXpForWinnersClientRpc();
                 RaiseGameOverScoreCardClientRpc();
+            }
+        }
+        private void AddXpBasedOnRank(int rank)
+        {
+            if (rank <= 3)
+            {
+                GameManager.Instance.Get<XPService>().AddXPOnGameOver(rank);
             }
         }
 
@@ -63,6 +73,19 @@ namespace BattleRoyale.NetworkModule
             EventBusManager.Instance.RaiseNoParams(EventName.GameOverScoreCard);
         }
 
+        [ClientRpc]
+        private void AddXpForWinnersClientRpc()
+        {
+            var allPlayerData = PlayerSessionManager.Instance.GetAllPlayerSessionData();
+            List<PlayerSessionData> sortedPlayers = new List<PlayerSessionData>(allPlayerData.Values);
+            sortedPlayers.Sort((a, b) => a.Rank.CompareTo(b.Rank));
+            int myrank = sortedPlayers.Find(x => x.ClientId == NetworkManager.Singleton.LocalClientId).Rank;
+
+            if (sortedPlayers.Count > 1)
+            {
+                AddXpBasedOnRank(myrank);
+            }
+        }
 
         [ServerRpc(RequireOwnership = false)]
         private void SetClientFlagServerRpc(ServerRpcParams serverRpcParams = default)

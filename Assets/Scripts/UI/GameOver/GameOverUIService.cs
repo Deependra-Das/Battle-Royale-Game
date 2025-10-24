@@ -56,17 +56,6 @@ namespace BattleRoyale.UIModule
                     player.Username.ToString()
                 );
             }
-
-            int myrank = sortedPlayers.Find(x => x.ClientId == NetworkManager.Singleton.LocalClientId).Rank;
-            AddXpBasedOnRank(myrank);
-        }
-
-        private void AddXpBasedOnRank(int rank)
-        {
-            if(rank<=3)
-            {
-                GameManager.Instance.Get<XPService>().AddXPOnGameOver(rank);
-            }
-        }
+        }     
     }
 }
