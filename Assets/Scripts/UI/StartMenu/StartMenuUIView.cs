@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using WebSocketSharp;
 
 namespace BattleRoyale.UIModule
 {
@@ -55,9 +56,9 @@ namespace BattleRoyale.UIModule
 
         private List<Sprite> _galleryImageList;
         private int _currentImageIndex = 0;
-
         private const int _minUserNameLength = 3;
         private const int _maxUserNameLength = 15;
+        private const string _defaultUsername = "Player";
 
         private void OnEnable() => SubscribeToEvents();
 
@@ -216,6 +217,14 @@ namespace BattleRoyale.UIModule
         private void OnCancelUsernameChangeButtonClicked()
         {
             AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
+
+            if(string.IsNullOrEmpty(PlayerPrefs.GetString(GameManager.UsernameKey).ToString()))
+            { 
+                PlayerPrefs.SetString(GameManager.UsernameKey, _defaultUsername);
+                PlayerPrefs.Save();
+                _usernameDisplayText.text = _defaultUsername;
+                _topBar.SetActive(true);
+            }
             HideUsernameInputPopup();
         }
 
@@ -286,6 +295,7 @@ namespace BattleRoyale.UIModule
             SetHowToPlayDisplayImage();
             UpdateCurrentImageIndexText();
             _prevButton.interactable = false;
+            _nextButton.interactable = true;
             ShowHowTopPlayPopup();
         }
 
@@ -297,6 +307,7 @@ namespace BattleRoyale.UIModule
 
         private void OnCloseHowToPlayButonClicked()
         {
+            AudioManager.Instance.PlaySFX(AudioModule.AudioType.ButtonClick);
             HideHowTopPlayPopup();
         }
 
