@@ -1,7 +1,7 @@
 # Robo-Rush
 
 ## Overview
-Robo Rush is a multiplayer battle-royale race-style obstacle course game where players must navigate floors of hexagonal tiles that disappear after being stepped on. The goal is to be the last player standing on the tile floors by strategically avoiding falling through the tiles to the ground beneath the floors of tiles. Top 3 ranking Players on the scoreboard gain XP for every match. The XP can be used to get new skins for the player characters (Future Implementation).
+Robo Rush is a multiplayer battle-royale race-style obstacle course game where upto 8 players need to navigate floors of hexagonal tiles that disappear after being stepped on. The goal is to be the last player standing on the tile floors by strategically avoiding falling through the tiles to the ground beneath the floors of tiles. Top 3 ranking Players on the scoreboard gain XP for every match. The XP can be used to get new skins for the player characters (Future Implementation).
 
 ---
 
@@ -47,7 +47,9 @@ Used to store and manage data independently of game objects, making them ideal f
 
 ## How to Play
 
-Open the Game: Launch Robo Rush and choose the "Start Playing" option from the main menu.
+Download the Game: A playable build of the game is available in the drive folder link attached below in the next section. Download the zip file & extract it.
+
+Open the Game: Launch Robo Rush (Battle-Royale-Game application file) and choose the "Start Playing" option from the main menu.
 
 Create Lobby: If you want to create a lobby, enter a lobby name, choose the lobby size/capacity, set the lobby to public for others to join or private if you want to play only with your friends.
 
@@ -64,6 +66,8 @@ Rank in Top 3 to Earn XP: The last player standing on the remaining tiles wins t
 ---
 
 ## Playable build
+
+https://drive.google.com/drive/folders/1A9wcJ2_kldITUvh_xYDpg4qSdVkbLzHp
 
 ---
 
