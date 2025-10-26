@@ -37,7 +37,7 @@ State Machine Pattern: Used to manage different game states (StartState, LobbySt
 
 Used to store and manage data independently of game objects, making them ideal for managing data for Audio, Level, Player, Character, UI, Network, Environment & XP. This allows for easy customization and modification of attributes directly from the Unity Editor without needing to modify code.
 
-### Design Patterns
+### Multiplayer & Network Services
 
 Unity Netcode: Unity Netcode enables multiplayer functionality by synchronizing data across clients and servers, allowing real-time communication and interaction in networked games.
 
