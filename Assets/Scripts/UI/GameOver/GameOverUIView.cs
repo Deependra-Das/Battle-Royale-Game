@@ -24,6 +24,8 @@ namespace BattleRoyale.UIModule
         [SerializeField] private float _gameOverCountdownValue = 5f;
         [SerializeField] private float _disconnectedCountdownTime = 5f;
 
+        private bool _isGameOverDataDisplayed = false;
+
         private void OnEnable() => SubscribeToEvents();
 
         private void OnDisable() => UnsubscribeToEvents();
@@ -49,6 +51,7 @@ namespace BattleRoyale.UIModule
 
         public void EnableView()
         {
+            _isGameOverDataDisplayed = false;
             gameObject.SetActive(true);
         }
 
@@ -82,9 +85,12 @@ namespace BattleRoyale.UIModule
 
         private void ShowDisconnectionGameOverUI()
         {
-            AudioManager.Instance.PlaySFX(AudioModule.AudioType.DisconnectionPopUp);
-            _disconnectedGameOverUIPopUp.SetActive(true);
-            StartCoroutine(DisconnectedCountdownSequence());
+            if (!_isGameOverDataDisplayed)
+            {
+                AudioManager.Instance.PlaySFX(AudioModule.AudioType.DisconnectionPopUp);
+                _disconnectedGameOverUIPopUp.SetActive(true);
+                StartCoroutine(DisconnectedCountdownSequence());
+            }
         }
 
         private IEnumerator DisconnectedCountdownSequence()
@@ -106,6 +112,7 @@ namespace BattleRoyale.UIModule
         {
             HideGameOverPopUp();
             ShowScoreboard();
+            _isGameOverDataDisplayed = true;
             StartCoroutine(GameOverCountdownSequence());
         }
 
