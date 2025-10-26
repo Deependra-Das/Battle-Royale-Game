@@ -37,6 +37,14 @@ State Machine Pattern: Used to manage different game states (StartState, LobbySt
 
 Used to store and manage data independently of game objects, making them ideal for managing data for Audio, Level, Player, Character, UI, Network, Environment & XP. This allows for easy customization and modification of attributes directly from the Unity Editor without needing to modify code.
 
+### Design Patterns
+
+Unity Netcode: Unity Netcode enables multiplayer functionality by synchronizing data across clients and servers, allowing real-time communication and interaction in networked games.
+
+Unity Lobby Service: The Unity Lobby Service helps manage player matchmaking and game sessions, allowing players to create, join, and manage lobbies before entering the game.
+
+Unity Relay Service: The Unity Relay service facilitate multiplayer connectivity in games without requiring developers to manage dedicated game servers or players to deal with network complexities like IP addresses and port forwarding.
+
 ---
 
 ## Architecture Block Diagram
