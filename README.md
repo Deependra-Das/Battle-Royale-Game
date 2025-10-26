@@ -68,3 +68,5 @@ Rank in Top 3 to Earn XP: The last player standing on the remaining tiles wins t
 ---
 
 ## Gameplay Video
+
+https://youtu.be/bCgLa1W95lI
