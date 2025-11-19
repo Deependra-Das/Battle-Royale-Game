@@ -1,5 +1,7 @@
 # Robo-Rush
 
+<img width="1920" height="1080" alt="RoboRush_Thumbnail" src="https://github.com/user-attachments/assets/f9c8e844-6cca-47a5-9a39-5f35b04463b4" />
+
 ## Overview
 Robo Rush is a multiplayer battle-royale race-style obstacle course game where upto 8 players need to navigate floors of hexagonal tiles that disappear after being stepped on. The goal is to be the last player standing on the tile floors by strategically avoiding falling through the tiles to the ground beneath the floors of tiles. Top 3 ranking Players on the scoreboard gain XP for every match. The XP can be used to get new skins for the player characters (Future Implementation).
 
@@ -81,4 +83,4 @@ https://drive.google.com/drive/folders/1A9wcJ2_kldITUvh_xYDpg4qSdVkbLzHp
 
 ## Gameplay Video
 
-https://youtu.be/bCgLa1W95lI
+https://youtu.be/wgcMyfOnYhg
