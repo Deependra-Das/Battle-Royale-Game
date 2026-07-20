@@ -77,7 +77,7 @@ Rank in Top 3 to Earn XP: The last player standing on the remaining tiles wins t
 
 ## Playable build
 
-https://drive.google.com/drive/folders/1A9wcJ2_kldITUvh_xYDpg4qSdVkbLzHp
+https://thependragon99.itch.io/robo-rush
 
 ---
 
